@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WOM.fm Audio Flyer</title>
+  <link rel="stylesheet" href="/assets/css/wom.css" />
+  <script src="https://cdn.jsdelivr.net/npm/amplitudejs@5.3.2/dist/amplitude.min.js" defer data-cfasync="false"></script>
+  <script src="/assets/js/app.js" defer data-cfasync="false"></script>
+</head>
+<body>
+  <main class="container">
+    <header class="header">
+      <img class="logo" src="/assets/img/logo.svg" alt="WOM.fm" />
+      <h1 id="flyer-title">WOM.fm Audio Flyer</h1>
+    </header>
+    <div id="auma" class="auma" hidden>
+      <img id="auma-image" alt="" />
+    </div>
+    <div class="player">
+      <button id="prev" class="btn" hidden>◀</button>
+      <button id="playpause" class="btn primary">▶︎/⏸</button>
+      <button id="next" class="btn" hidden>▶</button>
+    </div>
+    <div class="progress">
+      <div class="bar"><div id="progress" class="fill"></div></div>
+      <div class="times"><span id="current">0:00</span><span id="duration">0:00</span></div>
+    </div>
+    <div class="actions">
+      <button id="share" class="btn">Share</button>
+      <a id="cta" class="btn link" href="#" target="_blank" rel="noopener" hidden>Learn more</a>
+    </div>
+  </main>
+</body>
+</html>

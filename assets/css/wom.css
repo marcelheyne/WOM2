@@ -1,0 +1,17 @@
+:root { --bg:#0b0b0c; --fg:#fafafa; --muted:#9aa0a6; --accent:#3b82f6; --card:#17181b; }
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family:system-ui,Inter,Roboto,Arial,sans-serif}
+.container{max-width:720px;margin:0 auto;padding:24px}
+.header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.logo{height:28px}
+h1{font-size:22px;margin:0}
+.auma{margin:12px 0;border-radius:16px;overflow:hidden;background:var(--card)}
+.auma img{width:100%}
+.player{display:flex;gap:8px;margin:16px 0}
+.btn{border:1px solid #2a2c31;background:var(--card);color:var(--fg);padding:10px 14px;border-radius:10px;font-weight:600;cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:white}
+.progress{margin:8px 0}
+.bar{background:#22252b;height:6px;border-radius:6px;overflow:hidden}
+.fill{background:var(--accent);height:6px;width:0}
+.times{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-top:6px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}

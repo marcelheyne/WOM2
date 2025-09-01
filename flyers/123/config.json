@@ -1,0 +1,19 @@
+{
+  "type": "playlist",
+  "title": "Sample Audio Flyer \u2013 Playlist",
+  "cover": "images/cover.jpg",
+  "cta": {
+    "label": "Open example link",
+    "url": "https://www.example.com"
+  },
+  "tracks": [
+    {
+      "title": "Before spraying",
+      "src": "audio/01-before.mp3"
+    },
+    {
+      "title": "During spraying",
+      "src": "audio/02-during.mp3"
+    }
+  ]
+}
