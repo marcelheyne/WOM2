@@ -1,6 +1,7 @@
 {
   "type": "playlist",
   "title": "Sample Audio Flyer \u2013 Playlist",
+  "analytics": { "siteId": 1 },
   "cover": "images/cover.jpg",
   "cta": {
     "label": "Open example link",

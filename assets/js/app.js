@@ -1,11 +1,70 @@
 (function(){
   const $ = s => document.querySelector(s);
-  const flyerId = location.pathname.replace(/^\/|\/$/g,'');
-  let startIndex = +(new URLSearchParams(location.search).get('t')||0) || 0;
+  const MATOMO_BASE = (window.WOM_MATOMO && window.WOM_MATOMO.base) || "https://metrics.wom.center/";
+  // If you created visit-scope custom dimensions in Matomo, map their IDs here; otherwise set to null
+  const MATOMO_DIM = { flyerId: 1, flyerType: 2, trackTitle: 3 }; // adjust/remove as needed
 
   function t(sec){ sec=sec|0; return ((sec/60)|0)+':'+('0'+(sec%60)).slice(-2); }
 
+  // ---- Matomo wiring (per flyer) ----
+  function wireMatomo({ siteId, flyerId, flyerType, title }) {
+    if (!siteId) return; // per-flyer only; no siteId => no tracking
+    try {
+      window._paq = window._paq || [];
+      const _paq = window._paq;
+
+      // Optional privacy toggles:
+      // _paq.push(['disableCookies']);       // cookieless
+      // _paq.push(['setDoNotTrack', true]);  // honor DNT
+
+      _paq.push(['setTrackerUrl', MATOMO_BASE + 'matomo.php']);
+      _paq.push(['setSiteId', String(siteId)]);
+      _paq.push(['enableLinkTracking']);
+      _paq.push(['enableHeartBeatTimer', 10]); // better time-on-page
+      _paq.push(['setCustomUrl', location.href]);
+      if (title) _paq.push(['setDocumentTitle', title]);
+
+      // Custom dimensions (only if you created them)
+      if (MATOMO_DIM.flyerId)   _paq.push(['setCustomDimension', MATOMO_DIM.flyerId, String(flyerId)]);
+      if (MATOMO_DIM.flyerType) _paq.push(['setCustomDimension', MATOMO_DIM.flyerType, String(flyerType||'')]);
+
+      // Pageview
+      _paq.push(['trackPageView']);
+
+      // Load tracker JS
+      const g = document.createElement('script');
+      g.async = true; g.src = MATOMO_BASE + 'matomo.js';
+      document.head.appendChild(g);
+    } catch (e) {}
+  }
+
+  function mtmTrack(cat, act, name, val){
+    if (!window._paq) return;
+    window._paq.push(['trackEvent', cat, act, name, val]);
+  }
+
+  function wireAudioEvents(){
+    const audio = Amplitude.getAudio();
+    audio.addEventListener('play',  () => mtmTrack('Audio','Play',  (Amplitude.getActiveSongMetadata()?.name)||''));
+    audio.addEventListener('pause', () => mtmTrack('Audio','Pause', (Amplitude.getActiveSongMetadata()?.name)||''));
+
+    document.addEventListener('amplitude-song-change', () => {
+      const m = Amplitude.getActiveSongMetadata() || {};
+      mtmTrack('Audio','Song Change', m.name||'');
+      if (MATOMO_DIM.trackTitle) window._paq?.push(['setCustomDimension', MATOMO_DIM.trackTitle, m.name||'']);
+    });
+
+    $('#next')?.addEventListener('click', () => mtmTrack('Audio','Next'));
+    $('#prev')?.addEventListener('click', () => mtmTrack('Audio','Prev'));
+    $('#share')?.addEventListener('click',() => mtmTrack('Share','Click'));
+  }
+
+  // ---- App init ----
   async function main(){
+    const flyerId   = location.pathname.replace(/^\/|\/$/g,'');   // e.g., "123"
+    let startIndex  = +(new URLSearchParams(location.search).get('t')||0) || 0;
+
+    // fetch config
     const cfgRes = await fetch(`/flyers/${flyerId}/config.json`, {cache:'no-store'});
     if(!cfgRes.ok){ document.title='Audio Flyer not found'; document.body.innerHTML='<p style="padding:24px">This Audio Flyer could not be found.</p>'; return; }
     const cfg = await cfgRes.json();
@@ -15,8 +74,13 @@
 
     if (cfg.cta?.url) { const cta=$('#cta'); cta.hidden=false; cta.href=cfg.cta.url; cta.textContent=cfg.cta.label||'Learn more'; }
 
+    // ---- Matomo: per-flyer siteId from config ----
+    const flyerType = (cfg.type || 'single').toLowerCase();
+    const siteId    = cfg.analytics && cfg.analytics.siteId; // e.g., { "analytics": { "siteId": 7 } }
+    wireMatomo({ siteId, flyerId, flyerType, title: document.title });
+
     const base = `/flyers/${flyerId}/`;
-    const type = (cfg.type||'single').toLowerCase();
+    const type = flyerType;
     let songs = [];
 
     if (type==='single' || type==='playlist'){
@@ -50,6 +114,9 @@
       function setImg(){ const s = songs[Amplitude.getActiveIndex()]; if(s?.cover_art_url) img.src=s.cover_art_url; }
       setImg(); document.addEventListener('amplitude-song-change', setImg);
     }
+
+    // Hook events after Amplitude is ready
+    wireAudioEvents();
 
     $('#share').onclick = async () => {
       const idx=Amplitude.getActiveIndex(); const url=`${location.origin}${location.pathname}?t=${idx}`;
