@@ -80,6 +80,13 @@
     wireMatomo({ siteId, flyerId, flyerType, title: document.title });
 
     const base = `/flyers/${flyerId}/`;
+    if (cfg.branding) {
+      const root = document.documentElement.style;
+      if (cfg.branding.primary) root.setProperty('--brand',  cfg.branding.primary);
+      if (cfg.branding.accent)  root.setProperty('--accent', cfg.branding.accent);
+      if (cfg.branding.logo)    document.getElementById('brand-logo').src = base + cfg.branding.logo;
+      if (cfg.branding.logoHeight) root.setProperty('--logo-height', cfg.branding.logoHeight + 'px');
+    }
     const type = flyerType;
     let songs = [];
 

@@ -1,20 +1,14 @@
 {
   "type": "playlist",
-  "title": "Sample Audio Flyer \u2013 Playlist",
-  "analytics": { "siteId": 1 },
-  "cover": "images/cover.jpg",
-  "cta": {
-    "label": "Open example link",
-    "url": "https://www.example.com"
+  "title": "Mobile Money Episode 1",
+  "branding": {
+    "logo": "images/songo.svg",    // path is relative to /flyers/<id>/
+    "primary": "#ff8a00",          // big round button + icons
+    "accent":  "#ffc422",          // progress fill
+    "logoHeight": 52               // optional (px)
   },
   "tracks": [
-    {
-      "title": "Before spraying",
-      "src": "audio/01-before.mp3"
-    },
-    {
-      "title": "During spraying",
-      "src": "audio/02-during.mp3"
-    }
+    { "title": "Episode 1", "src": "audio/ep1.mp3" },
+    { "title": "Episode 2", "src": "audio/ep2.mp3" }
   ]
 }
