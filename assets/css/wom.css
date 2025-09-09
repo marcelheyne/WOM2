@@ -7,9 +7,11 @@
   --logo-height: 48px;
 
   /* new sizes */
-  --main-size: 200px;      /* big round play/pause */
-  --side-size: 48px;       /* prev/next button box */
-  --side-icon: 40px;       /* prev/next SVG size */
+  --logo-height: 44px;     /* smaller logo */
+	--main-size: 184px;      /* play/pause a tad smaller than 200 */
+	--side-size: 56px;       /* bigger prev/next touch target */
+	--side-icon: 48px;       /* bigger prev/next icon */
+	--share-size: 64px;      /* bigger share */
 }
 
 /* ============= Layout ============= */
@@ -57,12 +59,12 @@ body{
 progress.amplitude-song-played-progress{
   -webkit-appearance:none;
   appearance:none;
-  height: 12px;
+  height: 14px;
+  border-radius: 9px;
   width: 100%;
   max-width: 380px;
   border:0;
   background:#f2f2f2;
-  border-radius:8px;
   overflow:hidden;
 }
 progress[value]::-webkit-progress-bar{ background:#f3f3f3 }
@@ -117,9 +119,11 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
 .share-btn{
   appearance:none;border:0;background:transparent;cursor:pointer;padding:0;
   color: var(--brand);
-  width:52px;height:52px;display:grid;place-items:center;margin:0 auto;
+  width: var(--share-size);
+	height: var(--share-size);
+	display:grid;place-items:center;margin:0 auto;
 }
-.share-btn svg{ width:36px;height:36px }
+.share-btn svg{ width: calc(var(--share-size) * 0.7); height: calc(var(--share-size) * 0.7); }
 
 /* Small screens */
 @media (max-width:360px){

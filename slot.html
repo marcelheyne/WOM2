@@ -41,10 +41,10 @@
       <!-- PREVIOUS (left) -->
       <button class="ctrl amplitude-prev" id="previous" aria-label="Previous">
         <svg viewBox="0 0 48 48" aria-hidden="true">
-          <!-- bar -->
-          <rect x="10" y="14" width="4" height="20" fill="currentColor"/>
+          <!-- vertical bar -->
+          <rect x="10" y="12" width="5" height="24" rx="2" fill="currentColor"/>
           <!-- triangle -->
-          <polygon points="34,14 34,34 16,24" fill="currentColor"/>
+          <polygon points="35,12 35,36 18,24" fill="currentColor"/>
         </svg>
       </button>
     
@@ -52,16 +52,24 @@
       <button class="ctrl ctrl--main amplitude-play-pause"
               amplitude-main-play-pause="true"
               id="play-pause" aria-label="Play/Pause">
-        <!-- ▶︎ (bigger) -->
+        <!-- ▶︎ equilateral w/ rounded corners -->
         <svg class="icon icon--play" viewBox="0 0 80 80" aria-hidden="true">
           <circle cx="40" cy="40" r="36" class="btn-bg"/>
-          <polygon points="34,24 34,56 56,40" fill="#fff"/>
+          <!-- side length s=28 -> equilateral points; rounded via stroke-linejoin -->
+          <polygon
+            points="26,27.9 26,52.1 54,40"
+            fill="#fff"
+            stroke="#fff"
+            stroke-width="5"
+            stroke-linejoin="round"
+            stroke-linecap="round" />
         </svg>
-        <!-- ⏸ (two bars) -->
+    
+        <!-- ⏸ two rounded bars -->
         <svg class="icon icon--pause" viewBox="0 0 80 80" aria-hidden="true">
           <circle cx="40" cy="40" r="36" class="btn-bg"/>
-          <rect x="30" y="24" width="8" height="32" rx="2" fill="#fff"/>
-          <rect x="42" y="24" width="8" height="32" rx="2" fill="#fff"/>
+          <rect x="30" y="24" width="9" height="32" rx="2.5" fill="#fff"/>
+          <rect x="41" y="24" width="9" height="32" rx="2.5" fill="#fff"/>
         </svg>
       </button>
     
@@ -69,13 +77,13 @@
       <button class="ctrl amplitude-next" id="next" aria-label="Next">
         <svg viewBox="0 0 48 48" aria-hidden="true">
           <!-- triangle -->
-          <polygon points="14,14 14,34 32,24" fill="currentColor"/>
-          <!-- bar -->
-          <rect x="34" y="14" width="4" height="20" fill="currentColor"/>
+          <polygon points="13,12 13,36 30,24" fill="currentColor"/>
+          <!-- vertical bar -->
+          <rect x="33" y="12" width="5" height="24" rx="2" fill="currentColor"/>
         </svg>
       </button>
     </section>
-
+    
     <!-- Track title -->
     <section class="meta">
       <h1 id="track-title" data-amplitude-song-info="name">Audio Flyer</h1>
