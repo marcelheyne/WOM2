@@ -103,11 +103,8 @@
 
     const multi = songs.length > 1;
     
-    const prevBtn = document.getElementById('previous') || document.getElementById('prev');
-    const nextBtn = document.getElementById('next');
-    
-    if (prevBtn) prevBtn.hidden = !multi;
-    if (nextBtn) nextBtn.hidden = !multi;
+    document.getElementById('previous')?.classList.toggle('hidden', !multi);
+    document.getElementById('next')?.classList.toggle('hidden', !multi);
 
     Amplitude.init({ songs });
     if (startIndex>0 && startIndex<songs.length) Amplitude.playSongAtIndex(startIndex);

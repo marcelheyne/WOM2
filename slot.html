@@ -38,24 +38,41 @@
 
     <!-- Controls -->
     <section class="controls">
+      <!-- PREVIOUS (left) -->
       <button class="ctrl amplitude-prev" id="previous" aria-label="Previous">
-        <!-- inline SVG uses currentColor (brandable) -->
-        <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M27.68 11h-2.55a2.31 2.31 0 0 0-2.29 2.3v5.94L11.57 12.25c-.86-.56-1.57-.16-1.57.92v14.13c0 1.08.71 1.49 1.57.93l11.27-6.99v5.94c0 .72.58 1.3 1.3 1.3h2.54c.72 0 1.29-.58 1.29-1.3V12.3c0-.71-.57-1.3-1.29-1.3z" fill="currentColor"/></svg>
+        <svg viewBox="0 0 48 48" aria-hidden="true">
+          <!-- bar -->
+          <rect x="10" y="14" width="4" height="20" fill="currentColor"/>
+          <!-- triangle -->
+          <polygon points="34,14 34,34 16,24" fill="currentColor"/>
+        </svg>
       </button>
-
+    
+      <!-- PLAY/PAUSE (center) -->
       <button class="ctrl ctrl--main amplitude-play-pause"
-              amplitude-main-play-pause="true" id="play-pause" aria-label="Play/Pause">
-        <!-- big round button; icons toggle via CSS -->
+              amplitude-main-play-pause="true"
+              id="play-pause" aria-label="Play/Pause">
+        <!-- ▶︎ (bigger) -->
         <svg class="icon icon--play" viewBox="0 0 80 80" aria-hidden="true">
-          <circle cx="40" cy="40" r="36" class="btn-bg"/><path d="M49 40 33 30v20z" fill="#fff"/>
+          <circle cx="40" cy="40" r="36" class="btn-bg"/>
+          <polygon points="34,24 34,56 56,40" fill="#fff"/>
         </svg>
+        <!-- ⏸ (two bars) -->
         <svg class="icon icon--pause" viewBox="0 0 80 80" aria-hidden="true">
-          <circle cx="40" cy="40" r="36" class="btn-bg"/><path d="M34 28h6v24h-6zM40 28h6v24h-6z" fill="#fff"/>
+          <circle cx="40" cy="40" r="36" class="btn-bg"/>
+          <rect x="30" y="24" width="8" height="32" rx="2" fill="#fff"/>
+          <rect x="42" y="24" width="8" height="32" rx="2" fill="#fff"/>
         </svg>
       </button>
-
+    
+      <!-- NEXT (right) -->
       <button class="ctrl amplitude-next" id="next" aria-label="Next">
-        <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M20.32 37h2.55c.72 0 1.29-.58 1.29-1.3v-5.94l11.27 6.99c.86.56 1.57.16 1.57-.92V21.7c0-1.08-.71-1.49-1.57-.93L24.16 27.76v-5.94c0-.72-.58-1.3-1.3-1.3h-2.54c-.72 0-1.29.58-1.29 1.3V35.7c0 .71.57 1.3 1.29 1.3z" fill="currentColor"/></svg>
+        <svg viewBox="0 0 48 48" aria-hidden="true">
+          <!-- triangle -->
+          <polygon points="14,14 14,34 32,24" fill="currentColor"/>
+          <!-- bar -->
+          <rect x="34" y="14" width="4" height="20" fill="currentColor"/>
+        </svg>
       </button>
     </section>
 
