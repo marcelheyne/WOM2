@@ -1,12 +1,12 @@
 {
   "type": "playlist",
   "title": "Mobile Money Episode 1",
+  "analytics": { "siteId": 1 },
   "branding": {
-    "logo": "images/songo.svg",    // path is relative to /flyers/<id>/
-    "primary": "#ff8a00",          // big round button + icons
-    "accent":  "#ffc422",          // progress fill
-    "logoHeight": 52               // optional (px)
-  },
+    "logo": "images/songo.svg",
+    "primary": "#ff8a00",
+    "accent": "#ffc422",
+    "logoHeight": 52
   "tracks": [
     { "title": "Episode 1", "src": "audio/ep1.mp3" },
     { "title": "Episode 2", "src": "audio/ep2.mp3" }
