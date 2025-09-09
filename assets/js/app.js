@@ -70,7 +70,7 @@
     const cfg = await cfgRes.json();
 
     document.title = cfg.title || `WOM.fm / ${flyerId}`;
-    $('#flyer-title').textContent = cfg.title || 'WOM.fm Audio Flyer';
+    $('#track-title').textContent = cfg.title || 'WOM.fm Audio Flyer';
 
     if (cfg.cta?.url) { const cta=$('#cta'); cta.hidden=false; cta.href=cfg.cta.url; cta.textContent=cfg.cta.label||'Learn more'; }
 
