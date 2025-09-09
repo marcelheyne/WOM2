@@ -7,11 +7,11 @@
   --logo-height: 48px;
 
   /* new sizes */
-  --logo-height: 44px;     /* smaller logo */
-	--main-size: 184px;      /* play/pause a tad smaller than 200 */
-	--side-size: 56px;       /* bigger prev/next touch target */
-	--side-icon: 48px;       /* bigger prev/next icon */
-	--share-size: 64px;      /* bigger share */
+  --logo-height: 42px;   /* a bit smaller than before */
+	--main-size: 184px;    /* big round play/pause */
+	--side-size: 64px;     /* larger prev/next tap target */
+	--side-icon: 56px;     /* larger prev/next glyph */
+	--share-size: 72px;    /* larger share button */
 }
 
 /* ============= Layout ============= */

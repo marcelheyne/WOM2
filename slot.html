@@ -55,14 +55,13 @@
         <!-- ▶︎ equilateral w/ rounded corners -->
         <svg class="icon icon--play" viewBox="0 0 80 80" aria-hidden="true">
           <circle cx="40" cy="40" r="36" class="btn-bg"/>
-          <!-- side length s=28 -> equilateral points; rounded via stroke-linejoin -->
-          <polygon
-            points="26,27.9 26,52.1 54,40"
-            fill="#fff"
-            stroke="#fff"
-            stroke-width="5"
-            stroke-linejoin="round"
-            stroke-linecap="round" />
+          <!-- tip at (56,40); other two vertices computed from ±120° rotation (r=16) -->
+          <path d="M56 40 L32 53.856 L32 26.144 Z"
+                fill="#fff"
+                stroke="#fff"
+                stroke-width="5"
+                stroke-linejoin="round"
+                stroke-linecap="round"/>
         </svg>
     
         <!-- ⏸ two rounded bars -->
