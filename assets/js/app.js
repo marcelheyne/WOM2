@@ -112,10 +112,19 @@
     Amplitude.init({ songs });
     if (startIndex>0 && startIndex<songs.length) Amplitude.playSongAtIndex(startIndex);
 
-    const audio = Amplitude.getAudio();
-    const prog = $('#progress'); const cur=$('#current'), dur=$('#duration');
-    function upd(){ const c=audio.currentTime||0, d=audio.duration||0; cur.textContent=t(c); dur.textContent=d? t(d):'0:00'; prog.style.width = d? (c/d*100)+'%':'0'; }
-    audio.addEventListener('timeupdate', upd); audio.addEventListener('loadedmetadata', upd);
+    const audio  = Amplitude.getAudio();
+    const progEl = document.querySelector('progress.amplitude-song-played-progress');
+    
+    function upd(){
+      if (!progEl || !audio) return;
+      const d = audio.duration || 0;
+      const c = audio.currentTime || 0;
+      progEl.max   = d || 1;
+      progEl.value = c;
+    }
+    
+    audio.addEventListener('timeupdate', upd);
+    audio.addEventListener('loadedmetadata', upd);
 
     $('#playpause').onclick=()=>Amplitude.playPause();
     $('#prev').onclick=()=>Amplitude.prev();
