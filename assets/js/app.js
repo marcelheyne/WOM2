@@ -126,9 +126,6 @@
     audio.addEventListener('timeupdate', upd);
     audio.addEventListener('loadedmetadata', upd);
 
-    $('#playpause').onclick=()=>Amplitude.playPause();
-    $('#prev').onclick=()=>Amplitude.prev();
-    $('#next').onclick=()=>Amplitude.next();
 
     if (type==='auma' || type==='auma-seq'){
       const img = $('#auma-image'); $('#auma').hidden=false;
