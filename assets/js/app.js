@@ -101,8 +101,13 @@
 
     if (!songs.length){ document.body.innerHTML='<p style="padding:24px">No audio configured.</p>'; return; }
 
-    const multi = songs.length>1;
-    $('#prev').hidden = !multi; $('#next').hidden=!multi;
+    const multi = songs.length > 1;
+    
+    const prevBtn = document.getElementById('previous') || document.getElementById('prev');
+    const nextBtn = document.getElementById('next');
+    
+    if (prevBtn) prevBtn.hidden = !multi;
+    if (nextBtn) nextBtn.hidden = !multi;
 
     Amplitude.init({ songs });
     if (startIndex>0 && startIndex<songs.length) Amplitude.playSongAtIndex(startIndex);
