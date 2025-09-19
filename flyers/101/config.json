@@ -1,0 +1,37 @@
+{
+  "type": "playlist",
+  "title": "Qulqullinni",
+  "analytics": { "siteId": 1 },
+  "branding": {
+    "logo": "images/songo.svg",
+    "primary": "#ff8a00",
+    "accent": "#ffc422",
+    "logoHeight": 52
+  },
+  "tracks": [
+  { "title": "Qulqullinni akkamiti dhukkuba irraa nu eega?", "src": "audio/om010101.mp3" },
+  { "title": "Jarmiin dhukkuba fidu akkamiti tamsa’uu dandaa’a?", "src": "audio/1m010102.mp3" },
+  { "title": "Qulqullini akkamiti tamsa’ina jarmii nurraa dhorga?", "src": "audio/om010103.mp3" },
+  { "title": "Qulqullinni naannoo akkamitti dhukkuba nurraa eega?", "src": "audio/om010104.mp3" },
+  { "title": "Bishaan dhugaati fi bishaan soorata ittin qophaa’u akkamiti qulquuna isaa eegana?", "src": "audio/om010105.mp3" },
+  { "title": "Balfa adda adda haala  kamiin gatuu qabana?", "src": "audio/om010106.mp3" },
+  { "title": "Balfa adda adda haala  kamiin gatuu qabana?", "src": "audio/om010107.mp3" },
+  { "title": "Maaliif bishaan bakka tokkoti chisee jiru deemsisuun barbaachise?", "src": "audio/om010108.mp3" },
+  { "title": "Akkamiiti mana fincaani ijaaru dandeenya?", "src": "audio/om010109.mp3" },
+  { "title": "Qulqullina maana keesa eeguun akkamiti dhukkuba irra nu eega?", "src": "audio/om010110.mp3" },
+  { "title": "1Qaama ofii eegun akkamiti dhukkuba irraa nu eeguu danda’a?", "src": "audio/om010111.mp3" },
+  { "title": "Xurii laguu irra akkamiti of qulqulleesu dandeena?", "src": "audio/om010112.mp3" },
+  { "title": "Qulqullina ilkaani akami eegana?", "src": "audio/om010113.mp3" },
+  { "title": "Quluqullina ija keena akkamiti eegachu qabna?", "src": "audio/om010114.mp3" },
+  { "title": "Bishaan dhugaati qulqullu akkamiti argachuu dandeena?", "src": "audio/om010115.mp3" },
+  { "title": "Bishaan dhugaati akkamiti qulquleesina?", "src": "audio/om010116.mp3" },
+  { "title": "Nyaata keena akkamiti eegu dandeena?", "src": "audio/om010117.mp3" },
+  { "title": "Tatamsaa’ina jarmii nyaata irra akkamti eegu dandeena", "src": "audio/om010118.mp3" },
+  { "title": "Midhaan badde akkamiti beeku dandeena?", "src": "audio/om010119.mp3" },
+  { "title": "Nyaata akkamiti seeran bilcheesu dandeena?", "src": "audio/om010120.mp3" },
+  { "title": "Akkamiti nyaata gaari filaachuu dandeena?", "src": "audio/om010121.mp3" },
+  { "title": "Nyaata akkamiti seeraan kaa’uu dandeena?", "src": "audio/om010122.mp3" },
+  { "title": "Nyaata akkamitu tursiisuu dandeena?", "src": "audio/om010123.mp3" },
+  { "title": "Nyaata akkamiti daa’imaaniif qopheesu qabna?", "src": "audio/om010124.mp3" }
+  ]
+}
