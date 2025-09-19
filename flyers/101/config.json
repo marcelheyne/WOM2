@@ -6,7 +6,7 @@
     "logo": "images/whh.png",
     "primary": "#2FAB16",
     "accent": "#43db25",
-    "logoHeight": 52
+    "logoHeight": 70
   },
   "tracks": [
   { "title": "Qulqullinni akkamiti dhukkuba irraa nu eega?", "src": "audio/om010101.mp3" },
