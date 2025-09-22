@@ -128,7 +128,7 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
 /* Small screens */
 @media (max-width:360px){
   .ctrl--main{ width:140px;height:140px }
-  #track-title{ font-size:20px }
+  #track-title{ font-size:16px }
 }
 
 /* Large phone / small tablet */
