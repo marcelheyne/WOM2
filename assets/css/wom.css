@@ -221,92 +221,43 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
 }
 
 /* AUMA container */
-.auma{ margin: 14px 0 6px; }
-.auma.hidden{ display:none; }
 
-.auma-frame{
-  width:100%;
-  max-width: 720px;
-  margin: 0 auto;
-  aspect-ratio: 1 / 1;                  /* square */
-  background:#f5f5f5;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0,0,0,.06);
-}
+/* hide via either [hidden] or .hidden */
+#auma[hidden],
+#auma.hidden { display: none; }
 
-/* Square, cropped Auma with your existing ids */
+/* square container (responsive, cropped) */
 #auma{
   position: relative;
+  width: min(720px, 92vw);
   aspect-ratio: 1 / 1;
-  max-width: 720px;
-  margin: 12px auto 16px;
-  border-radius: 8px;
-  overflow: hidden;
-  background: #f5f5f5;
-  box-shadow: 0 2px 10px rgba(0,0,0,.06);
-}
-#auma > img,        /* generic */
-#auma #auma-image,  /* your id */
-#auma #auma-img {   /* future id */
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  opacity: 0;
-  transition: opacity .35s ease;
-}
-#auma > img.ready,
-#auma #auma-image.ready,
-#auma #auma-img.ready { opacity: 1; }
-
-#auma-img{
-  width:100%; height:100%;
-  object-fit: cover; object-position: center;
-  opacity: 0; transition: opacity .35s ease;
-}
-#auma-img.ready{ opacity: 1; }
-
-.auma-cap{
-  font-size: .95rem;
-  color: var(--text);
-  padding: 8px 4px 0;
-  text-align: center;
-}
-
-/* --- AUMA (augmented audio) -------------------------------------------- */
-#auma.hidden { display: none; }               /* JS toggles this as well */
-#auma {
-  position: relative;
-  width: min(720px, 92vw);                    /* responsive max width */
-  aspect-ratio: 1 / 1;                        /* perfect square */
-  margin: 12px auto 8px;
+  margin: 12px auto 10px;
   border-radius: 10px;
   overflow: hidden;
-  background: #f5f5f5;                        /* placeholder color */
+  background: #f5f5f5;
   box-shadow: 0 2px 12px rgba(0,0,0,.06);
+  padding: 0;                /* ensure no stray padding affects sizing */
 }
 
-/* Work with either id (#auma-image or #auma-img) and any <img> inside */
+/* the image: always fill the square and crop */
 #auma > img,
 #auma #auma-image,
-#auma #auma-img {
-  width: 100% !important;                     /* override generic img rules */
+#auma #auma-img{
+  display: block;
+  width: 100% !important;
   height: 100% !important;
   object-fit: cover;
   object-position: center;
-  display: block;
-  opacity: 0;                                 /* fade-in when ready */
+  opacity: 0;                            /* fade-in on load */
   transition: opacity .35s ease;
 }
 
+/* when JS sets .ready after onload */
 #auma > img.ready,
 #auma #auma-image.ready,
-#auma #auma-img.ready {
-  opacity: 1;
-}
+#auma #auma-img.ready{ opacity: 1; }
 
-.auma-cap {
+.auma-cap, #auma-caption{
   width: min(720px, 92vw);
   margin: 6px auto 0;
   color: #444;
@@ -315,48 +266,5 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
   text-align: center;
 }
 
-/* === AUMA (Augmented Audio) =========================== */
-#auma { 
-  padding: 0 16px 8px;
-  margin: 8px auto 0;
-}
-#auma.hidden { display: none; }
-
-#auma-figure {
-  margin: 0 auto;
-  max-width: 720px;          /* keep it comfortably wide on large phones/tablets */
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-#auma-img {
-  display: block;
-  width: 100%;
-  height: auto;              /* keep natural aspect ratio */
-  max-height: min(70svh, 680px);  /* never get taller than the viewport */
-  object-fit: contain;       /* fit inside the box without cropping */
-  border-radius: 12px;       /* same rounding as buttons */
-  background: rgba(0,0,0,.04); /* soft placeholder behind transparent images */
-  opacity: .001;             /* fade in when loaded */
-  transition: opacity .25s ease;
-}
-#auma-img.ready { opacity: 1; }
-
-#auma-caption {
-  font-size: 16px;
-  line-height: 1.35;
-  color: #444;
-  text-align: left;
-  padding: 0 4px;
-}
-
-/* a bit more height on very tall screens */
-@media (min-height: 900px) {
-  #auma-img { max-height: min(78svh, 820px); }
-}
-
-/* fallback for very old browsers (no aspect-ratio) */
-/* .auma-frame::before{content:'';float:left;padding-top:100%} */
-
-.hidden{ visibility:hidden }
+/* generic .hidden should not reserve space anywhere */
+.hidden{ display: none; }
