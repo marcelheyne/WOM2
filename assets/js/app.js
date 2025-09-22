@@ -78,39 +78,6 @@
     img.alt = alt || '';
   }
   
-  function wireAuma(cfg, base){
-    if (!cfg?.tracks?.length) return;
-    if (!window.Amplitude?.getAudio) return;
-    if (!document.getElementById('auma')) return;
-  
-    const toAbs = p => !p ? p : (/^https?:\/\//.test(p) || p.startsWith('/')) ? p : (base + p);
-    const tracks = cfg.tracks.map(t => ({
-      ...t,
-      image: t.image?.src ? { ...t.image, src: toAbs(t.image.src) } : t.image,
-      slides: t.slides?.map(s => ({ ...s, src: toAbs(s.src) })) || t.slides
-    }));
-  
-    // initial
-    const initIdx = Amplitude.getActiveIndex?.() ?? 0;
-    setupAumaForTrack(tracks[initIdx]);
-  
-    // song change (with fallback)
-    const onSongChange = () => {
-      const i = Amplitude.getActiveIndex?.() ?? 0;
-      setupAumaForTrack(tracks[i]);
-    };
-    if (typeof Amplitude.bind === 'function') {
-      Amplitude.bind('song_change', onSongChange);
-    } else {
-      document.addEventListener('amplitude-song-change', onSongChange);
-    }
-  
-    // time sync
-    const audio = Amplitude.getAudio();
-    const onTick = () => tickAuma(audio.currentTime || 0);
-    audio.addEventListener('timeupdate', onTick, { passive: true });
-    audio.addEventListener('seeked', onTick, { passive: true });
-  }
 
   // ---- Matomo wiring (per flyer) ----
   function wireMatomo({ siteId, flyerId, flyerType, title }) {
@@ -306,6 +273,40 @@
 
     Amplitude.init({ songs });
     if (startIndex>0 && startIndex<songs.length) Amplitude.playSongAtIndex(startIndex);
+    
+    function wireAuma(cfg, base){
+      if (!cfg?.tracks?.length) return;
+      if (!window.Amplitude?.getAudio) return;
+      if (!document.getElementById('auma')) return;
+    
+      const toAbs = p => !p ? p : (/^https?:\/\//.test(p) || p.startsWith('/')) ? p : (base + p);
+      const tracks = cfg.tracks.map(t => ({
+        ...t,
+        image: t.image?.src ? { ...t.image, src: toAbs(t.image.src) } : t.image,
+        slides: t.slides?.map(s => ({ ...s, src: toAbs(s.src) })) || t.slides
+      }));
+    
+      // initial
+      const initIdx = Amplitude.getActiveIndex?.() ?? 0;
+      setupAumaForTrack(tracks[initIdx]);
+    
+      // song change (with fallback)
+      const onSongChange = () => {
+        const i = Amplitude.getActiveIndex?.() ?? 0;
+        setupAumaForTrack(tracks[i]);
+      };
+      if (typeof Amplitude.bind === 'function') {
+        Amplitude.bind('song_change', onSongChange);
+      } else {
+        document.addEventListener('amplitude-song-change', onSongChange);
+      }
+    
+      // time sync
+      const audio = Amplitude.getAudio();
+      const onTick = () => tickAuma(audio.currentTime || 0);
+      audio.addEventListener('timeupdate', onTick, { passive: true });
+      audio.addEventListener('seeked', onTick, { passive: true });
+    }
     
     wireAuma(cfg, base);
 
