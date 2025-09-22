@@ -133,12 +133,48 @@
     // Hook events after Amplitude is ready
     wireAudioEvents();
 
-    $('#share').onclick = async () => {
-      const idx=Amplitude.getActiveIndex(); const url=`${location.origin}${location.pathname}?t=${idx}`;
-      const text=(cfg.title||'WOM.fm Audio Flyer')+' '+url;
-      if (navigator.share) { try{ await navigator.share({title:cfg.title||'WOM.fm', url}); }catch(e){} }
-      else { window.open('https://wa.me/?text='+encodeURIComponent(text), '_blank', 'noopener'); }
-    };
+// Build share URL with UTM attribution
+    function buildShareUrl(channel, flyerId){
+      const url = new URL(location.origin + location.pathname); // short canonical
+      url.searchParams.set('utm_source', channel);
+      url.searchParams.set('utm_medium', 'share');
+      url.searchParams.set('utm_campaign', flyerId);
+      return url.toString();
+    }
+    
+    function shareWhatsApp(cfg, flyerId){
+      const msg = `${cfg.title || 'Listen on WOM.fm'} • ${buildShareUrl('whatsapp', flyerId)}`;
+      const wa = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+      window.open(wa, '_blank', 'noopener');
+      try { window._paq?.push(['trackEvent', 'Share', 'WhatsApp', flyerId]); } catch(e){}
+    }
+    
+    async function shareNative(cfg, flyerId){
+      const text = cfg.title || 'Listen on WOM.fm';
+      const url  = buildShareUrl('native', flyerId);
+    
+      // If native share exists, use it
+      if (navigator.share){
+        try {
+          await navigator.share({ title: text, text, url });
+          window._paq?.push(['trackEvent', 'Share', 'Native', flyerId]);
+          return;
+        } catch(e){ /* user canceled or OS error */ }
+      }
+    
+      // fallback: copy to clipboard then open generic chooser tab
+      try {
+        await navigator.clipboard?.writeText(url);
+        alert('Link copied to clipboard 👍');
+      } catch(e) {
+        // ultimate fallback: open in a new tab so user can copy
+        window.open(url, '_blank', 'noopener');
+      }
+    }
+    
+    // … inside your main() AFTER cfg is loaded and DOM is ready:
+    document.getElementById('share-wa')?.addEventListener('click', () => shareWhatsApp(cfg, flyerId));
+    document.getElementById('share-native')?.addEventListener('click', () => shareNative(cfg, flyerId));
   }
 
   window.addEventListener('DOMContentLoaded', main);
