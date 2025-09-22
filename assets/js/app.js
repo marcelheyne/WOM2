@@ -73,6 +73,44 @@
     $('#track-title').textContent = cfg.title || 'WOM.fm Audio Flyer';
 
     if (cfg.cta?.url) { const cta=$('#cta'); cta.hidden=false; cta.href=cfg.cta.url; cta.textContent=cfg.cta.label||'Learn more'; }
+    
+    function scheduleNudge(flyerId, enabled = true){
+      if (!enabled) return;
+    
+      const key = `wom_nudge_done_${flyerId}`;
+      if (localStorage.getItem(key)) return; // already nudged on this flyer
+    
+      const waBtn = document.getElementById('share-wa');
+      if (!waBtn) return;
+    
+      // when user interacts, mark done and stop nudging
+      const markDone = () => {
+        localStorage.setItem(key, '1');
+        waBtn.classList.remove('nudge');
+        waBtn.removeEventListener('click', markDone);
+        waBtn.removeEventListener('focus', markDone);
+      };
+    
+      setTimeout(() => {
+        // show the nudge
+        waBtn.classList.add('nudge');
+    
+        // remove the CSS class after the last animation run
+        let runs = 0;
+        const onEnd = () => {
+          runs++;
+          if (runs >= 2) waBtn.classList.remove('nudge');
+        };
+        waBtn.addEventListener('animationend', onEnd, { once:false });
+    
+        // mark done on interaction
+        waBtn.addEventListener('click', markDone, { once:true });
+        waBtn.addEventListener('focus', markDone, { once:true });
+    
+        // optional: track that we showed a nudge
+        try { window._paq?.push(['trackEvent', 'Share Nudge', 'Shown', flyerId]); } catch(e){}
+      }, 3000); // delay before we nudge
+    }
 
     // ---- Matomo: per-flyer siteId from config ----
     const flyerType = (cfg.type || 'single').toLowerCase();
@@ -172,7 +210,7 @@
       }
     }
     
-    // … inside your main() AFTER cfg is loaded and DOM is ready:
+    scheduleNudge(flyerId, cfg.nudge !== false); // allow per-flyer disable via "nudge": false
     document.getElementById('share-wa')?.addEventListener('click', () => shareWhatsApp(cfg, flyerId));
     document.getElementById('share-native')?.addEventListener('click', () => shareNative(cfg, flyerId));
   }
