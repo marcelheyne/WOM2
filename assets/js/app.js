@@ -74,44 +74,61 @@
 
     if (cfg.cta?.url) { const cta=$('#cta'); cta.hidden=false; cta.href=cfg.cta.url; cta.textContent=cfg.cta.label||'Learn more'; }
     
-    function scheduleNudge(flyerId, enabled = true){
-      if (!enabled) return;
-    
-      const key = `wom_nudge_done_${flyerId}`;
-      if (localStorage.getItem(key)) return; // already nudged on this flyer
-    
-      const waBtn = document.getElementById('share-wa');
-      if (!waBtn) return;
-    
-      // when user interacts, mark done and stop nudging
-      const markDone = () => {
-        localStorage.setItem(key, '1');
-        waBtn.classList.remove('nudge');
-        waBtn.removeEventListener('click', markDone);
-        waBtn.removeEventListener('focus', markDone);
-      };
-    
-      setTimeout(() => {
-        // show the nudge
-        waBtn.classList.add('nudge');
-    
-        // remove the CSS class after the last animation run
-        let runs = 0;
-        const onEnd = () => {
-          runs++;
-          if (runs >= 2) waBtn.classList.remove('nudge');
-        };
-        waBtn.addEventListener('animationend', onEnd, { once:false });
-    
-        // mark done on interaction
-        waBtn.addEventListener('click', markDone, { once:true });
-        waBtn.addEventListener('focus', markDone, { once:true });
-    
-        // optional: track that we showed a nudge
-        try { window._paq?.push(['trackEvent', 'Share Nudge', 'Shown', flyerId]); } catch(e){}
-      }, 3000); // delay before we nudge
+  function scheduleNudgeAfterEngagement(flyerId, opts = {}) {
+    const {
+      enabled = true,
+      minSeconds = 10,        // nudge after 10s of listening…
+      minPercent = 0.25,      // …or after 25% progress, whichever comes first
+      delayMs = 500,          // small delay before animating
+      alsoOnEnded = true      // if they finish, nudge at the end too
+    } = opts;
+  
+    if (!enabled) return;
+    const key = `wom_nudge_done_${flyerId}`;
+    if (localStorage.getItem(key)) return;
+  
+    const waBtn = document.getElementById('share-wa');
+    if (!waBtn) return;
+  
+    const audio = Amplitude.getAudio?.();
+    if (!audio) return;
+  
+    const markDone = () => {
+      localStorage.setItem(key, '1');
+      waBtn.classList.remove('nudge');
+      waBtn.removeEventListener('click', markDone);
+      waBtn.removeEventListener('focus', markDone);
+    };
+  
+    const showNudge = () => {
+      if (localStorage.getItem(key)) return;
+      waBtn.classList.add('nudge');
+      // stop the class after the animation runs
+      const onEnd = () => waBtn.classList.remove('nudge');
+      waBtn.addEventListener('animationend', onEnd, { once: true });
+      waBtn.addEventListener('click', markDone, { once: true });
+      waBtn.addEventListener('focus', markDone, { once: true });
+      try { window._paq?.push(['trackEvent', 'Share Nudge', 'Shown', flyerId]); } catch(e){}
+    };
+  
+    const onProgress = () => {
+      const t = audio.currentTime || 0;
+      const d = audio.duration || 0;
+      const pct = d ? (t / d) : 0;
+      if (t >= minSeconds || pct >= minPercent) {
+        audio.removeEventListener('timeupdate', onProgress);
+        setTimeout(showNudge, delayMs);
+      }
+    };
+  
+    audio.addEventListener('timeupdate', onProgress, { passive: true });
+  
+    if (alsoOnEnded) {
+      audio.addEventListener('ended', () => {
+        if (!localStorage.getItem(key)) setTimeout(showNudge, 300);
+      }, { once: true });
     }
-
+  }
     // ---- Matomo: per-flyer siteId from config ----
     const flyerType = (cfg.type || 'single').toLowerCase();
     const siteId    = cfg.analytics && cfg.analytics.siteId; // e.g., { "analytics": { "siteId": 7 } }
@@ -210,7 +227,15 @@
       }
     }
     
-    scheduleNudge(flyerId, cfg.nudge !== false); // allow per-flyer disable via "nudge": false
+    // enable per flyer (default on). Disable by setting "nudge": false in config
+    scheduleNudgeAfterEngagement(flyerId, {
+      enabled: cfg.nudge !== false,
+      minSeconds: 10,      // tweak to 5–12s if you want
+      minPercent: 0.25,    // or 0.20/0.33 etc.
+      delayMs: 500,
+      alsoOnEnded: true
+    });
+    
     document.getElementById('share-wa')?.addEventListener('click', () => shareWhatsApp(cfg, flyerId));
     document.getElementById('share-native')?.addEventListener('click', () => shareNative(cfg, flyerId));
   }
