@@ -315,6 +315,47 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
   text-align: center;
 }
 
+/* === AUMA (Augmented Audio) =========================== */
+#auma { 
+  padding: 0 16px 8px;
+  margin: 8px auto 0;
+}
+#auma.hidden { display: none; }
+
+#auma-figure {
+  margin: 0 auto;
+  max-width: 720px;          /* keep it comfortably wide on large phones/tablets */
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#auma-img {
+  display: block;
+  width: 100%;
+  height: auto;              /* keep natural aspect ratio */
+  max-height: min(70svh, 680px);  /* never get taller than the viewport */
+  object-fit: contain;       /* fit inside the box without cropping */
+  border-radius: 12px;       /* same rounding as buttons */
+  background: rgba(0,0,0,.04); /* soft placeholder behind transparent images */
+  opacity: .001;             /* fade in when loaded */
+  transition: opacity .25s ease;
+}
+#auma-img.ready { opacity: 1; }
+
+#auma-caption {
+  font-size: 16px;
+  line-height: 1.35;
+  color: #444;
+  text-align: left;
+  padding: 0 4px;
+}
+
+/* a bit more height on very tall screens */
+@media (min-height: 900px) {
+  #auma-img { max-height: min(78svh, 820px); }
+}
+
 /* fallback for very old browsers (no aspect-ratio) */
 /* .auma-frame::before{content:'';float:left;padding-top:100%} */
 
