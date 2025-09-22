@@ -5,6 +5,62 @@
   const MATOMO_DIM = { flyerId: 1, flyerType: 2, trackTitle: 3 }; // adjust/remove as needed
 
   function t(sec){ sec=sec|0; return ((sec/60)|0)+':'+('0'+(sec%60)).slice(-2); }
+  
+  // ---------- AUMA helpers (no side effects) ----------
+  const $id = (x) => document.getElementById(x);
+  
+  function parseTime(t){ if(typeof t==='number')return t; if(!t)return 0;
+    const p=t.split(':').map(Number); return p.length===2? p[0]*60+p[1] : Number(t)||0; }
+  
+  function normalizeSlides(slides=[]){
+    return slides.map(s=>({...s,_t:parseTime(s.t)})).filter(s=>s.src).sort((a,b)=>a._t-b._t);
+  }
+  function preload(src){ const i=new Image(); i.src=src; }
+  
+  let currentSlides=null, currentSlideIdx=-1, aumaVisible=false;
+  
+  function showAuma(show){ const sec=$id('auma'); if(!sec) return;
+    aumaVisible=!!show; sec.classList.toggle('hidden', !show); }
+  
+  function setAumaImage(src, alt){ const img=$id('auma-img'); if(!img) return;
+    img.classList.remove('ready'); img.onload=()=>img.classList.add('ready');
+    img.src=src; img.alt=alt||''; }
+  
+  function setAumaCaption(text){ const cap=$id('auma-caption'); if(!cap) return;
+    if(text){ cap.textContent=text; cap.hidden=false; } else { cap.hidden=true; } }
+  
+  function setupAumaForTrack(track){
+    currentSlides=null; currentSlideIdx=-1;
+    if(!track){ showAuma(false); return; }
+  
+    if (track.slides?.length){
+      currentSlides=normalizeSlides(track.slides);
+      preload(currentSlides[0].src); if(currentSlides[1]) preload(currentSlides[1].src);
+      setAumaImage(currentSlides[0].src, currentSlides[0].alt);
+      setAumaCaption(currentSlides[0].cap||currentSlides[0].alt||'');
+      showAuma(true); return;
+    }
+  
+    if (track.image?.src || track.cover_art_url){
+      const img=track.image?.src ? track.image : {src:track.cover_art_url, alt:''};
+      setAumaImage(img.src, img.alt); setAumaCaption(img.cap||img.alt||''); showAuma(true); return;
+    }
+  
+    showAuma(false);
+  }
+  
+  function tickAuma(currentTime){
+    if(!aumaVisible || !currentSlides) return;
+    let idx=currentSlides.length-1;
+    for(let i=0;i<currentSlides.length;i++){ if(currentSlides[i]._t<=currentTime) idx=i; else break; }
+    if(idx!==currentSlideIdx){
+      currentSlideIdx=idx;
+      const s=currentSlides[idx];
+      setAumaImage(s.src, s.alt); setAumaCaption(s.cap||s.alt||'');
+      const next=currentSlides[idx+1]; if(next) preload(next.src);
+      try{ window._paq?.push(['trackEvent','Auma','Slide', String(idx)]);}catch(e){}
+    }
+  }
 
   // ---- Matomo wiring (per flyer) ----
   function wireMatomo({ siteId, flyerId, flyerType, title }) {
@@ -59,6 +115,39 @@
     $('#share')?.addEventListener('click',() => mtmTrack('Share','Click'));
   }
   
+  // ---- Auma wiring  ----
+  
+  function wireAuma(cfg, base){
+    if (!cfg?.tracks?.length) return;
+    if (!window.Amplitude?.getAudio) return;
+    const imgEl = document.getElementById('auma-img');
+    const aumaSec = document.getElementById('auma');
+    if (!imgEl || !aumaSec) return; // audio-only flyers still work
+  
+    // resolve relative slide/image paths against /flyers/<id>/
+    const toAbs = p => !p ? p : (/^https?:\/\//.test(p) || p.startsWith('/')) ? p : (base + p);
+    const tracks = cfg.tracks.map(t => ({
+      ...t,
+      image: t.image?.src ? { ...t.image, src: toAbs(t.image.src) } : t.image,
+      slides: t.slides?.map(s => ({ ...s, src: toAbs(s.src) })) || t.slides
+    }));
+  
+    // init current
+    const initIdx = Amplitude.getActiveIndex?.() ?? 0;
+    setupAumaForTrack(tracks[initIdx]);
+  
+    // on track change
+    Amplitude.bind('song_change', () => {
+      const i = Amplitude.getActiveIndex?.() ?? 0;
+      setupAumaForTrack(tracks[i]);
+    });
+  
+    // sync slides to time
+    const audio = Amplitude.getAudio();
+    const onTick = () => tickAuma(audio.currentTime || 0);
+    audio.addEventListener('timeupdate', onTick, { passive:true });
+    audio.addEventListener('seeked', onTick, { passive:true });
+  }
   
   // ---- App init ----
   async function main(){
@@ -144,16 +233,13 @@
       if (cfg.branding.logoHeight) root.setProperty('--logo-height', cfg.branding.logoHeight + 'px');
     }
     const type = flyerType;
-    let songs = [];
 
-    if (type==='single' || type==='playlist'){
-      songs = (cfg.tracks||[]).map(t => ({ name:t.title||'', url: base+t.src, cover_art_url: cfg.cover? base+cfg.cover:undefined }));
-    } else if (type==='auma'){
-      const s = (cfg.tracks?.[0]) || (cfg.slides?.[0]) || {};
-      songs = [{ name:s.title||'', url: base+(s.src||''), cover_art_url: s.image? base+s.image : (cfg.cover? base+cfg.cover:undefined)}];
-    } else if (type==='auma-seq'){
-      songs = (cfg.slides||[]).map(s => ({ name:s.title||'', url: base+s.src, cover_art_url: s.image? base+s.image: undefined }));
-    }
+// Build songs from tracks for ALL types; slides/images are handled by AUMA layer
+    let songs = (cfg.tracks || []).map(t => ({
+      name: t.title || '',
+      url:  base + t.src,
+      cover_art_url: t.image?.src ? (base + t.image.src) : (cfg.cover ? base + cfg.cover : undefined)
+    }));
 
     if (!songs.length){ document.body.innerHTML='<p style="padding:24px">No audio configured.</p>'; return; }
 
@@ -164,6 +250,8 @@
 
     Amplitude.init({ songs });
     if (startIndex>0 && startIndex<songs.length) Amplitude.playSongAtIndex(startIndex);
+    
+    wireAuma(cfg, base);
 
     const audio  = Amplitude.getAudio();
     const progEl = document.querySelector('progress.amplitude-song-played-progress');
@@ -183,121 +271,7 @@
     // Hook events after Amplitude is ready
     wireAudioEvents();
     
-    /* ---------- AUMA helpers ---------- */
-    const $id = (x) => document.getElementById(x);
     
-    function parseTime(t){
-    if (typeof t === 'number') return t;
-    if (!t) return 0;
-    const parts = t.split(':').map(Number);
-    return parts.length === 2 ? parts[0]*60 + parts[1] : Number(t)||0;
-    }
-    
-    function normalizeSlides(slides = []){
-    return slides
-      .map(s => ({...s, _t: parseTime(s.t)}))
-      .filter(s => s.src)
-      .sort((a,b)=>a._t-b._t);
-    }
-    
-    function preload(src){ const i = new Image(); i.src = src; }
-    
-    /* state */
-    let currentSlides = null;
-    let currentSlideIdx = -1;
-    let aumaVisible = false;
-    
-    function showAuma(show){
-    const sec = $id('auma');
-    if (!sec) return;
-    aumaVisible = !!show;
-    sec.classList.toggle('hidden', !show);
-    }
-    
-    function setAumaImage(src, alt){
-    const img = $id('auma-img');
-    if (!img) return;
-    img.classList.remove('ready');
-    img.onload = () => img.classList.add('ready');
-    img.src = src;
-    img.alt = alt || '';
-    }
-    
-    function setAumaCaption(text){
-    const cap = $id('auma-caption');
-    if (!cap) return;
-    if (text){ cap.textContent = text; cap.hidden = false; }
-    else     { cap.hidden = true; }
-    }
-    
-    /* called when a new track becomes active */
-    function setupAumaForTrack(track){
-    currentSlides = null;
-    currentSlideIdx = -1;
-    
-    if (!track) { showAuma(false); return; }
-    
-    if (track.slides && track.slides.length){
-      currentSlides = normalizeSlides(track.slides);
-      // preload first & next
-      preload(currentSlides[0].src);
-      if (currentSlides[1]) preload(currentSlides[1].src);
-      // show first immediately
-      setAumaImage(currentSlides[0].src, currentSlides[0].alt);
-      setAumaCaption(currentSlides[0].cap || currentSlides[0].alt || '');
-      showAuma(true);
-      return;
-    }
-    
-    if (track.image && track.image.src){
-      setAumaImage(track.image.src, track.image.alt);
-      setAumaCaption(track.image.cap || track.image.alt || '');
-      showAuma(true);
-      return;
-    }
-    
-    // no auma for this track
-    showAuma(false);
-    }
-    
-    /* called on timeupdate/seek to adjust slide */
-    function tickAuma(currentTime){
-    if (!aumaVisible || !currentSlides) return;
-    // find last slide with _t <= time (linear scan is fine for short lists)
-    let idx = currentSlides.length - 1;
-    for (let i=0;i<currentSlides.length;i++){
-      if (currentSlides[i]._t <= currentTime) idx = i; else break;
-    }
-    if (idx !== currentSlideIdx){
-      currentSlideIdx = idx;
-      const s = currentSlides[idx];
-      setAumaImage(s.src, s.alt);
-      setAumaCaption(s.cap || s.alt || '');
-      // preload the next one
-      const next = currentSlides[idx+1]; if (next) preload(next.src);
-      try { window._paq?.push(['trackEvent','Auma','Slide', String(idx)]); } catch(e){}
-    }
-    }
-    
-    // Auma 1) when a track changes
-    Amplitude.bind('song_change', function(){
-      const idx = Amplitude.getActiveIndex();
-      const t = (cfg.tracks || [])[idx];
-      setupAumaForTrack(t);
-    });
-    
-    // 2) on first load (init current track)
-    {
-      const idx = Amplitude.getActiveIndex?.() ?? 0;
-      const t = (cfg.tracks || [])[idx];
-      setupAumaForTrack(t);
-    }
-    
-    // 3) on time updates
-    const audio = Amplitude.getAudio();
-    audio.addEventListener('timeupdate', () => tickAuma(audio.currentTime), { passive:true });
-    audio.addEventListener('seeked', () => tickAuma(audio.currentTime), { passive:true });
-
 
 // Build share URL with UTM attribution
     function buildShareUrl(channel, flyerId){
