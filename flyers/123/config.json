@@ -9,6 +9,6 @@
     "logoHeight": 52
   },
   "tracks": [
-    { "title": "Episode 1", "src": "audio/ep1.mp3", "image": { "src": "images/Auma1.jpg", "alt": "Financial Literacy }
+    { "title": "Episode 1", "src": "audio/ep1.mp3", "image": { "src": "images/Auma1.jpg", "alt": "Financial Literacy }}
   ]
 }
