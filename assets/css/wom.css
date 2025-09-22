@@ -110,7 +110,7 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
 /* ============= Meta ============= */
 .meta{ margin: 40px 0 6px }
 #track-title{
-  font-size: 22px; font-weight:600; margin:0; color:#333;
+  font-size: 16px; font-weight:600; margin:0; color:#333;
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
 
