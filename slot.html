@@ -89,12 +89,27 @@
     </section>
 
     <!-- Share -->
-    <section class="share">
-      <button id="share" class="share-btn" aria-label="Share">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path fill="currentColor" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.06-.24.09-.47.09-.7s-.03-.46-.09-.7l7.13-4.16a3 3 0 1 0-.99-1.67L7.92 9.63a3 3 0 1 0 0 4.74l7.13 4.16a3 3 0 1 0 2.95-2.45z"/>
-        </svg>
-      </button>
+<section class="share">
+      <div class="share-row">
+        <!-- Primary: WhatsApp -->
+        <button id="share-wa" class="btn-wa" aria-label="Share on WhatsApp">
+          <!-- WhatsApp glyph -->
+          <svg viewBox="0 0 32 32" aria-hidden="true">
+            <path fill="currentColor"
+              d="M19.1 17.8c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.2-.8.9-1 .9-.2 0-.6-.2-1.1-.6-.4-.4-.7-.8-.8-1-.1-.2 0-.4.1-.5.1-.1.2-.3.3-.4.1-.1.1-.2.2-.4.1-.2 0-.3 0-.4 0-.1-.7-1.7-.9-2.3-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.7.3-.2.2-.8.8-.8 2 0 1.2.8 2.4.9 2.6.1.2 1.6 2.6 3.8 3.6 2.2 1.1 2.2.8 2.6.8s1.3-.5 1.5-1c.2-.5.2-1 .1-1.1-.2-.1-.4-.1-.7-.2zM16 3.1C9.9 3.1 5 8 5 14c0 2.4.8 4.5 2.1 6.2L6 27l6.9-1.8c1.7 1 3.6 1.6 5.6 1.6 6.1 0 11-4.9 11-10.9S22.1 3.1 16 3.1zm0 19.8c-1.9 0-3.7-.6-5.2-1.6l-.4-.3-3.1.8.8-3-.3-.4c-1.2-1.5-1.8-3.3-1.8-5.2C6 9 10.5 4.5 16 4.5S26 9 26 14.5 21.5 22.9 16 22.9z"/>
+          </svg>
+          <span>WhatsApp</span>
+        </button>
+    
+        <!-- Secondary: native share / more -->
+        <button id="share-native" class="share-btn" aria-label="Share">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor"
+              d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.06-.24.09-.47.09-.7s-.03-.46-.09-.7l7.13-4.16a3 3 0 1 0-.99-1.67L7.92 9.63a3 3 0 1 0 0 4.74l7.13 4.16a3 3 0 1 0 2.95-2.45z"/>
+          </svg>
+          <span>More</span>
+        </button>
+      </div>
     </section>
   </main>
 

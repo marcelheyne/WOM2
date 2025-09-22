@@ -4,6 +4,7 @@
   --accent: #ffc422;
   --text: #757575;
   --bg: #fff;
+  --wa: #25d366;     /* WhatsApp brand green */
   --logo-height: 48px;
 
   /* new sizes */
@@ -115,15 +116,32 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
 }
 
 /* ============= Share ============= */
-.share{ margin-top: 18px }
-.share-btn{
-  appearance:none;border:0;background:transparent;cursor:pointer;padding:0;
-  color: var(--brand);
-  width: var(--share-size);
-	height: var(--share-size);
-	display:grid;place-items:center;margin:0 auto;
+.share-row{
+  display:flex; gap:14px; align-items:center; justify-content:center;
+  margin-top: 12px;
 }
-.share-btn svg{ width: calc(var(--share-size) * 0.7); height: calc(var(--share-size) * 0.7); }
+
+.btn-wa{
+  display:flex; align-items:center; gap:8px;
+  border:0; cursor:pointer; padding:10px 14px; border-radius:999px;
+  color:#fff; background:var(--wa);
+  font-weight:600; font-size:16px;
+  box-shadow: 0 4px 10px rgba(37,211,102,.25);
+}
+.btn-wa svg{ width:22px; height:22px }
+
+/* reuse your existing share button but make it text+icon and a bit larger */
+.share-btn{
+  display:flex; align-items:center; gap:8px;
+  color: var(--brand);
+  border:2px solid currentColor; background:transparent; cursor:pointer;
+  padding:10px 14px; border-radius:999px; font-weight:600; font-size:16px;
+}
+.share-btn svg{ width:22px; height:22px }
+
+/* small screens can stack if needed */
+@media (max-width:360px){
+  .share-row{ flex-direction:column; gap:10px }
 
 /* Small screens */
 @media (max-width:360px){
