@@ -13,6 +13,8 @@
 	--side-size: 64px;     /* larger prev/next tap target */
 	--side-icon: 56px;     /* larger prev/next glyph */
 	--share-size: 72px;    /* larger share button */
+  --share-pill: 68px;          /* button diameter */
+  --share-icon: 32px;          /* inner glyph size */
 }
 
 /* ============= Layout ============= */
@@ -138,6 +140,35 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
   padding:10px 14px; border-radius:999px; font-weight:600; font-size:16px;
 }
 .share-btn svg{ width:22px; height:22px }
+
+.share-row--icons{
+  display:flex; gap:16px; justify-content:center; align-items:center;
+  margin-top: 14px;
+}
+
+.pill{
+  width: var(--share-pill);
+  height: var(--share-pill);
+  border-radius: 50%;
+  display:grid; place-items:center;
+  border:none; cursor:pointer; outline: none;
+  box-shadow: 0 6px 16px rgba(0,0,0,.08);
+  transition: transform .08s ease, box-shadow .2s ease;
+}
+.pill:active{ transform: scale(.96); }
+.pill svg{ width: var(--share-icon); height: var(--share-icon); }
+
+.pill--wa{ background: var(--wa); }
+.pill--more{
+  background: #fff;
+  border: 2px solid var(--brand);
+  color: var(--brand);
+}
+
+/* bigger on tablets */
+@media (min-width:768px){
+  :root{ --share-pill: 76px; --share-icon: 36px; }
+}
 
 /* small screens can stack if needed */
 @media (max-width:360px){
