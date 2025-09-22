@@ -183,24 +183,6 @@
     // Hook events after Amplitude is ready
     wireAudioEvents();
     
-    // Auma 1) when a track changes
-    Amplitude.bind('song_change', function(){
-      const idx = Amplitude.getActiveIndex();
-      const t = (cfg.tracks || [])[idx];
-      setupAumaForTrack(t);
-    });
-    
-    // 2) on first load (init current track)
-    {
-      const idx = Amplitude.getActiveIndex?.() ?? 0;
-      const t = (cfg.tracks || [])[idx];
-      setupAumaForTrack(t);
-    }
-    
-    // 3) on time updates
-    const audio = Amplitude.getAudio();
-    audio.addEventListener('timeupdate', () => tickAuma(audio.currentTime), { passive:true });
-    audio.addEventListener('seeked', () => tickAuma(audio.currentTime), { passive:true });
 
 // Build share URL with UTM attribution
     function buildShareUrl(channel, flyerId){
