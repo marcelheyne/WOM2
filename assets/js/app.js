@@ -19,8 +19,13 @@
   
   let currentSlides=null, currentSlideIdx=-1, aumaVisible=false;
   
-  function showAuma(show){ const sec=$id('auma'); if(!sec) return;
-    aumaVisible=!!show; sec.classList.toggle('hidden', !show); }
+  function showAuma(show){
+    const sec = document.getElementById('auma');
+    if (!sec) return;
+    aumaVisible = !!show;
+    sec.hidden = !show;                         // <- works even if no .hidden CSS
+    sec.classList?.toggle('hidden', !show);
+  }
   
   function setAumaImage(src, alt){ const img=$id('auma-img'); if(!img) return;
     img.classList.remove('ready'); img.onload=()=>img.classList.add('ready');
@@ -60,6 +65,17 @@
       const next=currentSlides[idx+1]; if(next) preload(next.src);
       try{ window._paq?.push(['trackEvent','Auma','Slide', String(idx)]);}catch(e){}
     }
+  }
+  
+  function setAumaImage(src, alt){
+    const img = document.getElementById('auma-img') ||
+                document.getElementById('auma-image') ||
+                document.querySelector('#auma img');
+    if (!img) return;
+    img.classList.remove('ready');
+    img.onload = () => img.classList.add('ready');
+    img.src = src;
+    img.alt = alt || '';
   }
 
   // ---- Matomo wiring (per flyer) ----
@@ -136,11 +152,17 @@
     const initIdx = Amplitude.getActiveIndex?.() ?? 0;
     setupAumaForTrack(tracks[initIdx]);
   
-    // on track change
-    Amplitude.bind('song_change', () => {
-      const i = Amplitude.getActiveIndex?.() ?? 0;
-      setupAumaForTrack(tracks[i]);
-    });
+   // song change (Amplitude v5 may not expose .bind in your build)
+     const onSongChange = () => {
+     const i = Amplitude.getActiveIndex?.() ?? 0;
+     setupAumaForTrack(tracks[i]);
+      };
+ 
+ if (typeof Amplitude.bind === 'function') {
+   Amplitude.bind('song_change', onSongChange);
+ } else {
+   document.addEventListener('amplitude-song-change', onSongChange);
+ }
   
     // sync slides to time
     const audio = Amplitude.getAudio();

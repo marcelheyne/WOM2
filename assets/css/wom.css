@@ -235,6 +235,31 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
   box-shadow: 0 2px 10px rgba(0,0,0,.06);
 }
 
+/* Square, cropped Auma with your existing ids */
+#auma{
+  position: relative;
+  aspect-ratio: 1 / 1;
+  max-width: 720px;
+  margin: 12px auto 16px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f5f5f5;
+  box-shadow: 0 2px 10px rgba(0,0,0,.06);
+}
+#auma > img,        /* generic */
+#auma #auma-image,  /* your id */
+#auma #auma-img {   /* future id */
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0;
+  transition: opacity .35s ease;
+}
+#auma > img.ready,
+#auma #auma-image.ready,
+#auma #auma-img.ready { opacity: 1; }
+
 #auma-img{
   width:100%; height:100%;
   object-fit: cover; object-position: center;
