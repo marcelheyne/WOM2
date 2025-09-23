@@ -263,10 +263,12 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
 /* Compact layout ONLY when an AUMA image is present */
 @media (max-width: 480px) {
 
-  /* smaller logo */
-  .has-auma #brand-logo img {
-    max-height: clamp(28px, 7svh, 36px);
-  }
+/* smaller logo ONLY when AUMA is visible */
+.has-auma #brand-logo img,
+.has-auma img#brand-logo {
+  max-height: clamp(28px, 7svh, 36px);
+  height: auto;
+}
 
   /* thinner progress */
   .has-auma .amplitude-song-played-progress {
@@ -301,6 +303,43 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
 
 .has-auma #track-title { 
     display: none !important; 
+  }
+  
+  /* Center the big play button and keep prev/next visible */
+  @media (max-width: 480px) {
+    .has-auma #playpause,
+    .has-auma .ctrl--main {
+      display: block;                 /* ensure margin auto works */
+      margin-left: auto;
+      margin-right: auto;             /* centers even in non-flex parents */
+    }
+  
+    /* if your controls row is a flex container under any of these names,
+       this guarantees center + equal spacing */
+    .has-auma #controls,
+    .has-auma .controls,
+    .has-auma .ctrls,
+    .has-auma .player {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+    }
+  
+    /* make sure prev/next don’t get hidden by other rules */
+    .has-auma #prev,
+    .has-auma #next {
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
+      transform: scale(1.1);          /* a touch larger for thumbs */
+    }
+  
+    /* smaller AUMA play button (AUMA only) */
+    .has-auma .ctrl--main {
+      width: clamp(96px, 22svw, 120px);
+      height: clamp(96px, 22svw, 120px);
+    }
   }
 
 /* generic .hidden should not reserve space anywhere */
