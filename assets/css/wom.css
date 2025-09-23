@@ -260,58 +260,47 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
 #auma #auma-img.ready{ opacity: 1; }
 
 
-/* ---------- Compact mobile layout ---------- */
-@media (max-width: 420px) {
+/* Compact layout ONLY when an AUMA image is present */
+@media (max-width: 480px) {
 
-  /* Logo smaller */
-  #logo img {
+  /* smaller logo */
+  .has-auma #logo img {
     max-height: clamp(28px, 7svh, 36px);
   }
 
-  /* Time + progress tighter */
-  .time-row { font-size: 13px; }           /* if you use a wrapper for 00:00 / 04:02 */
-  .amplitude-song-played-progress {
+  /* thinner progress */
+  .has-auma .amplitude-song-played-progress {
     height: 6px;
     margin: 6px 0 10px;
     border-radius: 6px;
   }
 
-  /* Centered, smaller play; a touch larger prev/next for accuracy */
-  .ctrls, .controls, .player {             /* any of your wrappers around the controls */
-    justify-content: center;
-    gap: 12px;
-    margin: 8px 0 6px;
-  }
-  .ctrl--main {                            /* main play/pause disk */
+  /* smaller centered play, slightly larger prev/next for thumb accuracy */
+  .has-auma .ctrl--main {
     width: clamp(96px, 22svw, 120px);
     height: clamp(96px, 22svw, 120px);
+    margin-inline: auto;          /* center even if row wrapper varies */
   }
-  #prev, #next {
-    transform: scale(1.1);
-  }
+  .has-auma #prev,
+  .has-auma #next { transform: scale(1.1); }
 
-  /* Auma square sized to fit the viewport together with controls + share */
-  #auma {
-    /* make the box whichever is smaller: 88vw or 50% of safe viewport height */
-    --box: min(88vw, 50svh);
+  /* AUMA square sized to fit above-the-fold with share buttons */
+  .has-auma #auma {
+    --box: min(88vw, 50svh);      /* square that fits the viewport */
     width: var(--box);
     height: var(--box);
-    aspect-ratio: auto;   /* explicit height wins; keep it a square */
-    margin-top: 10px;
+    aspect-ratio: auto;           /* explicit h/w keeps it square */
+    margin: 12px auto 8px;
   }
 
-  /* Share row closer to image, buttons prominent */
-  .share-row {
+  /* share row a bit tighter */
+  .has-auma .share-row {
     margin-top: 10px;
     gap: 14px;
   }
-  .share-btn {            /* if you have a class on the circular buttons */
-    transform: scale(1.05);
-  }
 
-  /* Track title – you can fully hide (uncomment) or just shrink */
-  #track-title { font-size: 15px; margin-top: 10px; }
-  /* #track-title { display: none; }  <- uncomment to remove on small screens */
+  /* optional: smaller track title; or set display:none if you prefer */
+  .has-auma #track-title { font-size: 15px; margin-top: 10px; }
 }
 
 /* generic .hidden should not reserve space anywhere */

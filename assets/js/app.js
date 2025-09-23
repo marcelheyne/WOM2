@@ -25,6 +25,7 @@
     aumaVisible = !!show;
     sec.hidden = !show;                         // <- works even if no .hidden CSS
     sec.classList?.toggle('hidden', !show);
+    document.documentElement.classList.toggle('has-auma', on);
   }
   
   function setAumaImage(src, alt){ const img=$id('auma-img'); if(!img) return;
