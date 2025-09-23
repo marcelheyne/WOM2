@@ -264,7 +264,7 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
 @media (max-width: 480px) {
 
   /* smaller logo */
-  .has-auma #logo img {
+  .has-auma #brand-logo img {
     max-height: clamp(28px, 7svh, 36px);
   }
 
