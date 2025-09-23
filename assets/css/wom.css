@@ -299,9 +299,9 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
     gap: 14px;
   }
 
-  /* optional: smaller track title; or set display:none if you prefer */
-  .has-auma #track-title { font-size: 15px; margin-top: 10px; }
-}
+.has-auma #track-title { 
+    display: none !important; 
+  }
 
 /* generic .hidden should not reserve space anywhere */
 .hidden{ display: none; }
