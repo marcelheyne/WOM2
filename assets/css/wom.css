@@ -259,14 +259,6 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
 #auma #auma-image.ready,
 #auma #auma-img.ready{ opacity: 1; }
 
-.auma-cap, #auma-caption{
-  width: min(720px, 92vw);
-  margin: 6px auto 0;
-  color: #444;
-  font-size: 14px;
-  line-height: 1.4;
-  text-align: center;
-}
 
 /* ---------- Compact mobile layout ---------- */
 @media (max-width: 420px) {
