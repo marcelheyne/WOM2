@@ -305,42 +305,48 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
     display: none !important; 
   }
   
-/* Stable 3-column control bar on phones – only when AUMA is shown */
+/* AUMA controls on small screens: force a stable 3-column layout */
   @media (max-width: 480px){
-    .has-auma #controls,
-    .has-auma .controls,
-    .has-auma .ctrls,
-    .has-auma .player {
+    /* the wrapper in your HTML is <section class="controls"> */
+    .has-auma .controls{
       display: grid !important;
-      grid-template-columns: 1fr auto 1fr;   /* prev | play | next */
+      grid-template-columns: 1fr auto 1fr;   /* previous | play | next */
       align-items: center;
       gap: 14px;
       width: 100%;
     }
   
-    /* keep both buttons visible and tappable */
+    /* left button (your id is #previous) + safety nets */
+    .has-auma #previous,
     .has-auma #prev,
-    .has-auma #next {
+    .has-auma .amplitude-prev{
       display: inline-flex !important;
       align-items: center;
       justify-content: center;
-      min-width: 44px;         /* thumb target */
+      min-width: 44px;
       min-height: 44px;
-      transform: scale(1.1);
+      justify-self: end;                     /* snap to left column edge */
     }
-    .has-auma #prev  { justify-self: end; }
-    .has-auma #next  { justify-self: start; }
   
-    /* center the play disk robustly */
-    .has-auma #playpause,
-    .has-auma .ctrl--main {
+    /* right button */
+    .has-auma #next,
+    .has-auma .amplitude-next{
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
+      min-width: 44px;
+      min-height: 44px;
+      justify-self: start;                   /* snap to right column edge */
+    }
+  
+    /* center play/pause */
+    .has-auma #play-pause,
+    .has-auma .ctrl--main{
       justify-self: center;
       width: clamp(96px, 22svw, 120px);
       height: clamp(96px, 22svw, 120px);
     }
-  }
-  
-  
+  }  
 
 /* generic .hidden should not reserve space anywhere */
 .hidden{ display: none; }
