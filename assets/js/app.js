@@ -19,14 +19,21 @@
   
   let currentSlides=null, currentSlideIdx=-1, aumaVisible=false;
   
-  function showAuma(show){
-    const sec = document.getElementById('auma');
-    if (!sec) return;
-    aumaVisible = !!show;
-    sec.hidden = !show;                         // <- works even if no .hidden CSS
-    sec.classList?.toggle('hidden', !show);
-    document.documentElement.classList.toggle('has-auma', on);
-  }
+ function showAuma(show){
+   const sec = document.getElementById('auma');
+   if (!sec) return;
+ 
+   const on = !!show;          // <-- define it
+   aumaVisible = on;
+ 
+   // collapse from layout:
+   sec.hidden = !on;
+   // if you sometimes rely on a .hidden class, keep this too (safe-guard):
+   if (sec.classList) sec.classList.toggle('hidden', !on);
+ 
+   // page-level flag for CSS
+   document.documentElement.classList.toggle('has-auma', on);
+ }
   
   function setAumaImage(src, alt){ const img=$id('auma-img'); if(!img) return;
     img.classList.remove('ready'); img.onload=()=>img.classList.add('ready');
