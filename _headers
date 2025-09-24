@@ -1,8 +1,24 @@
 /slot.html
   Cache-Control: no-store, must-revalidate
 
-/flyers/*
+# App code & CSS: update often → revalidate
+/assets/js/app.js
+  Cache-Control: no-cache
+/assets/css/wom.css
+  Cache-Control: no-cache
+
+# Third-party/vendor & static images: versioned → long-cache OK
+/assets/js/vendor/*
+  Cache-Control: public, max-age=31536000, immutable
+/assets/img/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Flyer config: always fetch fresh
+/flyers/*/config.json
   Cache-Control: no-store, must-revalidate
 
-/assets/*
-  Cache-Control: public, max-age=31536000, immutable
+# Flyer media: cache to keep playback snappy
+/flyers/*/audio/*
+  Cache-Control: public, max-age=2592000                # 30 days
+/flyers/*/images/*
+  Cache-Control: public, max-age=2592000
