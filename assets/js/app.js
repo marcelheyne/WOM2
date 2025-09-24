@@ -116,40 +116,38 @@
     if (!window.Amplitude?.getAudio) return;
     if (!document.getElementById('auma')) return;
   
-    // prefix relative paths with /flyers/<id>/
     const toAbs = p => !p ? p : (/^https?:\/\//.test(p) || p.startsWith('/')) ? p : (base + p);
   
-    // normalize tracks’ image to absolute src (supports string or object)
+    // normalize image paths
     const tracks = (cfg.tracks || []).map(t => {
       let img = null;
       if (t.image) {
-        img = (typeof t.image === 'string') ? { src: toAbs(t.image) }
-                                            : (t.image.src ? { ...t.image, src: toAbs(t.image.src) } : null);
+        img = (typeof t.image === 'string')
+          ? { src: toAbs(t.image) }
+          : (t.image.src ? { ...t.image, src: toAbs(t.image.src) } : null);
       } else if (t.cover_art_url) {
         img = { src: toAbs(t.cover_art_url) };
       }
       return { ...t, image: img };
     });
   
-    // initial
-    const initIdx = Amplitude.getActiveIndex?.() ?? 0;
-    setupAumaForTrack(tracks[initIdx]);
-  
-    // on song change (Amplitude API or DOM event)
-    const refresh = () => {
-      const i = Amplitude.getActiveIndex?.() ?? 0;
-      setupAumaForTrack(tracks[i]);
+    const refreshNow = () => {
+      const idx = Number(Amplitude.getActiveIndex?.() ?? 0);
+      setupAumaForTrack(tracks[idx]);
     };
+  
+    // Defer refresh to ensure Amplitude has applied the new index
+    const refresh = () => requestAnimationFrame(refreshNow);
+  
+    // Initial refresh (deferred one frame as well)
+    requestAnimationFrame(refreshNow);
+  
+    // Proper song-change hooks (both APIs supported)
     if (typeof Amplitude.bind === 'function') {
       Amplitude.bind('song_change', refresh);
     } else {
       document.addEventListener('amplitude-song-change', refresh);
     }
-  
-    // extra safety: also refresh on explicit button clicks & on ended
-    (document.getElementById('next') || document.querySelector('.amplitude-next'))?.addEventListener('click', refresh);
-    (document.getElementById('previous') || document.querySelector('.amplitude-prev'))?.addEventListener('click', refresh);
-    Amplitude.getAudio()?.addEventListener('ended', refresh, { passive:true });
   }
 
   // ---- Nudge (unchanged) ----
