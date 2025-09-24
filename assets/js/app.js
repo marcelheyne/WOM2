@@ -32,11 +32,19 @@
   // For the active track, show its image if present; otherwise hide AUMA section
   function setupAumaForTrack(track){
     if (!track){ showAuma(false); return; }
-    // Prefer track.image.src; fall back to legacy cover_art_url (keeps older flyers working)
-    const art = track.image?.src
-      ? track.image
-      : (track.cover_art_url ? { src: track.cover_art_url, alt: '' } : null);
-
+  
+    // normalize image: allow string or object
+    let art = null;
+    if (track.image) {
+      if (typeof track.image === 'string') {
+        art = { src: track.image, alt: '' };
+      } else if (track.image.src) {
+        art = track.image;
+      }
+    } else if (track.cover_art_url) {
+      art = { src: track.cover_art_url, alt: '' };
+    }
+  
     if (art?.src){
       setAumaImage(art.src, art.alt);
       showAuma(true);
@@ -45,7 +53,7 @@
       showAuma(false);
     }
   }
-
+  
   // ---- Matomo wiring (per flyer) ----
   function wireMatomo({ siteId, flyerId, flyerType, title }) {
     if (!siteId) return; // per-flyer only; no siteId => no tracking
@@ -106,29 +114,42 @@
   function wireAuma(cfg, base){
     if (!cfg?.tracks?.length) return;
     if (!window.Amplitude?.getAudio) return;
-    if (!document.getElementById('auma')) return; // audio-only flyers still work
-
-    // resolve relative image paths against /flyers/<id>/
+    if (!document.getElementById('auma')) return;
+  
+    // prefix relative paths with /flyers/<id>/
     const toAbs = p => !p ? p : (/^https?:\/\//.test(p) || p.startsWith('/')) ? p : (base + p);
-    const tracks = (cfg.tracks || []).map(t => ({
-      ...t,
-      image: t.image?.src ? { ...t.image, src: toAbs(t.image.src) } : t.image
-    }));
-
+  
+    // normalize tracks’ image to absolute src (supports string or object)
+    const tracks = (cfg.tracks || []).map(t => {
+      let img = null;
+      if (t.image) {
+        img = (typeof t.image === 'string') ? { src: toAbs(t.image) }
+                                            : (t.image.src ? { ...t.image, src: toAbs(t.image.src) } : null);
+      } else if (t.cover_art_url) {
+        img = { src: toAbs(t.cover_art_url) };
+      }
+      return { ...t, image: img };
+    });
+  
     // initial
     const initIdx = Amplitude.getActiveIndex?.() ?? 0;
     setupAumaForTrack(tracks[initIdx]);
-
-    // on song change (Amplitude dom event)
-    const onSongChange = () => {
+  
+    // on song change (Amplitude API or DOM event)
+    const refresh = () => {
       const i = Amplitude.getActiveIndex?.() ?? 0;
       setupAumaForTrack(tracks[i]);
     };
     if (typeof Amplitude.bind === 'function') {
-      Amplitude.bind('song_change', onSongChange);
+      Amplitude.bind('song_change', refresh);
     } else {
-      document.addEventListener('amplitude-song-change', onSongChange);
+      document.addEventListener('amplitude-song-change', refresh);
     }
+  
+    // extra safety: also refresh on explicit button clicks & on ended
+    (document.getElementById('next') || document.querySelector('.amplitude-next'))?.addEventListener('click', refresh);
+    (document.getElementById('previous') || document.querySelector('.amplitude-prev'))?.addEventListener('click', refresh);
+    Amplitude.getAudio()?.addEventListener('ended', refresh, { passive:true });
   }
 
   // ---- Nudge (unchanged) ----
