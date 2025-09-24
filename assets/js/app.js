@@ -110,15 +110,16 @@
     $('#share')?.addEventListener('click',() => mtmTrack('Share','Click'));
   }
 
-  // ---- AUMA wiring (image-per-track only) ----
-  function wireAuma(cfg, base){
+// ---- AUMA wiring (one image per track) ----
+  function wireAuma(cfg, base) {
     if (!cfg?.tracks?.length) return;
     if (!window.Amplitude?.getAudio) return;
     if (!document.getElementById('auma')) return;
   
-    const toAbs = p => !p ? p : (/^https?:\/\//.test(p) || p.startsWith('/')) ? p : (base + p);
+    // 1) make image src absolute once
+    const toAbs = p =>
+      !p ? p : (/^https?:\/\//.test(p) || p.startsWith('/')) ? p : (base + p);
   
-    // normalize image paths
     const tracks = (cfg.tracks || []).map(t => {
       let img = null;
       if (t.image) {
@@ -131,25 +132,45 @@
       return { ...t, image: img };
     });
   
+    let lastIndex = -1;
+  
+    // 2) read active index and update image if it actually changed
     const refreshNow = () => {
       const idx = Number(Amplitude.getActiveIndex?.() ?? 0);
+      if (idx === lastIndex) return;
+      lastIndex = idx;
       setupAumaForTrack(tracks[idx]);
     };
   
-    // Defer refresh to ensure Amplitude has applied the new index
+    // always read the *new* index
     const refresh = () => requestAnimationFrame(refreshNow);
   
-    // Initial refresh (deferred one frame as well)
+    // 3) initial render (after init / optional playSongAtIndex)
     requestAnimationFrame(refreshNow);
   
-    // Proper song-change hooks (both APIs supported)
+    // 4) hook all relevant signals
+    // a) Amplitude custom event (if present)
     if (typeof Amplitude.bind === 'function') {
       Amplitude.bind('song_change', refresh);
     } else {
       document.addEventListener('amplitude-song-change', refresh);
     }
+  
+    // b) audio lifecycle (covers next/prev, programmatic jumps, etc.)
+    const audio = Amplitude.getAudio();
+    audio.addEventListener('loadedmetadata', refresh, { passive: true });
+    audio.addEventListener('play',            refresh, { passive: true });
+    audio.addEventListener('seeked',          refresh, { passive: true });
+    audio.addEventListener('ended',           refresh, { passive: true });
+  
+    // c) UI buttons as a safety net (if present)
+    document.getElementById('next')?.addEventListener('click', () => setTimeout(refresh, 0));
+    document.getElementById('previous')?.addEventListener('click', () => setTimeout(refresh, 0));
+  
+    // d) very light polling fallback (handles rare edge builds)
+    const poll = setInterval(refreshNow, 750);
+    window.addEventListener('pagehide', () => clearInterval(poll), { once: true });
   }
-
   // ---- Nudge (unchanged) ----
   function scheduleNudgeAfterEngagement(flyerId, opts = {}) {
     const {
