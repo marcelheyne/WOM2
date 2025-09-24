@@ -234,10 +234,42 @@
       }, { once: true });
     }
   }
+  
+  // --- Alias → id resolver (works for ids too) -------------------------------
+  function lastSeg() {
+    return location.pathname.replace(/\/+$/, '').split('/').pop().toLowerCase();
+  }
+  
+  async function resolveFlyerId() {
+    const seg = lastSeg();
+  
+    // If it's already a numeric id (3–6 digits), use it
+    if (/^\d{3,6}$/.test(seg)) return seg;
+  
+    // Otherwise try to resolve an alias from /aliases.json
+    try {
+      const res = await fetch('/aliases.json', { cache: 'no-store' });
+      if (!res.ok) return null;
+  
+      const map = await res.json();
+      const entry = map?.[seg];
+      if (!entry) return null;
+  
+      // Support both "whh":"101" and "whh":{ "to":"101", "redirect":false }
+      return (typeof entry === 'string') ? entry : entry.to;
+    } catch {
+      return null;
+    }
+  }
 
   // ---- App init ----
   async function main(){
-    const flyerId   = location.pathname.replace(/^\/|\/$/g,'');   // e.g., "123"
+    const flyerId = await resolveFlyerId();
+    if (!flyerId) {
+      document.title = 'Audio Flyer not found';
+      document.body.innerHTML = '<p style="padding:24px">This Audio Flyer could not be found.</p>';
+      return;
+    }
     let startIndex  = +(new URLSearchParams(location.search).get('t')||0) || 0;
 
     // fetch config
