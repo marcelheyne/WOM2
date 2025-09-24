@@ -386,14 +386,27 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
 html, body { min-height: 100svh; }
 
 /* Sticky share row (works in normal + compact) */
-#share {
+/* The main scroller */
+#page { min-height: 100%; }
+
+/* Sticky share row */
+#share{
   position: sticky;
-  bottom: 0;
-  z-index: 3;
-  padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+  bottom: 0;                 /* pin to bottom of scroll container */
+  z-index: 30;
+  padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
   background: linear-gradient(#ffffff00, #ffffff66 40%, #fff 75%);
   backdrop-filter: blur(3px);
 }
+
+/* If sticky is unavailable (older engines), we’ll flip to fixed via a class */
+#share.fixed-share{
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+}
+
+/* Make room so fixed bar won't cover content */
+body.with-fixed-share { padding-bottom: 88px; } /* ≈ share bar height */
 
 /* ---------- Compact tweaks ---------- */
 html.compact #brand-logo img {
