@@ -346,6 +346,32 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
       width: clamp(96px, 22svw, 120px);
       height: clamp(96px, 22svw, 120px);
     }
+  }
+  
+  /* Hide the side controls when a flyer has only one track */
+  .single-track #previous,
+  .single-track #next,
+  .single-track .amplitude-prev,
+  .single-track .amplitude-next {
+    display: none !important;
+  }
+  
+  /* Audio-only: make sure the play button stays centered */
+  .single-track #play-pause,
+  .single-track .ctrl--main {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  /* AUMA on phones: collapse 3-col grid to a single centered column */
+  @media (max-width: 480px){
+    .has-auma.single-track .controls {
+      display: grid !important;
+      grid-template-columns: 1fr;     /* play only */
+      justify-items: center;
+      align-items: center;
+      gap: 0;
+    }
   }  
 
 /* generic .hidden should not reserve space anywhere */

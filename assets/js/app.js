@@ -331,6 +331,34 @@
     
     audio.addEventListener('timeupdate', upd);
     audio.addEventListener('loadedmetadata', upd);
+    
+    // Hide prev/next when there's only one track
+    function markSingleTrack(isSingle){
+      const html = document.documentElement;
+      html.classList.toggle('single-track', !!isSingle);
+    
+      // also make them unfocusable for a11y
+      const left  = document.getElementById('previous') || document.querySelector('.amplitude-prev');
+      const right = document.getElementById('next')      || document.querySelector('.amplitude-next');
+    
+      [left, right].forEach(btn => {
+        if (!btn) return;
+        if (isSingle) {
+          btn.setAttribute('aria-hidden', 'true');
+          btn.setAttribute('tabindex', '-1');
+          if ('disabled' in btn) btn.disabled = true;
+          btn.style.pointerEvents = 'none';
+        } else {
+          btn.removeAttribute('aria-hidden');
+          btn.removeAttribute('tabindex');
+          if ('disabled' in btn) btn.disabled = false;
+          btn.style.pointerEvents = '';
+        }
+      });
+    }
+    
+    // call it once using your config
+    markSingleTrack((cfg.tracks || []).length <= 1);
 
 
     // Hook events after Amplitude is ready
