@@ -1,5 +1,8 @@
 /slot.html
   Cache-Control: no-store, must-revalidate
+  
+/aliases.json
+  Cache-Control: no-store, must-revalidate
 
 # App code & CSS: update often → revalidate
 /assets/js/app.js
