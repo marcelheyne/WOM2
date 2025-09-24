@@ -271,6 +271,7 @@
       return;
     }
     let startIndex  = +(new URLSearchParams(location.search).get('t')||0) || 0;
+    window.flyerId = flyerId;
 
     // fetch config
     const cfgRes = await fetch(`/flyers/${flyerId}/config.json`, {cache:'no-store'});
