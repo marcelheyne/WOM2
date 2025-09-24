@@ -1,91 +1,50 @@
 (function(){
   const $ = s => document.querySelector(s);
-  const MATOMO_BASE = (window.WOM_MATOMO && window.WOM_MATOMO.base) || "https://metrics.wom.center/";
-  // If you created visit-scope custom dimensions in Matomo, map their IDs here; otherwise set to null
-  const MATOMO_DIM = { flyerId: 1, flyerType: 2, trackTitle: 3 }; // adjust/remove as needed
 
+  // ---- Matomo base + custom dimensions ----
+  const MATOMO_BASE = (window.WOM_MATOMO && window.WOM_MATOMO.base) || "https://metrics.wom.center/";
+  const MATOMO_DIM  = { flyerId: 1, flyerType: 2, trackTitle: 3 }; // adjust/remove as needed
+
+  // Small helper
   function t(sec){ sec=sec|0; return ((sec/60)|0)+':'+('0'+(sec%60)).slice(-2); }
-  
-  // ---------- AUMA helpers (no side effects) ----------
+
+  // ---------- AUMA v1 helpers (one image per track, no timing) ----------
   const $id = (x) => document.getElementById(x);
-  
-  function parseTime(t){ if(typeof t==='number')return t; if(!t)return 0;
-    const p=t.split(':').map(Number); return p.length===2? p[0]*60+p[1] : Number(t)||0; }
-  
-  function normalizeSlides(slides=[]){
-    return slides.map(s=>({...s,_t:parseTime(s.t)})).filter(s=>s.src).sort((a,b)=>a._t-b._t);
+
+  function showAuma(show){
+    const sec = $id('auma');
+    if (!sec) return;
+    const on = !!show;
+    sec.hidden = !on;                             // collapse from layout
+    sec.classList?.toggle('hidden', !on);         // safe-guard if CSS uses .hidden
+    document.documentElement.classList.toggle('has-auma', on); // lets CSS compact the UI
   }
-  function preload(src){ const i=new Image(); i.src=src; }
-  
-  let currentSlides=null, currentSlideIdx=-1, aumaVisible=false;
-  
- function showAuma(show){
-   const sec = document.getElementById('auma');
-   if (!sec) return;
- 
-   const on = !!show;          // <-- define it
-   aumaVisible = on;
- 
-   // collapse from layout:
-   sec.hidden = !on;
-   // if you sometimes rely on a .hidden class, keep this too (safe-guard):
-   if (sec.classList) sec.classList.toggle('hidden', !on);
- 
-   // page-level flag for CSS
-   document.documentElement.classList.toggle('has-auma', on);
- }
-  
-  function setAumaImage(src, alt){ const img=$id('auma-img'); if(!img) return;
-    img.classList.remove('ready'); img.onload=()=>img.classList.add('ready');
-    img.src=src; img.alt=alt||''; }
-  
-  function setAumaCaption(text){ const cap=$id('auma-caption'); if(!cap) return;
-    if(text){ cap.textContent=text; cap.hidden=false; } else { cap.hidden=true; } }
-  
-  function setupAumaForTrack(track){
-    currentSlides=null; currentSlideIdx=-1;
-    if(!track){ showAuma(false); return; }
-  
-    if (track.slides?.length){
-      currentSlides=normalizeSlides(track.slides);
-      preload(currentSlides[0].src); if(currentSlides[1]) preload(currentSlides[1].src);
-      setAumaImage(currentSlides[0].src, currentSlides[0].alt);
-      setAumaCaption(currentSlides[0].cap||currentSlides[0].alt||'');
-      showAuma(true); return;
-    }
-  
-    if (track.image?.src || track.cover_art_url){
-      const img=track.image?.src ? track.image : {src:track.cover_art_url, alt:''};
-      setAumaImage(img.src, img.alt); setAumaCaption(img.cap||img.alt||''); showAuma(true); return;
-    }
-  
-    showAuma(false);
-  }
-  
-  function tickAuma(currentTime){
-    if(!aumaVisible || !currentSlides) return;
-    let idx=currentSlides.length-1;
-    for(let i=0;i<currentSlides.length;i++){ if(currentSlides[i]._t<=currentTime) idx=i; else break; }
-    if(idx!==currentSlideIdx){
-      currentSlideIdx=idx;
-      const s=currentSlides[idx];
-      setAumaImage(s.src, s.alt); setAumaCaption(s.cap||s.alt||'');
-      const next=currentSlides[idx+1]; if(next) preload(next.src);
-      try{ window._paq?.push(['trackEvent','Auma','Slide', String(idx)]);}catch(e){}
-    }
-  }
-  
+
   function setAumaImage(src, alt){
-    const img = document.getElementById('auma-img') ||
-                document.getElementById('auma-image') ||
-                document.querySelector('#auma img');
+    const img = $id('auma-image') || document.querySelector('#auma img');
     if (!img) return;
     img.classList.remove('ready');
     img.onload = () => img.classList.add('ready');
     img.src = src;
     img.alt = alt || '';
   }
-  
+
+  // For the active track, show its image if present; otherwise hide AUMA section
+  function setupAumaForTrack(track){
+    if (!track){ showAuma(false); return; }
+    // Prefer track.image.src; fall back to legacy cover_art_url (keeps older flyers working)
+    const art = track.image?.src
+      ? track.image
+      : (track.cover_art_url ? { src: track.cover_art_url, alt: '' } : null);
+
+    if (art?.src){
+      setAumaImage(art.src, art.alt);
+      showAuma(true);
+      try { window._paq?.push(['trackEvent','Auma','Image', String(Amplitude.getActiveIndex?.() ?? 0)]); } catch(e){}
+    } else {
+      showAuma(false);
+    }
+  }
 
   // ---- Matomo wiring (per flyer) ----
   function wireMatomo({ siteId, flyerId, flyerType, title }) {
@@ -135,66 +94,44 @@
       if (MATOMO_DIM.trackTitle) window._paq?.push(['setCustomDimension', MATOMO_DIM.trackTitle, m.name||'']);
     });
 
-    $('#next')?.addEventListener('click', () => mtmTrack('Audio','Next'));
-    $('#prev')?.addEventListener('click', () => mtmTrack('Audio','Prev'));
+    // support both ids: #previous (your HTML) and #prev
+    (document.getElementById('next') || $('#next'))?.addEventListener('click', () => mtmTrack('Audio','Next'));
+    (document.getElementById('previous') || document.getElementById('prev'))?.addEventListener('click', () => mtmTrack('Audio','Prev'));
+
+    // legacy generic share button (kept harmless)
     $('#share')?.addEventListener('click',() => mtmTrack('Share','Click'));
   }
-  
-  // ---- Auma wiring  ----
-  
+
+  // ---- AUMA wiring (image-per-track only) ----
   function wireAuma(cfg, base){
     if (!cfg?.tracks?.length) return;
     if (!window.Amplitude?.getAudio) return;
-    const imgEl = document.getElementById('auma-img');
-    const aumaSec = document.getElementById('auma');
-    if (!imgEl || !aumaSec) return; // audio-only flyers still work
-  
-    // resolve relative slide/image paths against /flyers/<id>/
+    if (!document.getElementById('auma')) return; // audio-only flyers still work
+
+    // resolve relative image paths against /flyers/<id>/
     const toAbs = p => !p ? p : (/^https?:\/\//.test(p) || p.startsWith('/')) ? p : (base + p);
-    const tracks = cfg.tracks.map(t => ({
+    const tracks = (cfg.tracks || []).map(t => ({
       ...t,
-      image: t.image?.src ? { ...t.image, src: toAbs(t.image.src) } : t.image,
-      slides: t.slides?.map(s => ({ ...s, src: toAbs(s.src) })) || t.slides
+      image: t.image?.src ? { ...t.image, src: toAbs(t.image.src) } : t.image
     }));
-  
-    // init current
+
+    // initial
     const initIdx = Amplitude.getActiveIndex?.() ?? 0;
     setupAumaForTrack(tracks[initIdx]);
-  
-   // song change (Amplitude v5 may not expose .bind in your build)
-     const onSongChange = () => {
-     const i = Amplitude.getActiveIndex?.() ?? 0;
-     setupAumaForTrack(tracks[i]);
-      };
- 
- if (typeof Amplitude.bind === 'function') {
-   Amplitude.bind('song_change', onSongChange);
- } else {
-   document.addEventListener('amplitude-song-change', onSongChange);
- }
-  
-    // sync slides to time
-    const audio = Amplitude.getAudio();
-    const onTick = () => tickAuma(audio.currentTime || 0);
-    audio.addEventListener('timeupdate', onTick, { passive:true });
-    audio.addEventListener('seeked', onTick, { passive:true });
+
+    // on song change (Amplitude dom event)
+    const onSongChange = () => {
+      const i = Amplitude.getActiveIndex?.() ?? 0;
+      setupAumaForTrack(tracks[i]);
+    };
+    if (typeof Amplitude.bind === 'function') {
+      Amplitude.bind('song_change', onSongChange);
+    } else {
+      document.addEventListener('amplitude-song-change', onSongChange);
+    }
   }
-  
-  // ---- App init ----
-  async function main(){
-    const flyerId   = location.pathname.replace(/^\/|\/$/g,'');   // e.g., "123"
-    let startIndex  = +(new URLSearchParams(location.search).get('t')||0) || 0;
 
-    // fetch config
-    const cfgRes = await fetch(`/flyers/${flyerId}/config.json`, {cache:'no-store'});
-    if(!cfgRes.ok){ document.title='Audio Flyer not found'; document.body.innerHTML='<p style="padding:24px">This Audio Flyer could not be found.</p>'; return; }
-    const cfg = await cfgRes.json();
-
-    document.title = cfg.title || `WOM.fm / ${flyerId}`;
-    $('#track-title').textContent = cfg.title || 'WOM.fm Audio Flyer';
-
-    if (cfg.cta?.url) { const cta=$('#cta'); cta.hidden=false; cta.href=cfg.cta.url; cta.textContent=cfg.cta.label||'Learn more'; }
-    
+  // ---- Nudge (unchanged) ----
   function scheduleNudgeAfterEngagement(flyerId, opts = {}) {
     const {
       enabled = true,
@@ -203,124 +140,117 @@
       delayMs = 500,          // small delay before animating
       alsoOnEnded = true      // if they finish, nudge at the end too
     } = opts;
-  
+
     if (!enabled) return;
     const key = `wom_nudge_done_${flyerId}`;
     if (localStorage.getItem(key)) return;
-  
+
     const waBtn = document.getElementById('share-wa');
     if (!waBtn) return;
-  
+
     const audio = Amplitude.getAudio?.();
     if (!audio) return;
-  
+
     const markDone = () => {
       localStorage.setItem(key, '1');
       waBtn.classList.remove('nudge');
       waBtn.removeEventListener('click', markDone);
       waBtn.removeEventListener('focus', markDone);
     };
-  
+
     const showNudge = () => {
       if (localStorage.getItem(key)) return;
       waBtn.classList.add('nudge');
-      // stop the class after the animation runs
       const onEnd = () => waBtn.classList.remove('nudge');
       waBtn.addEventListener('animationend', onEnd, { once: true });
       waBtn.addEventListener('click', markDone, { once: true });
       waBtn.addEventListener('focus', markDone, { once: true });
       try { window._paq?.push(['trackEvent', 'Share Nudge', 'Shown', flyerId]); } catch(e){}
     };
-  
+
     const onProgress = () => {
-      const t = audio.currentTime || 0;
+      const tcur = audio.currentTime || 0;
       const d = audio.duration || 0;
-      const pct = d ? (t / d) : 0;
-      if (t >= minSeconds || pct >= minPercent) {
+      const pct = d ? (tcur / d) : 0;
+      if (tcur >= minSeconds || pct >= minPercent) {
         audio.removeEventListener('timeupdate', onProgress);
         setTimeout(showNudge, delayMs);
       }
     };
-  
+
     audio.addEventListener('timeupdate', onProgress, { passive: true });
-  
+
     if (alsoOnEnded) {
       audio.addEventListener('ended', () => {
         if (!localStorage.getItem(key)) setTimeout(showNudge, 300);
       }, { once: true });
     }
   }
-    // ---- Matomo: per-flyer siteId from config ----
+
+  // ---- App init ----
+  async function main(){
+    const flyerId   = location.pathname.replace(/^\/|\/$/g,'');   // e.g., "123"
+    let startIndex  = +(new URLSearchParams(location.search).get('t')||0) || 0;
+
+    // fetch config
+    const cfgRes = await fetch(`/flyers/${flyerId}/config.json`, {cache:'no-store'});
+    if(!cfgRes.ok){
+      document.title='Audio Flyer not found';
+      document.body.innerHTML='<p style="padding:24px">This Audio Flyer could not be found.</p>';
+      return;
+    }
+    const cfg = await cfgRes.json();
+    window.cfg = cfg; // expose for auma wiring
+
+    document.title = cfg.title || `WOM.fm / ${flyerId}`;
+    $('#track-title').textContent = cfg.title || 'WOM.fm Audio Flyer';
+
+    if (cfg.cta?.url) { const cta=$('#cta'); cta.hidden=false; cta.href=cfg.cta.url; cta.textContent=cfg.cta.label||'Learn more'; }
+
+    // Matomo per-flyer siteId from config
     const flyerType = (cfg.type || 'single').toLowerCase();
     const siteId    = cfg.analytics && cfg.analytics.siteId; // e.g., { "analytics": { "siteId": 7 } }
     wireMatomo({ siteId, flyerId, flyerType, title: document.title });
 
+    // Branding
     const base = `/flyers/${flyerId}/`;
     if (cfg.branding) {
       const root = document.documentElement.style;
       if (cfg.branding.primary) root.setProperty('--brand',  cfg.branding.primary);
       if (cfg.branding.accent)  root.setProperty('--accent', cfg.branding.accent);
-      if (cfg.branding.logo)    document.getElementById('brand-logo').src = base + cfg.branding.logo;
+      if (cfg.branding.logo)    $id('brand-logo') && ($id('brand-logo').src = base + cfg.branding.logo);
       if (cfg.branding.logoHeight) root.setProperty('--logo-height', cfg.branding.logoHeight + 'px');
     }
-    const type = flyerType;
 
-// Build songs from tracks for ALL types; slides/images are handled by AUMA layer
+    // Build songs from tracks for ALL types; AUMA layer handles images
     let songs = (cfg.tracks || []).map(t => ({
       name: t.title || '',
       url:  base + t.src,
+      // optional cover for Amplitude's internal UI (not required for AUMA)
       cover_art_url: t.image?.src ? (base + t.image.src) : (cfg.cover ? base + cfg.cover : undefined)
     }));
 
-    if (!songs.length){ document.body.innerHTML='<p style="padding:24px">No audio configured.</p>'; return; }
+    if (!songs.length){
+      document.body.innerHTML='<p style="padding:24px">No audio configured.</p>';
+      return;
+    }
 
     const multi = songs.length > 1;
-    
     document.getElementById('previous')?.classList.toggle('hidden', !multi);
     document.getElementById('next')?.classList.toggle('hidden', !multi);
 
     Amplitude.init({ songs });
     if (startIndex>0 && startIndex<songs.length) Amplitude.playSongAtIndex(startIndex);
-    
-    function wireAuma(cfg, base){
-      if (!cfg?.tracks?.length) return;
-      if (!window.Amplitude?.getAudio) return;
-      if (!document.getElementById('auma')) return;
-    
-      const toAbs = p => !p ? p : (/^https?:\/\//.test(p) || p.startsWith('/')) ? p : (base + p);
-      const tracks = cfg.tracks.map(t => ({
-        ...t,
-        image: t.image?.src ? { ...t.image, src: toAbs(t.image.src) } : t.image,
-        slides: t.slides?.map(s => ({ ...s, src: toAbs(s.src) })) || t.slides
-      }));
-    
-      // initial
-      const initIdx = Amplitude.getActiveIndex?.() ?? 0;
-      setupAumaForTrack(tracks[initIdx]);
-    
-      // song change (with fallback)
-      const onSongChange = () => {
-        const i = Amplitude.getActiveIndex?.() ?? 0;
-        setupAumaForTrack(tracks[i]);
-      };
-      if (typeof Amplitude.bind === 'function') {
-        Amplitude.bind('song_change', onSongChange);
-      } else {
-        document.addEventListener('amplitude-song-change', onSongChange);
-      }
-    
-      // time sync
-      const audio = Amplitude.getAudio();
-      const onTick = () => tickAuma(audio.currentTime || 0);
-      audio.addEventListener('timeupdate', onTick, { passive: true });
-      audio.addEventListener('seeked', onTick, { passive: true });
-    }
-    
+
+    // Mark single-track (for CSS that hides prev/next)
+    document.documentElement.classList.toggle('single-track', !multi);
+
+    // Wire AUMA (v1)
     wireAuma(cfg, base);
 
+    // Progress <progress> binding
     const audio  = Amplitude.getAudio();
     const progEl = document.querySelector('progress.amplitude-song-played-progress');
-    
     function upd(){
       if (!progEl || !audio) return;
       const d = audio.duration || 0;
@@ -328,45 +258,13 @@
       progEl.max   = d || 1;
       progEl.value = c;
     }
-    
     audio.addEventListener('timeupdate', upd);
     audio.addEventListener('loadedmetadata', upd);
-    
-    // Hide prev/next when there's only one track
-    function markSingleTrack(isSingle){
-      const html = document.documentElement;
-      html.classList.toggle('single-track', !!isSingle);
-    
-      // also make them unfocusable for a11y
-      const left  = document.getElementById('previous') || document.querySelector('.amplitude-prev');
-      const right = document.getElementById('next')      || document.querySelector('.amplitude-next');
-    
-      [left, right].forEach(btn => {
-        if (!btn) return;
-        if (isSingle) {
-          btn.setAttribute('aria-hidden', 'true');
-          btn.setAttribute('tabindex', '-1');
-          if ('disabled' in btn) btn.disabled = true;
-          btn.style.pointerEvents = 'none';
-        } else {
-          btn.removeAttribute('aria-hidden');
-          btn.removeAttribute('tabindex');
-          if ('disabled' in btn) btn.disabled = false;
-          btn.style.pointerEvents = '';
-        }
-      });
-    }
-    
-    // call it once using your config
-    markSingleTrack((cfg.tracks || []).length <= 1);
 
-
-    // Hook events after Amplitude is ready
+    // Audio analytics
     wireAudioEvents();
-    
-    
 
-// Build share URL with UTM attribution
+    // Share helpers + nudge
     function buildShareUrl(channel, flyerId){
       const url = new URL(location.origin + location.pathname); // short canonical
       url.searchParams.set('utm_source', channel);
@@ -374,19 +272,15 @@
       url.searchParams.set('utm_campaign', flyerId);
       return url.toString();
     }
-    
     function shareWhatsApp(cfg, flyerId){
       const msg = `${cfg.title || 'Listen on WOM.fm'} • ${buildShareUrl('whatsapp', flyerId)}`;
       const wa = `https://wa.me/?text=${encodeURIComponent(msg)}`;
       window.open(wa, '_blank', 'noopener');
       try { window._paq?.push(['trackEvent', 'Share', 'WhatsApp', flyerId]); } catch(e){}
     }
-    
     async function shareNative(cfg, flyerId){
       const text = cfg.title || 'Listen on WOM.fm';
       const url  = buildShareUrl('native', flyerId);
-    
-      // If native share exists, use it
       if (navigator.share){
         try {
           await navigator.share({ title: text, text, url });
@@ -394,26 +288,23 @@
           return;
         } catch(e){ /* user canceled or OS error */ }
       }
-    
-      // fallback: copy to clipboard then open generic chooser tab
       try {
         await navigator.clipboard?.writeText(url);
         alert('Link copied to clipboard 👍');
       } catch(e) {
-        // ultimate fallback: open in a new tab so user can copy
         window.open(url, '_blank', 'noopener');
       }
     }
-    
+
     // enable per flyer (default on). Disable by setting "nudge": false in config
     scheduleNudgeAfterEngagement(flyerId, {
       enabled: cfg.nudge !== false,
-      minSeconds: 10,      // tweak to 5–12s if you want
-      minPercent: 0.25,    // or 0.20/0.33 etc.
+      minSeconds: 10,
+      minPercent: 0.25,
       delayMs: 500,
       alsoOnEnded: true
     });
-    
+
     document.getElementById('share-wa')?.addEventListener('click', () => shareWhatsApp(cfg, flyerId));
     document.getElementById('share-native')?.addEventListener('click', () => shareNative(cfg, flyerId));
   }
