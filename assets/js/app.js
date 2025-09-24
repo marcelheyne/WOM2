@@ -1,5 +1,13 @@
 (function(){
   const $ = s => document.querySelector(s);
+  
+  // Compact UI when the viewport is short or very narrow
+  function updateCompact() {
+    const compact = (window.innerHeight < 700) || (window.innerWidth < 360);
+    document.documentElement.classList.toggle('compact', compact);
+  }
+  window.addEventListener('resize', updateCompact, { passive: true });
+  updateCompact();
 
   // ---- Matomo base + custom dimensions ----
   const MATOMO_BASE = (window.WOM_MATOMO && window.WOM_MATOMO.base) || "https://metrics.wom.center/";
