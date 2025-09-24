@@ -1,0 +1,21 @@
+{
+  "type": "playlist",
+  "title": "Mobile Money Episode 1",
+  "analytics": { "siteId": 1 },
+  "branding": {
+    "logo": "images/songo.svg",
+    "primary": "#ff8a00",
+    "accent": "#ffc422",
+    "logoHeight": 52
+  },
+  "tracks": [
+    { "title": "Slide 1", "src": "audio/1.mp3", "image": { "src": "images/1.jpeg", "alt": "Sustainable Aquaculture 1" }},
+    { "title": "Slide 2", "src": "audio/2.mp3", "image": { "src": "images/2.jpeg", "alt": "Sustainable Aquaculture 2" }},
+    { "title": "Slide 3", "src": "audio/3.mp3", "image": { "src": "images/3.jpeg", "alt": "Sustainable Aquaculture 3" }},
+    { "title": "Slide 4", "src": "audio/4.mp3", "image": { "src": "images/4.jpeg", "alt": "Sustainable Aquaculture 4" }},
+    { "title": "Slide 5", "src": "audio/5.mp3", "image": { "src": "images/5.jpeg", "alt": "Sustainable Aquaculture 5" }},
+    { "title": "Slide 6", "src": "audio/6.mp3", "image": { "src": "images/6.jpeg", "alt": "Sustainable Aquaculture 6" }},
+    { "title": "Slide 7", "src": "audio/7.mp3", "image": { "src": "images/7.jpeg", "alt": "Sustainable Aquaculture 7" }},
+    { "title": "Slide 8", "src": "audio/8.mp3", "image": { "src": "images/8.jpeg", "alt": "Sustainable Aquaculture 8" }}
+  ]
+}
