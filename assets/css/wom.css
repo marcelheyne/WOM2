@@ -377,44 +377,83 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
 /* generic .hidden should not reserve space anywhere */
 .hidden{ display: none; }
 
-/* Make viewport calc more reliable on mobile browser chrome */
+/* -----------------------------------------------------------
+   COMPACT LAYOUT (applies when <html class="compact"> … )
+   Matches your current HTML/IDs only — no .whats-btn/.nav-btn
+   ----------------------------------------------------------- */
+
+/* Make viewport calc more reliable on mobile browsers */
 html, body { min-height: 100svh; }
 
-/* ---- Sticky share row (works in both normal + compact) ---- */
-#share-row, .share-bar {
+/* Sticky share row (works in normal + compact) */
+#share {
   position: sticky;
-  bottom: 0; /* keep on screen */
+  bottom: 0;
   z-index: 3;
-  padding: 8px 16px calc(8px + env(safe-area-inset-bottom));
-  background: linear-gradient(#ffffff00, #ffffffd6 40%, #fff 75%);
+  padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+  background: linear-gradient(#ffffff00, #ffffff66 40%, #fff 75%);
   backdrop-filter: blur(3px);
 }
 
-/* If your container has a different id/class, add it here too */
-#share { position: sticky; bottom: 0; }
+/* ---------- Compact tweaks ---------- */
+html.compact #brand-logo img {
+  max-height: 28px;           /* smaller top logo */
+}
 
-/* ---- Compact mode: shrink vertical chrome ---- */
-.compact #brand-logo img          { max-height: 28px; }
-.compact .progress-wrap           { margin: 6px 0 2px; }
-.compact .times                   { font-size: 12px; }
-.compact .controls                { gap: 12px; margin: 10px 0; }
+html.compact .progress-wrap {
+  margin-top: 8px;
+}
 
-/* Audio-only play button stays generous; AUMA gets smaller */
-.compact.has-auma .btn-play       { width: 120px; height: 120px; }
-.compact .btn-play                { width: 140px; height: 140px; } /* audio-only */
+html.compact .times {
+  font-size: 12px;            /* smaller time labels */
+}
 
-.compact .nav-btn                 { --icon: 26px; } /* prev/next glyph size */
-.compact .whats-btn, .compact .more-btn { transform: scale(.9); }
+html.compact .controls {
+  gap: 12px;
+  margin: 8px 0 0;
+}
 
-/* AUMA image: keep visible room for share row */
-.compact #auma                    { margin-top: 8px; }
-.compact #auma-img {
-  max-height: min(48svh, 420px);  /* leave space for controls + share */
+/* Audio-only keeps a generous play size; AUMA gets a smaller one */
+html.compact:not(.has-auma) #playpause {
+  width: 140px;
+  height: 140px;
+}
+html.compact.has-auma #playpause {
+  width: 120px;
+  height: 120px;
+}
+
+/* Nudge prev/next down a notch on very small screens */
+html.compact #prev,
+html.compact #next {
+  transform: scale(0.9);
+}
+
+/* AUMA image: keep room for the sticky share row */
+html.compact #auma {
+  margin-top: 8px;
+}
+html.compact #auma #auma-image,
+html.compact #auma #auma-img,
+html.compact #auma > img {
+  /* Square or rectangular, but don’t let it push share off screen */
+  max-height: min(48svh, 420px);
   border-radius: 12px;
 }
 
-/* Generic spacing tightener that doesn’t harm larger devices */
-.compact .section, .compact .auma-card { margin-block: 8px; }
+/* Tighten general vertical rhythm a bit */
+html.compact section,
+html.compact .auma-card { margin-block: 8px; }
 
 /* Optional: hide track title when space is tight and AUMA is present */
-.compact.has-auma #track-title { display: none; }
+html.compact.has-auma #track-title { display: none; }
+
+/* Share buttons (generic — works for either <button> or <a>) */
+html.compact #share button,
+html.compact #share a {
+  /* If your round share buttons have fixed px sizes,
+     this gives them a compact size without new classes */
+  width: clamp(52px, 9.5vmin, 64px);
+  height: clamp(52px, 9.5vmin, 64px);
+  line-height: clamp(52px, 9.5vmin, 64px);
+}
