@@ -4,7 +4,9 @@ export async function onRequest({ request, next }) {
   const p = url.pathname.replace(/\/+$/, ""); // "", "/123", "/assets/.."
 
   // 1) Let root and static paths pass through to Pages
-  if (p === "") return next();
+  if (p === "") {
+    return Response.redirect("https://www.wom.fm", 301);
+  }
 
   const RESERVED = [
     "/slot", "/slot.html",
