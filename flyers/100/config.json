@@ -1,0 +1,14 @@
+{
+  "type": "playlist",
+  "title": "Qulqullinni",
+  "analytics": { "siteId": 2 },
+  "branding": {
+    "logo": "images/whh.png",
+    "primary": "#2FAB16",
+    "accent": "#43db25",
+    "logoHeight": 70
+  },
+  "tracks": [
+  { "title": "Qulqullinni akkamiti dhukkuba irraa nu eega?", "src": "audio/om010101.mp3" }
+  ]
+}
