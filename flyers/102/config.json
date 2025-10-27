@@ -6,7 +6,7 @@
     "logo": "images/wom.png",
     "primary": "#ffb713",
     "accent": "#ffb713",
-    "logoHeight": 70
+    "logoHeight": 50
   },
   "tracks": [
   { "title": "Ninawezaje kujikinga na matatizo za kiafya?", "src": "audio/02.mp3" },
