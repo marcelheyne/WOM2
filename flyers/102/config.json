@@ -1,11 +1,11 @@
 {
   "type": "playlist",
-  "title": "Qulqullinni",
+  "title": "Afya ya Wanawake",
   "analytics": { "siteId": 2 },
   "branding": {
-    "logo": "images/whh.png",
-    "primary": "#2FAB16",
-    "accent": "#43db25",
+    "logo": "images/wom_logo.png",
+    "primary": "#f83564",
+    "accent": "#ea2264",
     "logoHeight": 70
   },
   "tracks": [
