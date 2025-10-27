@@ -1,0 +1,36 @@
+{
+  "type": "playlist",
+  "title": "Qulqullinni",
+  "analytics": { "siteId": 2 },
+  "branding": {
+    "logo": "images/whh.png",
+    "primary": "#2FAB16",
+    "accent": "#43db25",
+    "logoHeight": 70
+  },
+  "tracks": [
+  { "title": "Ninawezaje kujikinga na matatizo za kiafya?", "src": "audio/02.mp3" },
+  { "title": "Nitawezaje kupumzika?", "src": "audio/03.mp3" },
+  { "title": "Kwa nini niende kwa uchunguzi wa kiafya mara kwa mara?", "src": "audio/04.mp3" },
+  { "title": "Ni hatua gani huchukuliwa wakati wa uchunguzi wa chungu cha uzazi?", "src": "audio/05.mp3" },
+  { "title": "Kwa nini nastahili kujihusisha na Ngono Salama?", "src": "audio/06.mp3" },
+  { "title": "Kwa nini nitumie mbinu za upangaji uzazi?", "src": "audio/07.mp3" },
+  { "title": "Kwa nini nastahili kujiweka vizuri wakati wa ujauzito na baada ya kuzaa?", "src": "audio/08.mp3" },
+  { "title": "Nawezaje kuzuia kufura kwa viungo vya tumbo ya uzazi?", "src": "audio/09.mp3" },
+  { "title": "Nawezaje kuzuia mkojo unaovuja au kudondoka kutoka kwa uke?", "src": "audio/10.mp3" },
+  { "title": "Nawezaje kujikinga na maabukizi ya pepopunda?", "src": "audio/11.mp3" },
+  { "title": "Kwa nini nikague matiti kila mara?", "src": "audio/12.mp3" },
+  { "title": "Njia zipi mwafaka za kuchunguza matiti yangu?", "src": "audio/13.mp3" },
+  { "title": "Nifanye nini nikipata uvimbe kwenye matiti yangu?", "src": "audio/14.mp3" },
+  { "title": "Je, napaswa kujua nini kuhusu siku zangu za hedhi?", "src": "audio/15.mp3" },
+  { "title": "Je, kuna shida zipi zinazotokana na hedhi?", "src": "audio/o16.mp3" },
+  { "title": "Ni Sababu zipi husababisha mabadiliko ya hedhi?", "src": "audio/17.mp3" },
+  { "title": "Je, naweza kufanya nini ili kupunguza uchungu ambao huja na hedhi?", "src": "audio/18.mp3" },
+  { "title": "Je, dalili za hedhi ni zipi?", "src": "audio/19.mp3" },
+  { "title": "Je, nastahili kufanya nini ili niweze kustahimili dalili za hedhi au Pre-menstrual Syndrome?", "src": "audio/20.mp3" },
+  { "title": "Je, nifanyeje ikiwa nitavuja damu kupita kiasi au hedhi yangu ikitoka kwa muda mrefu?", "src": "audio/21.mp3" },
+  { "title": "Nifanye nini ikiwa hedhi zangu sio nzito?", "src": "audio/22.mp3" },
+  { "title": "Je, nifanyeje ikiwa hedhi yangu itakuja haraka, au kutokwa damu nyakati zingine?", "src": "audio/23.mp3" },
+  { "title": "Je, nifanye nini wakati hedhi zangu zitakuja baada ya muda mrefu, au zikome?", "src": "audio/24.mp3" }
+  ]
+}
