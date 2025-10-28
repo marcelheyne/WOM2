@@ -4,8 +4,8 @@
   "analytics": { "siteId": 3 },
   "branding": {
     "logo": "images/Audiopedia-Foundation.png",
-    "primary": "#72147e",
-    "accent": "#b623c8",
+    "primary": "#b623c8",
+    "accent": "#72147e",
     "logoHeight": 40
   },
   "tracks": [
