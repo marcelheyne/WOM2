@@ -1,0 +1,37 @@
+{
+  "type": "playlist",
+  "title": "Qulqullinni",
+  "analytics": { "siteId": 3 },
+  "branding": {
+    "logo": "images/Audiopedia-Foundation.png",
+    "primary": "#ffb713",
+    "accent": "#ffb713",
+    "logoHeight": 70
+  },
+  "tracks": [
+  { "title": "Kipindi cha 1 cha Pesa za Simu", "src": "audio/SwDFL05.mp3" },
+  { "title": "Kipindi cha 2 cha Pesa za Simu", "src": "audio/SwDFL06.mp3" },
+  { "title": "Kipindi cha 3 cha Pesa za Simu", "src": "audio/SwDFL07.mp3" },
+  { "title": "Kipindi cha 4 cha Pesa za Simu", "src": "audio/SwDFL08.mp3" },
+  { "title": "Kipindi cha 5 cha Pesa za Simu", "src": "audio/SwDFL09.mp3" },
+  { "title": "Kipindi cha 6 cha Pesa za Simu", "src": "audio/SwDFL10.mp3" },
+  { "title": "Kipindi cha 7 cha Pesa za Simu", "src": "audio/SwDFL11.mp3" },
+  { "title": "Kipindi cha 8 cha Pesa za Simu", "src": "audio/SwDFL12.mp3" },
+  { "title": "Kipindi cha 9 cha Pesa za Simu", "src": "audio/SwDFL13.mp3" },
+  { "title": "Kipindi cha 10 cha Pesa za Simu", "src": "audio/SwDFL14.mp3" },
+  { "title": "Kipindi cha 11 cha Pesa za Simu", "src": "audio/SwDFL15.mp3" },
+  { "title": "Kipindi cha 12 cha Pesa za Simu", "src": "audio/SwDFL16.mp3" },
+  { "title": "Kipindi cha 13 cha Pesa za Simu", "src": "audio/SwDFL17.mp3" },
+  { "title": "Kipindi cha 14 cha Pesa za Simu", "src": "audio/SwDFL18.mp3" },
+  { "title": "Kipindi cha 15 cha Pesa za Simu", "src": "audio/SwDFL19.mp3" },
+  { "title": "Kipindi cha 16 cha Pesa za Simu", "src": "audio/SwDFL20.mp3" },
+  { "title": "Kipindi cha 17 cha Pesa za Simu", "src": "audio/SwDFL21.mp3" },
+  { "title": "Kipindi cha 18 cha Pesa za Simu", "src": "audio/SwDFL22.mp3" },
+  { "title": "Kipindi cha 19 cha Pesa za Simu", "src": "audio/SwDFL23.mp3" },
+  { "title": "Kipindi cha 20 cha Pesa za Simu", "src": "audio/SwDFL24.mp3" },
+  { "title": "Kipindi cha 21 cha Pesa za Simu", "src": "audio/SwDFL25.mp3" },
+  
+  
+  
+  ]
+}
