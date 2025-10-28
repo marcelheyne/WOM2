@@ -123,38 +123,34 @@
     const audio = Amplitude.getAudio?.();
     if (!audio) return;
   
-    let maxPct = 0, sent = false;
+    let maxPct = 0, sent = false, started = false;
     const title = () => (Amplitude.getActiveSongMetadata()?.name) || '';
+    const endLabel = p => p < 25 ? 'End 0–25' : p < 50 ? 'End 25–50' : p < 75 ? 'End 50–75' : 'End 75–100';
+    const reset = () => { maxPct = 0; sent = false; started = false; };
   
-    // "Start" once
     audio.addEventListener('play', () => {
-      try { window._paq?.push(['trackEvent','Audio', title(), 'Start']); } catch(e){}
-    }, { once: true });
+      if (!started) { window._paq?.push(['trackEvent','Audio', title(), 'Start']); started = true; }
+    });
   
-    // Track max % reached
     audio.addEventListener('timeupdate', () => {
       const d = audio.duration || 0, t = audio.currentTime || 0;
       if (d > 0) maxPct = Math.max(maxPct, Math.round((t/d)*100));
     }, { passive: true });
   
-    const endLabel = (p) => p < 25 ? 'End 0–25' : p < 50 ? 'End 25–50' : p < 75 ? 'End 50–75' : 'End 75–100';
-  
     function sendSummary(){
       if (sent || maxPct === 0) return;
       sent = true;
-      try {
-        window._paq?.push(['trackEvent','Audio', title(), endLabel(maxPct), maxPct]); // Value = exact %
-        if (maxPct >= 100) window._paq?.push(['trackEvent','Audio', title(), 'Complete']);
-      } catch(e){}
+      window._paq?.push(['trackEvent','Audio', title(), endLabel(maxPct), maxPct]);
+      if (maxPct >= 100) window._paq?.push(['trackEvent','Audio', title(), 'Complete']);
     }
   
-    audio.addEventListener('ended', sendSummary, { once: true });
-    window.addEventListener('pagehide', sendSummary, { once: true });
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'hidden') sendSummary();
-    });
+    // Close out + reset on each way a track can end/change
+    audio.addEventListener('ended', () => { sendSummary(); reset(); });
+    document.addEventListener('amplitude-song-change', () => { sendSummary(); reset(); });
+    window.addEventListener('pagehide', sendSummary);
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') sendSummary(); });
   }
-
+  
 // ---- AUMA wiring (one image per track) ----
   function wireAuma(cfg, base) {
     if (!cfg?.tracks?.length) return;
