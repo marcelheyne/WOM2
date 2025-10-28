@@ -117,6 +117,43 @@
     // legacy generic share button (kept harmless)
     $('#share')?.addEventListener('click',() => mtmTrack('Share','Click'));
   }
+  
+  // --- Listen summary (Matomo-native: Start + End bucket + Complete) ---
+  function wireListenSummary(){
+    const audio = Amplitude.getAudio?.();
+    if (!audio) return;
+  
+    let maxPct = 0, sent = false;
+    const title = () => (Amplitude.getActiveSongMetadata()?.name) || '';
+  
+    // "Start" once
+    audio.addEventListener('play', () => {
+      try { window._paq?.push(['trackEvent','Audio', title(), 'Start']); } catch(e){}
+    }, { once: true });
+  
+    // Track max % reached
+    audio.addEventListener('timeupdate', () => {
+      const d = audio.duration || 0, t = audio.currentTime || 0;
+      if (d > 0) maxPct = Math.max(maxPct, Math.round((t/d)*100));
+    }, { passive: true });
+  
+    const endLabel = (p) => p < 25 ? 'End 0–25' : p < 50 ? 'End 25–50' : p < 75 ? 'End 50–75' : 'End 75–100';
+  
+    function sendSummary(){
+      if (sent || maxPct === 0) return;
+      sent = true;
+      try {
+        window._paq?.push(['trackEvent','Audio', title(), endLabel(maxPct), maxPct]); // Value = exact %
+        if (maxPct >= 100) window._paq?.push(['trackEvent','Audio', title(), 'Complete']);
+      } catch(e){}
+    }
+  
+    audio.addEventListener('ended', sendSummary, { once: true });
+    window.addEventListener('pagehide', sendSummary, { once: true });
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') sendSummary();
+    });
+  }
 
 // ---- AUMA wiring (one image per track) ----
   function wireAuma(cfg, base) {
@@ -344,6 +381,7 @@
 
     // Audio analytics
     wireAudioEvents();
+    wireListenSummary();
 
     // Share helpers + nudge
     function buildShareUrl(channel, flyerId){
