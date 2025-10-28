@@ -1,12 +1,12 @@
 {
   "type": "playlist",
-  "title": "Qulqullinni",
+  "title": "Ujuzi wa Kidijitali wa Fedha",
   "analytics": { "siteId": 3 },
   "branding": {
     "logo": "images/Audiopedia-Foundation.png",
-    "primary": "#ffb713",
-    "accent": "#ffb713",
-    "logoHeight": 70
+    "primary": "#72147e",
+    "accent": "#fa9905",
+    "logoHeight": 40
   },
   "tracks": [
   { "title": "Kipindi cha 1 cha Pesa za Simu", "src": "audio/SwDFL05.mp3" },
