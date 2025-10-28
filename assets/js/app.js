@@ -119,56 +119,65 @@
   }
   
   // --- Listen summary (Matomo-native: Start + End bucket + Complete) ---
-  function wireListenSummary(){
-    const audio = Amplitude.getAudio?.();
-    if (!audio) return;
-  
-    let maxPct = 0, sent = false, started = false;
-    const title = () => (Amplitude.getActiveSongMetadata()?.name) || '';
-    const endLabel = p => p < 25 ? 'End 0–25' : p < 50 ? 'End 25–50' : p < 75 ? 'End 50–75' : 'End 75–100';
-    const reset = () => { maxPct = 0; sent = false; started = false; };
-  
-    audio.addEventListener('play', () => {
-      if (!started) { window._paq?.push(['trackEvent','Audio', title(), 'Start']); started = true; }
-    });
-  
-    audio.addEventListener('timeupdate', () => {
-      const d = audio.duration || 0, t = audio.currentTime || 0;
-      if (d > 0) maxPct = Math.max(maxPct, Math.round((t/d)*100));
-    }, { passive: true });
-  
-    function sendSummary(){
-      if (sent || maxPct === 0) return;
-      sent = true;
-      window._paq?.push(['trackEvent','Audio', title(), endLabel(maxPct), maxPct]);
-      if (maxPct >= 100) window._paq?.push(['trackEvent','Audio', title(), 'Complete']);
-    }
-  
-    // Close out + reset on each way a track can end/change
-    audio.addEventListener('ended', () => { sendSummary(); reset(); });
-    
-    // 1) Amplitude callback (preferred)
-    if (typeof Amplitude.bind === 'function') {
-      Amplitude.bind('song_change', () => { sendSummary(); reset(); });
-    } else {
-      // 2) Older builds dispatch a DOM event
-      document.addEventListener('amplitude-song-change', () => { sendSummary(); reset(); });
-    }
-    
-    // 3) Fallback: detect source change via loadedmetadata
-    let lastSrc = audio.currentSrc || '';
-    audio.addEventListener('loadedmetadata', () => {
-      const cur = audio.currentSrc || '';
-      if (lastSrc && cur && cur !== lastSrc) { sendSummary(); reset(); }
-      lastSrc = cur;
-    }, { passive: true });
-    
-    // Safety nets (tab close / background)
-    window.addEventListener('pagehide', sendSummary);
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'hidden') sendSummary();
-    });
-  }
+ function wireListenSummary(){
+   const audio = Amplitude.getAudio?.();
+   if (!audio) return;
+ 
+   let maxPct = 0, sent = false, started = false;
+   let curTitle = (Amplitude.getActiveSongMetadata()?.name) || '';
+ 
+   const endLabel = p => p < 25 ? 'End 0–25' : p < 50 ? 'End 25–50' : p < 75 ? 'End 50–75' : 'End 75–100';
+   const reset = () => { maxPct = 0; sent = false; started = false; };
+ 
+   // keep a stable title per track
+   const refreshTitle = () => { curTitle = (Amplitude.getActiveSongMetadata()?.name) || ''; };
+   refreshTitle();
+ 
+   audio.addEventListener('play', () => {
+     if (!started) { window._paq?.push(['trackEvent','Audio', curTitle, 'Start']); started = true; }
+   });
+ 
+   audio.addEventListener('timeupdate', () => {
+     const d = audio.duration || 0, t = audio.currentTime || 0;
+     if (d > 0) maxPct = Math.max(maxPct, Math.round((t/d)*100));
+   }, { passive: true });
+ 
+   function sendSummary({ forceComplete = false, nameOverride } = {}){
+     if (sent || maxPct === 0) return;
+     let p = forceComplete ? 100 : maxPct;
+     // if we’re *very* close, count it as complete (covers song_change before ended)
+     if (p >= 98) p = 100;
+ 
+     const name = nameOverride || curTitle;
+     sent = true;
+     window._paq?.push(['trackEvent','Audio', name, endLabel(p), p]);
+     if (p >= 100) window._paq?.push(['trackEvent','Audio', name, 'Complete']);
+   }
+ 
+   // natural end → force 100%
+   audio.addEventListener('ended', () => { sendSummary({ forceComplete:true }); reset(); });
+ 
+   // Amplitude’s song-change happens on auto-advance and button next/prev
+   if (typeof Amplitude.bind === 'function') {
+     Amplitude.bind('song_change', () => { sendSummary({ nameOverride: curTitle }); reset(); refreshTitle(); });
+   } else {
+     document.addEventListener('amplitude-song-change', () => { sendSummary({ nameOverride: curTitle }); reset(); refreshTitle(); });
+   }
+ 
+   // Fallback: src swap detected early → close previous using snapshot title
+   let lastSrc = audio.currentSrc || '';
+   audio.addEventListener('loadedmetadata', () => {
+     const cur = audio.currentSrc || '';
+     if (lastSrc && cur && cur !== lastSrc) { sendSummary({ nameOverride: curTitle }); reset(); refreshTitle(); }
+     lastSrc = cur;
+   }, { passive: true });
+ 
+   // Safety nets
+   window.addEventListener('pagehide', () => sendSummary({ nameOverride: curTitle }));
+   document.addEventListener('visibilitychange', () => {
+     if (document.visibilityState === 'hidden') sendSummary({ nameOverride: curTitle });
+   });
+ }
   
 // ---- AUMA wiring (one image per track) ----
   function wireAuma(cfg, base) {
