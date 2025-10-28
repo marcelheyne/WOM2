@@ -229,9 +229,17 @@
     // 4) hook all relevant signals
     // a) Amplitude custom event (if present)
     if (typeof Amplitude.bind === 'function') {
-      Amplitude.bind('song_change', refresh);
+      Amplitude.bind('song_change', () => {
+        const nearEnd = maxPct >= 95;                 // same threshold you used for pagehide
+        sendSummary({ nameOverride: curTitle, forceComplete: nearEnd });
+        reset(); refreshTitle();
+      });
     } else {
-      document.addEventListener('amplitude-song-change', refresh);
+      document.addEventListener('amplitude-song-change', () => {
+        const nearEnd = maxPct >= 95;
+        sendSummary({ nameOverride: curTitle, forceComplete: nearEnd });
+        reset(); refreshTitle();
+      });
     }
   
     // b) audio lifecycle (covers next/prev, programmatic jumps, etc.)
