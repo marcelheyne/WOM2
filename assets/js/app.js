@@ -178,9 +178,13 @@
    }, { passive: true });
  
    // Safety nets
-   window.addEventListener('pagehide', () => sendSummary({ nameOverride: curTitle }));
+   window.addEventListener('pagehide', () =>
+     sendSummary({ nameOverride: curTitle, forceComplete: maxPct >= 95 })
+   );
    document.addEventListener('visibilitychange', () => {
-     if (document.visibilityState === 'hidden') sendSummary({ nameOverride: curTitle });
+     if (document.visibilityState === 'hidden') {
+       sendSummary({ nameOverride: curTitle, forceComplete: maxPct >= 95 });
+     }
    });
  }
   
