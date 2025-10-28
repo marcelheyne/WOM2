@@ -137,16 +137,21 @@
      if (!started) { window._paq?.push(['trackEvent','Audio', curTitle, 'Start']); started = true; }
    });
  
-   audio.addEventListener('timeupdate', () => {
-     const d = audio.duration || 0, t = audio.currentTime || 0;
-     if (d > 0) maxPct = Math.max(maxPct, Math.round((t/d)*100));
-   }, { passive: true });
+  audio.addEventListener('timeupdate', () => {
+    const d = audio.duration || 0, t = audio.currentTime || 0;
+    if (d > 0) {
+      // normal progress
+      maxPct = Math.max(maxPct, Math.round((t / d) * 100));
+      // if we’re within the last second, count as 100%
+      if (d - t <= 1.0) maxPct = 100;
+    }
+  }, { passive: true });
  
    function sendSummary({ forceComplete = false, nameOverride } = {}){
      if (sent || maxPct === 0) return;
      let p = forceComplete ? 100 : maxPct;
      // if we’re *very* close, count it as complete (covers song_change before ended)
-     if (p >= 98) p = 100;
+     if (p >= 95) p = 100;
  
      const name = nameOverride || curTitle;
      sent = true;
