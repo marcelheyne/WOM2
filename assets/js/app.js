@@ -101,8 +101,8 @@
 
   function wireAudioEvents(){
     const audio = Amplitude.getAudio();
-    audio.addEventListener('play',  () => mtmTrack('Audio','Play',  (Amplitude.getActiveSongMetadata()?.name)||''));
-    audio.addEventListener('pause', () => mtmTrack('Audio','Pause', (Amplitude.getActiveSongMetadata()?.name)||''));
+ // audio.addEventListener('play',  () => mtmTrack('Audio','Play',  (Amplitude.getActiveSongMetadata()?.name)||''));
+ // audio.addEventListener('pause', () => mtmTrack('Audio','Pause', (Amplitude.getActiveSongMetadata()?.name)||''));
 
     document.addEventListener('amplitude-song-change', () => {
       const m = Amplitude.getActiveSongMetadata() || {};
@@ -146,9 +146,28 @@
   
     // Close out + reset on each way a track can end/change
     audio.addEventListener('ended', () => { sendSummary(); reset(); });
-    document.addEventListener('amplitude-song-change', () => { sendSummary(); reset(); });
+    
+    // 1) Amplitude callback (preferred)
+    if (typeof Amplitude.bind === 'function') {
+      Amplitude.bind('song_change', () => { sendSummary(); reset(); });
+    } else {
+      // 2) Older builds dispatch a DOM event
+      document.addEventListener('amplitude-song-change', () => { sendSummary(); reset(); });
+    }
+    
+    // 3) Fallback: detect source change via loadedmetadata
+    let lastSrc = audio.currentSrc || '';
+    audio.addEventListener('loadedmetadata', () => {
+      const cur = audio.currentSrc || '';
+      if (lastSrc && cur && cur !== lastSrc) { sendSummary(); reset(); }
+      lastSrc = cur;
+    }, { passive: true });
+    
+    // Safety nets (tab close / background)
     window.addEventListener('pagehide', sendSummary);
-    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') sendSummary(); });
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') sendSummary();
+    });
   }
   
 // ---- AUMA wiring (one image per track) ----
@@ -219,7 +238,7 @@
       minSeconds = 10,        // nudge after 10s of listening…
       minPercent = 0.25,      // …or after 25% progress, whichever comes first
       delayMs = 500,          // small delay before animating
-      alsoOnEnded = true      // if they finish, nudge at the end too
+      alsoOnEnded = false     // if they finish, nudge at the end too
     } = opts;
 
     if (!enabled) return;
