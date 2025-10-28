@@ -164,9 +164,15 @@
  
    // Amplitude’s song-change happens on auto-advance and button next/prev
    if (typeof Amplitude.bind === 'function') {
-     Amplitude.bind('song_change', () => { sendSummary({ nameOverride: curTitle }); reset(); refreshTitle(); });
+   Amplitude.bind('song_change', () => {
+     sendSummary({ nameOverride: curTitle, forceComplete: maxPct >= 95 });
+     reset(); refreshTitle();
+   });
    } else {
-     document.addEventListener('amplitude-song-change', () => { sendSummary({ nameOverride: curTitle }); reset(); refreshTitle(); });
+   document.addEventListener('amplitude-song-change', () => {
+     sendSummary({ nameOverride: curTitle, forceComplete: maxPct >= 95 });
+     reset(); refreshTitle();
+   });
    }
  
    // Fallback: src swap detected early → close previous using snapshot title
@@ -225,22 +231,6 @@
   
     // 3) initial render (after init / optional playSongAtIndex)
     requestAnimationFrame(refreshNow);
-  
-    // 4) hook all relevant signals
-    // a) Amplitude custom event (if present)
-    if (typeof Amplitude.bind === 'function') {
-      Amplitude.bind('song_change', () => {
-        const nearEnd = maxPct >= 95;                 // same threshold you used for pagehide
-        sendSummary({ nameOverride: curTitle, forceComplete: nearEnd });
-        reset(); refreshTitle();
-      });
-    } else {
-      document.addEventListener('amplitude-song-change', () => {
-        const nearEnd = maxPct >= 95;
-        sendSummary({ nameOverride: curTitle, forceComplete: nearEnd });
-        reset(); refreshTitle();
-      });
-    }
   
     // b) audio lifecycle (covers next/prev, programmatic jumps, etc.)
     const audio = Amplitude.getAudio();
