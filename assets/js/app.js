@@ -188,7 +188,11 @@
      sendSummary({ nameOverride: curTitle, forceComplete: maxPct >= 95 })
    );
    document.addEventListener('visibilitychange', () => {
-     if (document.visibilityState === 'hidden') {
+     if (document.visibilityState !== 'hidden') return;
+   
+     // Only summarize if playback is no longer ongoing
+     const stillPlaying = !audio.paused && !audio.ended;
+     if (!stillPlaying) {
        sendSummary({ nameOverride: curTitle, forceComplete: maxPct >= 95 });
      }
    });
