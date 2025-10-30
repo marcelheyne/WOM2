@@ -414,6 +414,28 @@ html.compact.has-auma #playpause {
   height: 120px;
 }
 
+/* Single audio flyer: hide side controls and hard-center the play button */
+.single-track #prev,
+.single-track #previous,
+.single-track .amplitude-prev,
+.single-track #next,
+.single-track .amplitude-next {
+  display: none !important;
+}
+
+.single-track .controls {
+  display: grid !important;
+  grid-template-columns: 1fr;   /* only the center cell */
+  justify-items: center;        /* center the play button */
+  align-items: center;
+}
+
+.single-track #play-pause,
+.single-track #playpause,       /* safety: if the id ever comes without a hyphen */
+.single-track .ctrl--main {
+  margin-inline: auto;          /* belt & suspenders centering */
+}
+
 /* Nudge prev/next down a notch on very small screens */
 html.compact #prev,
 html.compact #next {
