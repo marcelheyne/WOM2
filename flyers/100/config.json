@@ -1,14 +1,14 @@
 {
   "type": "playlist",
-  "title": "Qulqullinni",
+  "title": "Welcome to WOM.fm!",
   "analytics": { "siteId": 2 },
   "branding": {
-    "logo": "images/whh.png",
-    "primary": "#2FAB16",
-    "accent": "#43db25",
-    "logoHeight": 70
+    "logo": "images/wom.png",
+  "primary": "#ffb713",
+  "accent": "#ffb713",
+  "logoHeight": 50
   },
   "tracks": [
-  { "title": "Qulqullinni akkamiti dhukkuba irraa nu eega?", "src": "audio/om010101.mp3" }
+  { "title": "Welcome to WOM.fm!", "src": "audio/audio.mp3" }
   ]
 }
