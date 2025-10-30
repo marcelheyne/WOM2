@@ -354,6 +354,14 @@
     }
     const cfg = await cfgRes.json();
     window.cfg = cfg; // expose for auma wiring
+    
+    // Mark single-track flyers so CSS can center the play button
+    const nTracks = (cfg.tracks && cfg.tracks.length) || 0;
+    document.documentElement.classList.toggle('single-track', nTracks <= 1);
+    
+    // Also keep the AUMA flag accurate 
+    const isAuma = cfg.type === 'auma' || cfg.type === 'auma-seq';
+    document.documentElement.classList.toggle('has-auma', isAuma);
 
     document.title = cfg.title || `WOM.fm / ${flyerId}`;
     $('#track-title').textContent = cfg.title || 'WOM.fm Audio Flyer';
