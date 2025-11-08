@@ -4,8 +4,8 @@
   "analytics": { "siteId": 3 },
   "branding": {
     "logo": "images/wom.png",
-    "primary": "#d40000",
-    "accent": "#374150",
+  "primary": "#ffb713",
+    "accent": "#ea2264",
     "logoHeight": 50
   },
   "tracks": [
