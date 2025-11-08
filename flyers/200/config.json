@@ -3,10 +3,10 @@
   "title": "Ujuzi wa Kidijitali wa Fedha",
   "analytics": { "siteId": 3 },
   "branding": {
-    "logo": "images/Audiopedia-Foundation.png",
-    "primary": "#72147e",
-    "accent": "#b623c8",
-    "logoHeight": 40
+    "logo": "images/wom.png",
+    "primary": "#d40000",
+    "accent": "#374150",
+    "logoHeight": 50
   },
   "tracks": [
   { "title": "Kipindi cha 1 cha Pesa za Simu", "src": "audio/SwDFL05.mp3" },
