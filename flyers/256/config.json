@@ -1,0 +1,39 @@
+{
+  "type": "playlist",
+  "title": "Obumanyi ku Mobile Money okuva eri Airtel",
+  "analytics": { "siteId": 4 },
+  "branding": {
+    "logo": "images/airtel.png",
+  "primary": "#D40000",
+    "accent": "#374150",
+    "logoHeight": 50
+  },
+  "tracks": [
+  { "title": "Obumanyi ku Mobile Money - Ekitundu 1", "src": "audio/LugDFL02.mp3" },
+  { "title": "Obumanyi ku Mobile Money - Ekitundu 2", "src": "audio/LugDFL04.mp3" },
+  { "title": "Obumanyi ku Mobile Money - Ekitundu 3", "src": "audio/LugDFL05.mp3" },
+  { "title": "Obumanyi ku Mobile Money - Ekitundu 4", "src": "audio/LugDFL06.mp3" },
+  { "title": "Obumanyi ku Mobile Money - Ekitundu 5", "src": "audio/LugDFL07.mp3" },
+  { "title": "Obumanyi ku Mobile Money - Ekitundu 6", "src": "audio/LugDFL08.mp3" },
+  { "title": "Obumanyi ku Mobile Money - Ekitundu 7", "src": "audio/LugDFL09.mp3" },
+  { "title": "Obumanyi ku Mobile Money - Ekitundu 8", "src": "audio/LugDFL10.mp3" },
+  { "title": "Obumanyi ku Mobile Money - Ekitundu 9", "src": "audio/LugDFL11.mp3" },
+  { "title": "Obumanyi ku Mobile Money - Ekitundu 10", "src": "audio/LugDFL12.mp3" },
+  { "title": "Obumanyi ku Mobile Money - Ekitundu 11", "src": "audio/LugDFL13.mp3" },
+  { "title": "Obumanyi ku Mobile Money - Ekitundu 12", "src": "audio/LugDFL14.mp3" },
+  { "title": "Obumanyi ku Mobile Money - Ekitundu 13", "src": "audio/LugDFL15.mp3" },
+  { "title": "Obumanyi ku Mobile Money - Ekitundu 14", "src": "audio/LugDFL16.mp3" },
+  { "title": "Obumanyi ku Mobile Money - Ekitundu 15", "src": "audio/LugDFL17.mp3" },
+  { "title": "Obumanyi ku Mobile Money - Ekitundu 16", "src": "audio/LugDFL18.mp3" },
+  { "title": "Obumanyi ku Mobile Money - Ekitundu 17", "src": "audio/LugDFL19.mp3" },
+  { "title": "Obumanyi ku Mobile Money - Ekitundu 18", "src": "audio/LugDFL20.mp3" },
+  { "title": "Obumanyi ku Mobile Money - Ekitundu 19", "src": "audio/LugDFL21.mp3" },
+  { "title": "Obumanyi ku Mobile Money - Ekitundu 20", "src": "audio/LugDFL22.mp3" },
+  { "title": "Obumanyi ku Mobile Money - Ekitundu 21", "src": "audio/LugDFL23.mp3" },
+  { "title": "Obumanyi ku Mobile Money - Ekitundu 23", "src": "audio/LugDFL24.mp3" },
+  { "title": "Obumanyi ku Mobile Money - Ekitundu 24", "src": "audio/LugDFL25.mp3" }
+  
+  
+  
+  ]
+}
