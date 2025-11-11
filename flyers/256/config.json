@@ -3,10 +3,10 @@
   "title": "Obumanyi ku Mobile Money okuva eri Airtel",
   "analytics": { "siteId": 4 },
   "branding": {
-    "logo": "images/airtel.png",
+    "logo": "images/airtel_logo.png",
   "primary": "#D40000",
     "accent": "#374150",
-    "logoHeight": 50
+    "logoHeight": 70
   },
   "tracks": [
   { "title": "Obumanyi ku Mobile Money - Ekitundu 1", "src": "audio/LugDFL02.mp3" },
