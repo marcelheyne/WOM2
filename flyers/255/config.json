@@ -6,7 +6,7 @@
     "logo": "images/vodacom.png",
   "primary": "#E60000",
     "accent": "#30b54a",
-    "logoHeight": 50
+    "logoHeight": 70
   },
   "tracks": [
   { "title": "Kipindi cha 1 cha Pesa za Simu", "src": "audio/SwDFL05.mp3" },
