@@ -6,7 +6,7 @@
     "logo": "images/audiopedia.png",
   "primary": "#ffb713",
     "accent": "#ea2264",
-    "logoHeight": 40
+    "logoHeight": 45
   },
   "tracks": [
   { "title": "Ujuzi wa Pesa za Simu", "src": "audio/SwDFL01.mp3" },
