@@ -9,6 +9,7 @@
     "logoHeight": 70
   },
   "tracks": [
+  { "title": "Ujuzi wa Pesa za Simu", "src": "audio/SwDFL01.mp3" },
   { "title": "Kipindi cha 1 cha Pesa za Simu", "src": "audio/SwDFL05.mp3" },
   { "title": "Kipindi cha 2 cha Pesa za Simu", "src": "audio/SwDFL06.mp3" },
   { "title": "Kipindi cha 3 cha Pesa za Simu", "src": "audio/SwDFL07.mp3" },
