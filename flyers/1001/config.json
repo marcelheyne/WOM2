@@ -1,6 +1,7 @@
 {
   "type": "playlist",
   "title": "Ubuzima bwo mu mutwe",
+  "analytics": { "siteId": 1 },
   "branding": {
     "logo": "images/avega.png",
     "primary": "#2FAB16",
