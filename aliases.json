@@ -2,5 +2,6 @@
   "whh": "101",
   "welthungerhilfe": { "to": "101", "redirect": true },
   "basf": "204",
-  "avega": { "to": "1001", "redirect": false }
+  "avega": { "to": "1001", "redirect": false },
+  "lgkp": { "to": "1002", "redirect": true },
 }
