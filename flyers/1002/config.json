@@ -6,7 +6,7 @@
     "logo": "images/logo.png",
   "primary": "#1b5d45",
   "accent": "#D7F4E9",
-  "logoHeight": 50
+  "logoHeight": 70
   },
   "tracks": [
   { "title": "ډینګي", "src": "audio/audio.mp3" }
