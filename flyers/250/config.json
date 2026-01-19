@@ -1,0 +1,17 @@
+{
+  "type": "audio",
+  "title": "M-Koba",
+  "analytics": { "siteId": 6 },
+  "branding": {
+    "logo": "images/vodacom.png",
+  "primary": "#E60000",
+    "accent": "#30b54a",
+    "logoHeight": 70
+  },
+  "tracks": [
+  { "title": "Ujuzi wa Pesa za Simu", "src": "audio/mkoba.mp3" }
+  
+  
+  
+  ]
+}
