@@ -1,6 +1,7 @@
 (function(){
   const $ = s => document.querySelector(s);
-  
+  const $id = (x) => document.getElementById(x);
+
   // Compact UI when the viewport is short or very narrow
   function updateCompact() {
     const compact = (window.innerHeight < 700) || (window.innerWidth < 360);
@@ -15,11 +16,11 @@
 
   // Small helper
   function t(sec){ sec=sec|0; return ((sec/60)|0)+':'+('0'+(sec%60)).slice(-2); }
-  
+
   // ---- Canonical helpers ----
   function canonicalSlug({ flyerId, aliasSlug } = {}) {
     const pathSlug = location.pathname.replace(/^\/+|\/+$/g, "");
-    // After your CF redirect, pathSlug is already the alias; fallback to flyerId
+    // After CF redirect, pathSlug is already the alias; fallback to flyerId
     return (aliasSlug && aliasSlug.trim()) || pathSlug || String(flyerId || "").trim() || "unknown";
   }
   function ensureCanonicalLink(href) {
@@ -31,8 +32,6 @@
   }
 
   // ---------- AUMA v1 helpers (one image per track, no timing) ----------
-  const $id = (x) => document.getElementById(x);
-
   function showAuma(show){
     const sec = $id('auma');
     if (!sec) return;
@@ -54,7 +53,7 @@
   // For the active track, show its image if present; otherwise hide AUMA section
   function setupAumaForTrack(track){
     if (!track){ showAuma(false); return; }
-  
+
     // normalize image: allow string or object
     let art = null;
     if (track.image) {
@@ -66,7 +65,7 @@
     } else if (track.cover_art_url) {
       art = { src: track.cover_art_url, alt: '' };
     }
-  
+
     if (art?.src){
       setAumaImage(art.src, art.alt);
       showAuma(true);
@@ -75,39 +74,39 @@
       showAuma(false);
     }
   }
-  
+
   // ---- Matomo wiring (per flyer) ----
   function wireMatomo({ siteId, flyerId, flyerType, title, aliasSlug }) {
     if (!siteId) return;
-  
+
     const slug = canonicalSlug({ flyerId, aliasSlug });
     const canonicalUrl = `${location.origin}/${slug}`;
-  
+
     try {
       window._paq = window._paq || [];
       const _paq = window._paq;
-  
+
       // Optional privacy toggles:
       // _paq.push(['disableCookies']);
       // _paq.push(['setDoNotTrack', true]);
-  
+
       _paq.push(['setTrackerUrl', MATOMO_BASE + 'matomo.php']);
       _paq.push(['setSiteId', String(siteId)]);
       _paq.push(['enableLinkTracking']);
       _paq.push(['enableHeartBeatTimer', 10]);
-  
+
       // Canonical hygiene
       _paq.push(['setCustomUrl', canonicalUrl]);
       _paq.push(['setReferrerUrl', document.referrer || '']);
       _paq.push(['setDocumentTitle', title || `WOM.fm / ${slug}`]);
-  
+
       // Custom dimensions (keep your indexes)
       if (MATOMO_DIM.flyerId)   _paq.push(['setCustomDimension', MATOMO_DIM.flyerId,   String(flyerId)]);
       if (MATOMO_DIM.flyerType) _paq.push(['setCustomDimension', MATOMO_DIM.flyerType, String(flyerType || '')]);
-  
+
       // Pageview
       _paq.push(['trackPageView']);
-  
+
       // Load tracker once
       if (!document.getElementById('matomo-js')) {
         const g = document.createElement('script');
@@ -116,15 +115,15 @@
         g.src = MATOMO_BASE + 'matomo.js';
         document.head.appendChild(g);
       }
-  
+
       // Also inject a canonical link for SEO/consistency
       ensureCanonicalLink(canonicalUrl);
-  
+
       // Soft “open” marker
       _paq.push(['trackEvent','Flyer','Open', slug]);
     } catch (e) {}
   }
-  
+
   function mtmTrack(cat, act, name, val){
     if (!window._paq) return;
     window._paq.push(['trackEvent', cat, act, name, val]);
@@ -132,8 +131,6 @@
 
   function wireAudioEvents(){
     const audio = Amplitude.getAudio();
- // audio.addEventListener('play',  () => mtmTrack('Audio','Play',  (Amplitude.getActiveSongMetadata()?.name)||''));
- // audio.addEventListener('pause', () => mtmTrack('Audio','Pause', (Amplitude.getActiveSongMetadata()?.name)||''));
 
     document.addEventListener('amplitude-song-change', () => {
       const m = Amplitude.getActiveSongMetadata() || {};
@@ -148,97 +145,92 @@
     // legacy generic share button (kept harmless)
     $('#share')?.addEventListener('click',() => mtmTrack('Share','Click'));
   }
-  
+
   // --- Listen summary (Matomo-native: Start + End bucket + Complete) ---
- function wireListenSummary(){
-   const audio = Amplitude.getAudio?.();
-   if (!audio) return;
- 
-   let maxPct = 0, sent = false, started = false;
-   let curTitle = (Amplitude.getActiveSongMetadata()?.name) || '';
- 
-   const endLabel = p => p < 25 ? 'End 0–25' : p < 50 ? 'End 25–50' : p < 75 ? 'End 50–75' : 'End 75–100';
-   const reset = () => { maxPct = 0; sent = false; started = false; };
- 
-   // keep a stable title per track
-   const refreshTitle = () => { curTitle = (Amplitude.getActiveSongMetadata()?.name) || ''; };
-   refreshTitle();
- 
-   audio.addEventListener('play', () => {
-     if (!started) { window._paq?.push(['trackEvent','Audio', curTitle, 'Start']); started = true; }
-   });
- 
-  audio.addEventListener('timeupdate', () => {
-    const d = audio.duration || 0, t = audio.currentTime || 0;
-    if (d > 0) {
-      // normal progress
-      maxPct = Math.max(maxPct, Math.round((t / d) * 100));
-      // if we’re within the last second, count as 100%
-      if (d - t <= 1.0) maxPct = 100;
+  function wireListenSummary(){
+    const audio = Amplitude.getAudio?.();
+    if (!audio) return;
+
+    let maxPct = 0, sent = false, started = false;
+    let curTitle = (Amplitude.getActiveSongMetadata()?.name) || '';
+
+    const endLabel = p => p < 25 ? 'End 0–25' : p < 50 ? 'End 25–50' : p < 75 ? 'End 50–75' : 'End 75–100';
+    const reset = () => { maxPct = 0; sent = false; started = false; };
+
+    // keep a stable title per track
+    const refreshTitle = () => { curTitle = (Amplitude.getActiveSongMetadata()?.name) || ''; };
+    refreshTitle();
+
+    audio.addEventListener('play', () => {
+      if (!started) { window._paq?.push(['trackEvent','Audio', curTitle, 'Start']); started = true; }
+    });
+
+    audio.addEventListener('timeupdate', () => {
+      const d = audio.duration || 0, t = audio.currentTime || 0;
+      if (d > 0) {
+        maxPct = Math.max(maxPct, Math.round((t / d) * 100));
+        if (d - t <= 1.0) maxPct = 100; // treat trailing <1s as complete
+      }
+    }, { passive: true });
+
+    function sendSummary({ forceComplete = false, nameOverride } = {}){
+      if (sent || maxPct === 0) return;
+      let p = forceComplete ? 100 : maxPct;
+      if (p >= 95) p = 100; // near-complete
+
+      const name = nameOverride || curTitle;
+      sent = true;
+      window._paq?.push(['trackEvent','Audio', name, endLabel(p), p]);
+      if (p >= 100) window._paq?.push(['trackEvent','Audio', name, 'Complete']);
     }
-  }, { passive: true });
- 
-   function sendSummary({ forceComplete = false, nameOverride } = {}){
-     if (sent || maxPct === 0) return;
-     let p = forceComplete ? 100 : maxPct;
-     // if we’re *very* close, count it as complete (covers song_change before ended)
-     if (p >= 95) p = 100;
- 
-     const name = nameOverride || curTitle;
-     sent = true;
-     window._paq?.push(['trackEvent','Audio', name, endLabel(p), p]);
-     if (p >= 100) window._paq?.push(['trackEvent','Audio', name, 'Complete']);
-   }
- 
-   // natural end → force 100%
-   audio.addEventListener('ended', () => { sendSummary({ forceComplete:true }); reset(); });
- 
-   // Amplitude’s song-change happens on auto-advance and button next/prev
-   if (typeof Amplitude.bind === 'function') {
-   Amplitude.bind('song_change', () => {
-     sendSummary({ nameOverride: curTitle, forceComplete: maxPct >= 95 });
-     reset(); refreshTitle();
-   });
-   } else {
-   document.addEventListener('amplitude-song-change', () => {
-     sendSummary({ nameOverride: curTitle, forceComplete: maxPct >= 95 });
-     reset(); refreshTitle();
-   });
-   }
- 
-   // Fallback: src swap detected early → close previous using snapshot title
-   let lastSrc = audio.currentSrc || '';
-   audio.addEventListener('loadedmetadata', () => {
-     const cur = audio.currentSrc || '';
-     if (lastSrc && cur && cur !== lastSrc) { sendSummary({ nameOverride: curTitle }); reset(); refreshTitle(); }
-     lastSrc = cur;
-   }, { passive: true });
- 
-   // Safety nets
-   window.addEventListener('pagehide', () =>
-     sendSummary({ nameOverride: curTitle, forceComplete: maxPct >= 95 })
-   );
-   document.addEventListener('visibilitychange', () => {
-     if (document.visibilityState !== 'hidden') return;
-   
-     // Only summarize if playback is no longer ongoing
-     const stillPlaying = !audio.paused && !audio.ended;
-     if (!stillPlaying) {
-       sendSummary({ nameOverride: curTitle, forceComplete: maxPct >= 95 });
-     }
-   });
- }
-  
-// ---- AUMA wiring (one image per track) ----
+
+    // natural end → force 100%
+    audio.addEventListener('ended', () => { sendSummary({ forceComplete:true }); reset(); });
+
+    // Amplitude’s song-change
+    if (typeof Amplitude.bind === 'function') {
+      Amplitude.bind('song_change', () => {
+        sendSummary({ nameOverride: curTitle, forceComplete: maxPct >= 95 });
+        reset(); refreshTitle();
+      });
+    } else {
+      document.addEventListener('amplitude-song-change', () => {
+        sendSummary({ nameOverride: curTitle, forceComplete: maxPct >= 95 });
+        reset(); refreshTitle();
+      });
+    }
+
+    // Fallback: src swap detected early → close previous using snapshot title
+    let lastSrc = audio.currentSrc || '';
+    audio.addEventListener('loadedmetadata', () => {
+      const cur = audio.currentSrc || '';
+      if (lastSrc && cur && cur !== lastSrc) { sendSummary({ nameOverride: curTitle }); reset(); refreshTitle(); }
+      lastSrc = cur;
+    }, { passive: true });
+
+    // Safety nets
+    window.addEventListener('pagehide', () =>
+      sendSummary({ nameOverride: curTitle, forceComplete: maxPct >= 95 })
+    );
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState !== 'hidden') return;
+      const stillPlaying = !audio.paused && !audio.ended;
+      if (!stillPlaying) {
+        sendSummary({ nameOverride: curTitle, forceComplete: maxPct >= 95 });
+      }
+    });
+  }
+
+  // ---- AUMA wiring (one image per track) ----
   function wireAuma(cfg, base) {
     if (!cfg?.tracks?.length) return;
     if (!window.Amplitude?.getAudio) return;
     if (!document.getElementById('auma')) return;
-  
+
     // 1) make image src absolute once
     const toAbs = p =>
       !p ? p : (/^https?:\/\//.test(p) || p.startsWith('/')) ? p : (base + p);
-  
+
     const tracks = (cfg.tracks || []).map(t => {
       let img = null;
       if (t.image) {
@@ -250,9 +242,9 @@
       }
       return { ...t, image: img };
     });
-  
+
     let lastIndex = -1;
-  
+
     // 2) read active index and update image if it actually changed
     const refreshNow = () => {
       const idx = Number(Amplitude.getActiveIndex?.() ?? 0);
@@ -260,36 +252,36 @@
       lastIndex = idx;
       setupAumaForTrack(tracks[idx]);
     };
-  
-    // always read the *new* index
+
     const refresh = () => requestAnimationFrame(refreshNow);
-  
-    // 3) initial render (after init / optional playSongAtIndex)
+
+    // 3) initial render
     requestAnimationFrame(refreshNow);
-  
-    // b) audio lifecycle (covers next/prev, programmatic jumps, etc.)
+
+    // audio lifecycle (covers next/prev, programmatic jumps, etc.)
     const audio = Amplitude.getAudio();
     audio.addEventListener('loadedmetadata', refresh, { passive: true });
     audio.addEventListener('play',            refresh, { passive: true });
     audio.addEventListener('seeked',          refresh, { passive: true });
     audio.addEventListener('ended',           refresh, { passive: true });
-  
-    // c) UI buttons as a safety net (if present)
+
+    // UI buttons as a safety net (if present)
     document.getElementById('next')?.addEventListener('click', () => setTimeout(refresh, 0));
     document.getElementById('previous')?.addEventListener('click', () => setTimeout(refresh, 0));
-  
-    // d) very light polling fallback (handles rare edge builds)
+
+    // very light polling fallback
     const poll = setInterval(refreshNow, 750);
     window.addEventListener('pagehide', () => clearInterval(poll), { once: true });
   }
-  // ---- Nudge (unchanged) ----
+
+  // ---- Share nudge ----
   function scheduleNudgeAfterEngagement(flyerId, opts = {}) {
     const {
       enabled = true,
-      minSeconds = 10,        // nudge after 10s of listening…
-      minPercent = 0.25,      // …or after 25% progress, whichever comes first
-      delayMs = 500,          // small delay before animating
-      alsoOnEnded = false     // if they finish, nudge at the end too
+      minSeconds = 10,
+      minPercent = 0.25,
+      delayMs = 500,
+      alsoOnEnded = false
     } = opts;
 
     if (!enabled) return;
@@ -337,42 +329,55 @@
       }, { once: true });
     }
   }
-  
-  // --- Alias → id resolver (works for ids too) -------------------------------
+
+  // ---- Edge injection helpers ----
+  function getInjectedFlyerRef() {
+    const id    = (typeof window !== 'undefined' && window.__flyerId)   ? String(window.__flyerId)   : null;
+    const alias = (typeof window !== 'undefined' && window.__aliasSlug) ? String(window.__aliasSlug) : null;
+    return { id, alias };
+  }
+
+  // --- Alias → id resolver (fallback when edge did not inject) -------------
   function lastSeg() {
     return location.pathname.replace(/\/+$/, '').split('/').pop().toLowerCase();
   }
-  
-  async function resolveFlyerId() {
+  async function resolveFlyerIdFallback() {
     const seg = lastSeg();
-  
-    // If it's already a numeric id (3–6 digits), use it
     if (/^\d{3,6}$/.test(seg)) return seg;
-  
-    // Otherwise try to resolve an alias from /aliases.json
     try {
       const res = await fetch('/aliases.json', { cache: 'no-store' });
       if (!res.ok) return null;
-  
       const map = await res.json();
       const entry = map?.[seg];
       if (!entry) return null;
-  
-      // Support both "whh":"101" and "whh":{ "to":"101", "redirect":false }
-      return (typeof entry === 'string') ? entry : entry.to;
-    } catch {
-      return null;
-    }
+      // Supports "whh":"101" or {id:"101"} or {to:"welthungerhilfe"}
+      if (typeof entry === 'string' && /^\d{3,6}$/.test(entry)) return entry;
+      if (entry && typeof entry === 'object') {
+        if (entry.id && /^\d{3,6}$/.test(String(entry.id))) return String(entry.id);
+        if (entry.to && typeof entry.to === 'string') {
+          const e2 = map?.[entry.to.toLowerCase()];
+          if (e2 && typeof e2 === 'object' && e2.id) return String(e2.id);
+          if (e2 && typeof e2 === 'string' && /^\d{3,6}$/.test(e2)) return e2;
+        }
+      }
+    } catch {}
+    return null;
   }
 
   // ---- App init ----
   async function main(){
-    const flyerId = await resolveFlyerId();
+    // Prefer edge-injected id/alias
+    let { id: flyerId, alias: aliasSlug } = getInjectedFlyerRef();
+
+    // Fallback to client-side resolver if not injected
+    if (!flyerId) flyerId = await resolveFlyerIdFallback();
+
     if (!flyerId) {
       document.title = 'Audio Flyer not found';
       document.body.innerHTML = '<p style="padding:24px">This Audio Flyer could not be found.</p>';
       return;
     }
+
     let startIndex  = +(new URLSearchParams(location.search).get('t')||0) || 0;
     window.flyerId = flyerId;
 
@@ -385,25 +390,30 @@
     }
     const cfg = await cfgRes.json();
     window.cfg = cfg; // expose for auma wiring
-    
+
     // Mark single-track flyers so CSS can center the play button
     const nTracks = (cfg.tracks && cfg.tracks.length) || 0;
     document.documentElement.classList.toggle('single-track', nTracks <= 1);
-    
-    // Also keep the AUMA flag accurate 
-    const isAuma = cfg.type === 'auma' || cfg.type === 'auma-seq';
+
+    // AUMA flag for CSS
+    const isAuma = (cfg.type === 'auma' || cfg.type === 'auma-seq');
     document.documentElement.classList.toggle('has-auma', isAuma);
 
     document.title = cfg.title || `WOM.fm / ${flyerId}`;
-    $('#track-title').textContent = cfg.title || 'WOM.fm Audio Flyer';
+    const tt = $('#track-title');
+    if (tt) tt.textContent = cfg.title || 'WOM.fm Audio Flyer';
 
-    if (cfg.cta?.url) { const cta=$('#cta'); cta.hidden=false; cta.href=cfg.cta.url; cta.textContent=cfg.cta.label||'Learn more'; }
+    if (cfg.cta?.url) {
+      const cta=$('#cta');
+      if (cta) { cta.hidden=false; cta.href=cfg.cta.url; cta.textContent=cfg.cta.label||'Learn more'; }
+    }
 
-    // Matomo per-flyer siteId from config
-    const flyerType = (cfg.type || 'single').toLowerCase();
-    const siteId    = cfg.analytics && cfg.analytics.siteId;
-    // If you ever resolve the pretty alias in JS, pass it as aliasSlug (optional)
-    wireMatomo({ siteId, flyerId, flyerType, title: document.title, aliasSlug: window.__aliasSlug });
+    // Matomo per-flyer siteId from config + normalized type
+    const typeRaw  = (cfg.type || 'audio').toLowerCase();
+    const flyerType = (typeRaw === 'single') ? 'audio' : typeRaw;  // normalize
+    const siteId    = cfg.analytics?.siteId ?? cfg.siteId ?? null;
+
+    wireMatomo({ siteId, flyerId, flyerType, title: document.title, aliasSlug });
 
     // Branding
     const base = `/flyers/${flyerId}/`;
@@ -411,7 +421,7 @@
       const root = document.documentElement.style;
       if (cfg.branding.primary) root.setProperty('--brand',  cfg.branding.primary);
       if (cfg.branding.accent)  root.setProperty('--accent', cfg.branding.accent);
-      if (cfg.branding.logo)    $id('brand-logo') && ($id('brand-logo').src = base + cfg.branding.logo);
+      if (cfg.branding.logo && $id('brand-logo')) $id('brand-logo').src = base + cfg.branding.logo;
       if (cfg.branding.logoHeight) root.setProperty('--logo-height', cfg.branding.logoHeight + 'px');
     }
 
@@ -480,7 +490,7 @@
           await navigator.share({ title: text, text, url });
           window._paq?.push(['trackEvent', 'Share', 'Native', flyerId]);
           return;
-        } catch(e){ /* user canceled or OS error */ }
+        } catch(e){ /* canceled or OS error */ }
       }
       try {
         await navigator.clipboard?.writeText(url);
@@ -490,7 +500,6 @@
       }
     }
 
-    // enable per flyer (default on). Disable by setting "nudge": false in config
     scheduleNudgeAfterEngagement(flyerId, {
       enabled: cfg.nudge !== false,
       minSeconds: 10,
@@ -504,4 +513,4 @@
   }
 
   window.addEventListener('DOMContentLoaded', main);
-})(); 
+})();
