@@ -1,8 +1,8 @@
 {
-  "whh": "101",
-  "welthungerhilfe": { "to": "101", "redirect": true },
-  "basf": "204",
-  "M-koba": "250",
-  "avega": { "to": "1001", "redirect": false },
-  "lgkp": { "to": "1002", "redirect": false }
+  "whh": { "id": "101", "canonical": true },
+  "welthungerhilfe": { "id": "101", "canonical": true },
+  "basf": { "id": "204", "canonical": true },
+  "m-koba": { "id": "250", "canonical": true },
+  "avega": { "id": "1001", "canonical": true },
+  "lgkp": { "id": "1002", "canonical": true }
 }
