@@ -15,6 +15,20 @@
 
   // Small helper
   function t(sec){ sec=sec|0; return ((sec/60)|0)+':'+('0'+(sec%60)).slice(-2); }
+  
+  // ---- Canonical helpers ----
+  function canonicalSlug({ flyerId, aliasSlug } = {}) {
+    const pathSlug = location.pathname.replace(/^\/+|\/+$/g, "");
+    // After your CF redirect, pathSlug is already the alias; fallback to flyerId
+    return (aliasSlug && aliasSlug.trim()) || pathSlug || String(flyerId || "").trim() || "unknown";
+  }
+  function ensureCanonicalLink(href) {
+    try {
+      let link = document.querySelector('link[rel="canonical"]');
+      if (!link) { link = document.createElement("link"); link.rel = "canonical"; document.head.appendChild(link); }
+      link.href = href;
+    } catch {}
+  }
 
   // ---------- AUMA v1 helpers (one image per track, no timing) ----------
   const $id = (x) => document.getElementById(x);
@@ -63,37 +77,54 @@
   }
   
   // ---- Matomo wiring (per flyer) ----
-  function wireMatomo({ siteId, flyerId, flyerType, title }) {
-    if (!siteId) return; // per-flyer only; no siteId => no tracking
+  function wireMatomo({ siteId, flyerId, flyerType, title, aliasSlug }) {
+    if (!siteId) return;
+  
+    const slug = canonicalSlug({ flyerId, aliasSlug });
+    const canonicalUrl = `${location.origin}/${slug}`;
+  
     try {
       window._paq = window._paq || [];
       const _paq = window._paq;
-
+  
       // Optional privacy toggles:
-      // _paq.push(['disableCookies']);       // cookieless
-      // _paq.push(['setDoNotTrack', true]);  // honor DNT
-
+      // _paq.push(['disableCookies']);
+      // _paq.push(['setDoNotTrack', true]);
+  
       _paq.push(['setTrackerUrl', MATOMO_BASE + 'matomo.php']);
       _paq.push(['setSiteId', String(siteId)]);
       _paq.push(['enableLinkTracking']);
-      _paq.push(['enableHeartBeatTimer', 10]); // better time-on-page
-      _paq.push(['setCustomUrl', location.href]);
-      if (title) _paq.push(['setDocumentTitle', title]);
-
-      // Custom dimensions (only if you created them)
-      if (MATOMO_DIM.flyerId)   _paq.push(['setCustomDimension', MATOMO_DIM.flyerId, String(flyerId)]);
-      if (MATOMO_DIM.flyerType) _paq.push(['setCustomDimension', MATOMO_DIM.flyerType, String(flyerType||'')]);
-
+      _paq.push(['enableHeartBeatTimer', 10]);
+  
+      // Canonical hygiene
+      _paq.push(['setCustomUrl', canonicalUrl]);
+      _paq.push(['setReferrerUrl', document.referrer || '']);
+      _paq.push(['setDocumentTitle', title || `WOM.fm / ${slug}`]);
+  
+      // Custom dimensions (keep your indexes)
+      if (MATOMO_DIM.flyerId)   _paq.push(['setCustomDimension', MATOMO_DIM.flyerId,   String(flyerId)]);
+      if (MATOMO_DIM.flyerType) _paq.push(['setCustomDimension', MATOMO_DIM.flyerType, String(flyerType || '')]);
+  
       // Pageview
       _paq.push(['trackPageView']);
-
-      // Load tracker JS
-      const g = document.createElement('script');
-      g.async = true; g.src = MATOMO_BASE + 'matomo.js';
-      document.head.appendChild(g);
+  
+      // Load tracker once
+      if (!document.getElementById('matomo-js')) {
+        const g = document.createElement('script');
+        g.id = 'matomo-js';
+        g.async = true;
+        g.src = MATOMO_BASE + 'matomo.js';
+        document.head.appendChild(g);
+      }
+  
+      // Also inject a canonical link for SEO/consistency
+      ensureCanonicalLink(canonicalUrl);
+  
+      // Soft “open” marker
+      _paq.push(['trackEvent','Flyer','Open', slug]);
     } catch (e) {}
   }
-
+  
   function mtmTrack(cat, act, name, val){
     if (!window._paq) return;
     window._paq.push(['trackEvent', cat, act, name, val]);
