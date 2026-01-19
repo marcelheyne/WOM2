@@ -504,4 +504,4 @@
   }
 
   window.addEventListener('DOMContentLoaded', main);
-})();
+})(); 
