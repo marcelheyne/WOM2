@@ -3,11 +3,12 @@ export async function onRequest({ request, next }) {
   const url = new URL(request.url);
   const p = url.pathname.replace(/\/+$/, ""); // "", "/123", "/assets/.."
 
-  // 1) Let root and static paths pass through to Pages
+  // 1) Root -> HubSpot
   if (p === "") {
     return Response.redirect("https://www.wom.fm", 301);
   }
 
+  // 2) Static / reserved passthrough
   const RESERVED = [
     "/slot", "/slot.html",
     "/assets", "/flyers", "/.well-known",
@@ -18,65 +19,129 @@ export async function onRequest({ request, next }) {
     return next();
   }
 
-  // 2) Single-segment flyer code (/123, /1001, /whh, /welthungerhilfe)
-  //    Accept 3–6 digits (e.g., 3-digit "Pro", 4-digit "Lite") OR 3–32 char slug
+  // Small helpers
+  const isId = (s) => /^\d{3,6}$/.test(String(s));
+  const isSlug = (s) => /^[a-z0-9-]{3,32}$/i.test(String(s));
+  const serveSlot = async () => {
+    const slotResp = await fetch(new URL("/slot", url).toString(), { headers: request.headers });
+    const headers = new Headers(slotResp.headers);
+    headers.set("Cache-Control", "no-store, must-revalidate");
+    headers.set("X-Fn", "flyer-slot");
+    return new Response(slotResp.body, { status: slotResp.status, headers });
+  };
+
+  // 3) Load alias map (works with both schemas)
+  let aliases = {};
+  try {
+    const mapRes = await fetch(new URL("/aliases.json", url).toString(), {
+      headers: { accept: "application/json" },
+      cf: { cacheTtl: 0 }
+    });
+    if (mapRes.ok) aliases = await mapRes.json();
+  } catch (_) {}
+
+  // resolve an alias entry to { id, slug, canonical, redirect }
+  function resolveAliasEntry(key) {
+    const raw = aliases?.[key];
+    if (!raw) return null;
+
+    // "whh": "welthungerhilfe"  (string)
+    if (typeof raw === "string") {
+      const val = String(raw);
+      return {
+        id: isId(val) ? val : null,
+        slug: isSlug(val) ? val : null,
+        canonical: false,
+        redirect: false
+      };
+    }
+
+    // object forms:
+    // { to: "welthungerhilfe", redirect: true }
+    // { id: "101", canonical: true }
+    if (typeof raw === "object") {
+      const to = raw.to != null ? String(raw.to) : null;
+      const id = raw.id != null ? String(raw.id) : (isId(to) ? to : null);
+      const slug = isSlug(to) ? to : null;
+      return {
+        id: isId(id) ? id : null,
+        slug,
+        canonical: !!raw.canonical,
+        redirect: !!raw.redirect
+      };
+    }
+    return null;
+  }
+
+  // find a canonical alias slug for a given id
+  function canonicalForId(id) {
+    id = String(id);
+    for (const [slug, obj] of Object.entries(aliases)) {
+      if (obj && typeof obj === "object" && String(obj.id || "") === id && obj.canonical) {
+        return slug;
+      }
+    }
+    return null;
+  }
+
+  // 4) Single-segment flyer code (/123, /1001, /whh, /welthungerhilfe)
   const m = p.match(/^\/(\d{3,6}|[a-z0-9-]{3,32})$/i);
   if (m) {
     const code = m[1];
     const lower = code.toLowerCase();
 
-    // Helper to serve slot content while keeping the current URL
-    async function serveSlot() {
-      const slotResp = await fetch(new URL("/slot", url).toString(), { headers: request.headers });
-      const headers = new Headers(slotResp.headers);
-      headers.set("Cache-Control", "no-store, must-revalidate");
-      headers.set("X-Fn", "flyer-slot");
-      return new Response(slotResp.body, { status: slotResp.status, headers });
-    }
-
-    // Try direct folder first (exact code)
-    {
-      const cfgUrl = new URL(`/flyers/${code}/config.json`, url).toString();
-      const probe = await fetch(cfgUrl, { method: "GET", headers: { accept: "application/json" }, cf: { cacheTtl: 0 } });
-      if (probe.ok) {
-        return serveSlot();
+    // 4a) Numeric path: prefer canonical alias if present
+    if (isId(lower)) {
+      const canon = canonicalForId(lower);
+      if (canon) {
+        // Force the pretty URL publicly
+        return Response.redirect(new URL(`/${canon}`, url).toString(), 301);
       }
+      // No canonical alias → verify folder exists, then serve numeric slot
+      const cfgUrl = new URL(`/flyers/${lower}/config.json`, url).toString();
+      const ok = await fetch(cfgUrl, { headers: { accept: "application/json" }, cf: { cacheTtl: 0 } })
+        .then(r => r.ok).catch(() => false);
+      if (ok) return serveSlot();
+      // numeric but missing → fall through to HubSpot
+      return Response.redirect("https://www.wom.fm", 301);
     }
 
-    // If not found, try alias map
-    try {
-      const mapUrl = new URL("/aliases.json", url).toString();
-      const mapRes = await fetch(mapUrl, { headers: { accept: "application/json" }, cf: { cacheTtl: 0 } });
-      if (mapRes.ok) {
-        const raw = await mapRes.json();
-        const entry = raw?.[lower];
-        if (entry) {
-          const target = typeof entry === "string" ? entry : entry.to?.toString();
-          const redirect = typeof entry === "object" && entry.redirect === true;
-
-          if (target && /^[a-z0-9-]{3,32}$/i.test(target)) {
-            // verify target flyer exists
-            const tgtCfg = new URL(`/flyers/${target}/config.json`, url).toString();
-            const ok = await fetch(tgtCfg, { headers: { accept: "application/json" }, cf: { cacheTtl: 0 } }).then(r => r.ok).catch(() => false);
-
-            if (ok) {
-              // Two modes: redirect to canonical (/101) or keep alias URL and just render slot
-              if (redirect) {
-                return Response.redirect(new URL(`/${target}`, url).toString(), 301);
-              }
-              // Keep alias URL visible but render the slot shell
-              return serveSlot();
-            }
+    // 4b) Alias path
+    if (isSlug(lower)) {
+      const entry = resolveAliasEntry(lower);
+      if (entry) {
+        // if a canonical alias exists for this id and this alias is not it, normalize
+        if (entry.id) {
+          const canon = canonicalForId(entry.id);
+          if (canon && lower !== canon) {
+            return Response.redirect(new URL(`/${canon}`, url).toString(), 301);
           }
+          // verify flyer exists by id
+          const cfgUrl = new URL(`/flyers/${entry.id}/config.json`, url).toString();
+          const ok = await fetch(cfgUrl, { headers: { accept: "application/json" }, cf: { cacheTtl: 0 } })
+            .then(r => r.ok).catch(() => false);
+          if (ok) return serveSlot();
+        }
+
+        // legacy alias that points to another slug: "{ to: 'welthungerhilfe', redirect:true }"
+        if (entry.slug && entry.redirect) {
+          return Response.redirect(new URL(`/${entry.slug}`, url).toString(), 301);
+        }
+        if (entry.slug) {
+          // keep alias URL; verify a folder with that slug exists (rare setup)
+          const cfgUrl = new URL(`/flyers/${entry.slug}/config.json`, url).toString();
+          const ok = await fetch(cfgUrl, { headers: { accept: "application/json" }, cf: { cacheTtl: 0 } })
+            .then(r => r.ok).catch(() => false);
+          if (ok) return serveSlot();
         }
       }
-    } catch (_) { /* ignore alias errors, fall through */ }
 
-    // Missing flyer/alias -> HubSpot
-    return Response.redirect("https://www.wom.fm", 301);
+      // unknown alias → HubSpot
+      return Response.redirect("https://www.wom.fm", 301);
+    }
   }
 
-  // 3) Anything else: if Pages returns 404, send to HubSpot
+  // 5) Anything else: if Pages returns 404, send to HubSpot
   const res = await next();
   if (res.status === 404) {
     return Response.redirect("https://www.wom.fm", 301);
