@@ -2,7 +2,7 @@
   "whh": "101",
   "welthungerhilfe": { "to": "101", "redirect": true },
   "basf": "204",
+  "M-koba": "250",
   "avega": { "to": "1001", "redirect": false },
-  "lgkp": { "to": "1002", "redirect": false },
-  "m-koba": { "to": "250", "redirect": false }
+  "lgkp": { "to": "1002", "redirect": false }
 }
