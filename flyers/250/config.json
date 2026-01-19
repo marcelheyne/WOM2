@@ -1,6 +1,6 @@
 {
   "type": "audio",
-  "title": "M-Koba",
+  "title": "M-Koba ndio habari ya vikundi",
   "analytics": { "siteId": 6 },
   "branding": {
     "logo": "images/vodacom.png",
@@ -9,7 +9,7 @@
     "logoHeight": 70
   },
   "tracks": [
-  { "title": "Ujuzi wa Pesa za Simu", "src": "audio/mkoba.mp3" }
+  { "title": "M-Koba ndio habari ya vikundi", "src": "audio/mkoba.mp3" }
   
   
   
