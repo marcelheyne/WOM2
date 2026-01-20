@@ -3,7 +3,16 @@ export async function onRequest({ request, next }) {
   const url = new URL(request.url);
   const p = url.pathname.replace(/\/+$/, ""); // "", "/123", "/alias", "/assets/.."
 
-  // 1) Root -> HubSpot
+  // --- staging detection + helper to inject robots header ---
+  const isStage = /^stage\.wom\.fm$/i.test(url.hostname);
+  function withStageRobots(r) {
+    if (!isStage) return r;
+    const headers = new Headers(r.headers);
+    headers.set("X-Robots-Tag", "noindex, nofollow");
+    return new Response(r.body, { status: r.status, headers });
+  }
+
+  // 1) Root -> HubSpot (leave redirects untouched)
   if (p === "") {
     return Response.redirect("https://www.wom.fm", 301);
   }
@@ -16,7 +25,8 @@ export async function onRequest({ request, next }) {
     "/aliases.json"
   ];
   if (RESERVED.some(r => p === r || p.startsWith(r + "/"))) {
-    return next();
+    const pass = await next();
+    return withStageRobots(pass);
   }
 
   // ---------- Helpers ----------
@@ -45,7 +55,7 @@ export async function onRequest({ request, next }) {
 
     const ct = slotResp.headers.get("content-type") || "";
     if (!ct.includes("text/html")) {
-      return slotResp;
+      return withStageRobots(slotResp);
     }
 
     let html = await slotResp.text();
@@ -57,6 +67,7 @@ export async function onRequest({ request, next }) {
     const headers = new Headers(slotResp.headers);
     headers.set("Cache-Control", "no-store, must-revalidate");
     headers.set("X-Fn", "flyer-slot");
+    if (isStage) headers.set("X-Robots-Tag", "noindex, nofollow");
     return new Response(html, { status: slotResp.status, headers });
   }
 
@@ -168,5 +179,5 @@ export async function onRequest({ request, next }) {
   if (res.status === 404) {
     return Response.redirect("https://www.wom.fm", 301);
   }
-  return res;
+  return withStageRobots(res);
 }
