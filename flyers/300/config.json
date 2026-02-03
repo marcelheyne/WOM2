@@ -6,7 +6,7 @@
     "logo": "images/basf.png",
     "primary": "#65ac1e",
     "accent": "#D9EBE2",
-    "logoHeight": 52
+    "logoHeight": 70
   },
   "tracks": [
     { "title": "This is our suit", "src": "audio/1.mp3", "image": { "src": "images/1.jpg", "alt": "BASF PPE" }}
