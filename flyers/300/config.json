@@ -1,0 +1,14 @@
+{
+  "type": "auma",
+  "title": "Sustainable Aquaculture",
+  "analytics": { "siteId": 1 },
+  "branding": {
+    "logo": "images/basf.png",
+    "primary": "#65ac1e",
+    "accent": "#D9EBE2",
+    "logoHeight": 52
+  },
+  "tracks": [
+    { "title": "Slide 1", "src": "audio/1.mp3", "image": { "src": "images/1.jpeg", "alt": "Sustainable Aquaculture 1" }}
+  ]
+}
