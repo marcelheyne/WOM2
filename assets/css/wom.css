@@ -266,7 +266,8 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
 /* smaller logo ONLY when AUMA is visible */
 .has-auma #brand-logo img,
 .has-auma img#brand-logo {
-  max-height: clamp(28px, 7svh, 36px);
+  max-height: clamp(32px, 9svh, 64px);
+  max-width: min(60vw, 220px); /* prevents overrun on narrow phones */
   height: auto;
 }
 
