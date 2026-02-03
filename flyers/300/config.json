@@ -9,6 +9,6 @@
     "logoHeight": 52
   },
   "tracks": [
-    { "title": "Slide 1", "src": "audio/1.mp3", "image": { "src": "images/1.jpeg", "alt": "Sustainable Aquaculture 1" }}
+    { "title": "This is our suit", "src": "audio/1.mp3", "image": { "src": "images/1.jpg", "alt": "BASF PPE" }}
   ]
 }
