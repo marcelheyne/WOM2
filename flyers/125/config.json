@@ -6,7 +6,7 @@
     "logo": "images/wom.png",
     "primary": "#ff8a00",
     "accent": "#ffc422",
-    "logoHeight": 52
+    "logoHeight": 40
   },
   "tracks": [
     { "title": "Slide 1", "src": "audio/1.mp3", "image": { "src": "images/1.jpg", "alt": "Votre système solaire est votre partenaire" }},
