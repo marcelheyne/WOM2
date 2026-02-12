@@ -13,6 +13,40 @@
 
   <!-- Your flyer app logic (fetches config, builds playlist, Matomo, share, etc.) -->
   <script src="/assets/js/app.js" defer data-cfasync="false"></script>
+  
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const cfg = window.FLYER_CONFIG || {};
+  
+    // 1) Branding - set logo if provided, otherwise collapse header
+    const logoUrl = cfg.branding && cfg.branding.logo;
+    const logoEl  = document.getElementById('brand-logo');
+    if (logoUrl && logoEl) {
+      logoEl.src = logoUrl;
+      logoEl.alt = (cfg.branding && cfg.branding.alt) || 'Brand';
+    } else {
+      // no logo defined in config → remove the header to save space
+      const header = document.querySelector('.brand');
+      if (header) header.remove();
+      document.documentElement.classList.add('no-brand');
+    }
+  
+    // 2) AUMA image - unhide and load when provided
+    const aumaCfg = cfg.auma || {};
+    if (aumaCfg.image) {
+      const aumaBox = document.getElementById('auma');
+      const aumaImg = document.getElementById('auma-image');
+      if (aumaBox && aumaImg) {
+        aumaImg.addEventListener('load', () => aumaImg.classList.add('ready'));
+        aumaBox.hidden = false;
+        aumaImg.src = aumaCfg.image;
+      }
+    }
+  
+    // (Optional) If you want to flag Auma mode for CSS:
+    document.documentElement.classList.add('has-auma');
+  });
+  </script>
 </head>
 <body>
 
