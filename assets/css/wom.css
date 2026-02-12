@@ -413,6 +413,30 @@ html.compact .controls{
   margin: 8px 0 0;
 }
 
+/* short phones */
+@media (max-height:680px){
+  .no-brand{
+    --play-size: clamp(136px, 28svw, 176px);
+    --auma-box:  min(88vw, 41svh);
+  }
+}
+
+/* medium phones */
+@media (min-height:681px) and (max-height:800px){
+  .no-brand{
+    --play-size: clamp(148px, 30svw, 188px);
+    --auma-box:  min(88vw, 42svh);
+  }
+}
+
+/* tall phones */
+@media (min-height:801px){
+  .no-brand{
+    --play-size: clamp(160px, 32svw, 200px);
+    --auma-box:  min(88vw, 44svh);
+  }
+}
+
 /* Audio-only keeps a generous play size; AUMA uses the same var so it won't get overridden */
 html.compact:not(.has-auma) #playpause{
   width: var(--play-size, 140px);
