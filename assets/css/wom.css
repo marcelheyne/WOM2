@@ -272,8 +272,6 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
     max-width: min(60vw, 220px);
     height: auto;
   }
-  /* remove the brand block completely when no logo */
-  .no-brand .has-auma .brand{ display:none; }
 
   /* Thinner progress + less vertical margin */
   .has-auma .amplitude-song-played-progress{
