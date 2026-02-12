@@ -274,7 +274,7 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
   }
   /* no-logo state: bigger Play, slightly smaller image box */
   .no-brand{
-    --play-size: clamp(176px, 36svw, 220px);
+    --play-size: clamp(148px, 30svw, 196px);
     --auma-box:  min(88vw, 44svh);
   }
   
