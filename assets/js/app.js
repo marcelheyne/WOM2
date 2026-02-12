@@ -417,14 +417,27 @@
 
     // Branding
     const base = `/flyers/${flyerId}/`;
+const header = document.querySelector('.brand');
+    const logoEl = document.getElementById('brand-logo');
+    
     const toAbs = p => !p
       ? ''
-      : (/^https?:\/\//.test(p) || p.startsWith('/'))
-        ? p            // absolute URL or root path: use as-is
-        : (base + p);  // relative to flyer folder
+      : (/^https?:\/\//.test(p) || p.startsWith('/')) ? p : (base + p);
     
-    if (cfg.branding.logo && $id('brand-logo')) {
-      $id('brand-logo').src = toAbs(cfg.branding.logo);
+    const logoUrl = cfg.branding && cfg.branding.logo;
+    
+    if (logoUrl && logoEl) {
+      logoEl.onload  = () => { document.documentElement.classList.remove('no-brand'); };
+      logoEl.onerror = () => {
+        document.documentElement.classList.add('no-brand');
+        if (header) header.style.display = 'none';
+      };
+      logoEl.src = toAbs(logoUrl);
+      logoEl.alt = (cfg.branding && cfg.branding.alt) || '';
+    } else {
+      // no logo provided in config → collapse header
+      document.documentElement.classList.add('no-brand');
+      if (header) header.style.display = 'none';
     }
     if (cfg.branding) {
       const root = document.documentElement.style;

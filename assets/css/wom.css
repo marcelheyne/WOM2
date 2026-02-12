@@ -47,6 +47,13 @@ body{
   object-fit: contain;
 }
 
+/* Collapse the brand header when we’re in no-logo mode */
+.no-brand .flyer .brand { display: none; }
+
+/* Safety: hide an image that has no src at all */
+.flyer #brand-logo[src=""],
+.flyer #brand-logo:not([src]){ display: none; }
+
 /* ============= Timeline ============= */
 .timeline{
   display:flex;
