@@ -282,7 +282,7 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
   }
   
   /* Less top padding when no logo is present */
-  .no-brand .flyer{ padding-top: 8px; }          /* was 24px */
+  .no-brand .flyer{ padding-top: 16px; }          /* was 24px */
   
   /* Pull the timeline up a bit */
   .has-auma .amplitude-song-played-progress{
