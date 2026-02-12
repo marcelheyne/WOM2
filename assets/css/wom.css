@@ -4,24 +4,25 @@
   --accent: #ffc422;
   --text: #757575;
   --bg: #fff;
-  --wa: #25d366;     /* WhatsApp brand green */
-  --logo-height: 48px;
-  --nudge-count: 5;   /* number of pulses */
-  --nudge-dur: 1.1s;  /* pulse length */
+  --wa: #25d366;          /* WhatsApp brand green */
 
-  /* new sizes */
-  --logo-height: 42px;   /* a bit smaller than before */
-	--main-size: 184px;    /* big round play/pause */
-	--side-size: 64px;     /* larger prev/next tap target */
-	--side-icon: 56px;     /* larger prev/next glyph */
-	--share-size: 72px;    /* larger share button */
-  --share-pill: 68px;          /* button diameter */
-  --share-icon: 32px;          /* inner glyph size */
+  --logo-height: 42px;    /* header logo height */
+
+  /* core sizes (desktop/tablet defaults) */
+  --main-size: 184px;     /* big round play/pause */
+  --side-size: 64px;      /* prev/next tap target */
+  --side-icon: 56px;      /* prev/next glyph */
+  --share-size: 72px;     /* text+icon share pills */
+  --share-pill: 68px;     /* icon-only share pill diameter */
+  --share-icon: 32px;     /* icon-only glyph size */
+
+  --nudge-count: 5;       /* number of pulses */
+  --nudge-dur: 1.1s;      /* pulse length */
 }
 
 /* ============= Layout ============= */
-*{box-sizing:border-box}
-html,body{height:100%}
+*{ box-sizing:border-box }
+html,body{ height:100% }
 body{
   margin:0;
   background:var(--bg);
@@ -107,7 +108,7 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
 .amplitude-paused  .icon--play  { display:block }
 .amplitude-playing .icon--pause { display:block }
 
-/* small phones: taper the main button a bit */
+/* small phones (very narrow): taper the main button a bit */
 @media (max-width:360px){
   :root{ --main-size: 180px; --side-size: 44px; --side-icon: 36px; }
 }
@@ -134,7 +135,6 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
 }
 .btn-wa svg{ width:22px; height:22px }
 
-/* reuse your existing share button but make it text+icon and a bit larger */
 .share-btn{
   display:flex; align-items:center; gap:8px;
   color: var(--brand);
@@ -168,12 +168,11 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
   color: var(--brand);
 }
 
-/* show two subtle “ring” pulses + a tiny scale pop */
+/* share “nudge” animation */
 .pill--wa.nudge{
   animation: nudge-pop var(--nudge-dur) ease-in-out 0s var(--nudge-count);
   box-shadow: 0 8px 18px rgba(37,211,102,.28);
 }
-
 .pill--wa.nudge::after{
   content:'';
   position:absolute; inset:-8px;
@@ -181,23 +180,17 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
   opacity:0; pointer-events:none;
   animation: nudge-ring var(--nudge-dur) ease-out 0s var(--nudge-count);
 }
-
 @keyframes nudge-pop{
   0%,100% { transform: scale(1); }
   50%     { transform: scale(1.07); }
 }
-
 @keyframes nudge-ring{
   0%   { transform: scale(.85); opacity:.50; }
   100% { transform: scale(1.25); opacity:0; }
 }
-
-/* accessibility: respect reduced motion */
 @media (prefers-reduced-motion: reduce){
   .pill--wa.nudge,
-  .pill--wa.nudge::after{
-    animation: none !important;
-  }
+  .pill--wa.nudge::after{ animation: none !important; }
 }
 
 /* bigger on tablets */
@@ -205,7 +198,7 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
   :root{ --share-pill: 76px; --share-icon: 36px; }
 }
 
-/* small screens can stack if needed */
+/* stack on very small screens if needed */
 @media (max-width:360px){
   .share-row{ flex-direction:column; gap:10px }
 }
@@ -221,11 +214,10 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
   .timeline{ gap:20px }
 }
 
-/* AUMA container */
+/* ============= AUMA container ============= */
 
 /* hide via either [hidden] or .hidden */
-#auma[hidden],
-#auma.hidden { display: none; }
+#auma[hidden], #auma.hidden { display: none; }
 
 /* square container (responsive, cropped) */
 #auma{
@@ -238,7 +230,7 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
   overflow: hidden;
   background: #f5f5f5;
   box-shadow: 0 2px 12px rgba(0,0,0,.06);
-  padding: 0;                /* ensure no stray padding affects sizing */
+  padding: 0; /* ensure no stray padding affects sizing */
 }
 
 /* the image: always fill the square and crop */
@@ -250,7 +242,7 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
   height: 100% !important;
   object-fit: cover;
   object-position: center;
-  opacity: 0;                            /* fade-in on load */
+  opacity: 0;                 /* fade-in on load */
   transition: opacity .35s ease;
 }
 
@@ -259,51 +251,43 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
 #auma #auma-image.ready,
 #auma #auma-img.ready{ opacity: 1; }
 
-
-/* Compact layout ONLY when an AUMA image is present */
+/* ============= Phone layout tweaks (only when AUMA image is present) ============= */
 @media (max-width: 480px){
-  
-  /* No logo: make Play larger and tighten spacing */
-  .no-brand .has-auma .ctrl--main{
-    width: clamp(104px, 24svw, 132px);   /* was 88–110px */
-    height: clamp(104px, 24svw, 132px);
-    margin-inline: auto;
-  }
-  
-  .no-brand .has-auma .amplitude-song-played-progress{
-    margin: 2px 0 6px;                   /* slightly tighter */
-  }
-  
-  /* shrink the image box a touch to compensate the larger Play */
-  .no-brand .has-auma #auma{
-    --box: min(88vw, 44svh);             /* was 46–50svh */
-    width: var(--box);
-    height: var(--box);
-    margin: 8px auto 8px;
-  }
-  
-  /* if you render the brand header element at all, hide it in no-brand */
-  .no-brand .has-auma .brand{ display:none; }
 
-  /* Header logo (keeps presence without pushing layout down) */
+  /* mobile layout variables */
+  :root{
+    --play-size: clamp(88px, 20svw, 110px);  /* default play size on phones */
+    --auma-box:  min(88vw, 46svh);           /* image box height on phones */
+  }
+  /* no-logo state: bigger Play, slightly smaller image box */
+  .no-brand{
+    --play-size: clamp(104px, 24svw, 132px);
+    --auma-box:  min(88vw, 44svh);
+  }
+
+  /* Header logo (presence without pushing layout down) */
   .has-auma #brand-logo img,
   .has-auma img#brand-logo{
     max-height: clamp(32px, 9svh, 60px);
     max-width: min(60vw, 220px);
     height: auto;
   }
+  /* remove the brand block completely when no logo */
+  .no-brand .has-auma .brand{ display:none; }
 
   /* Thinner progress + less vertical margin */
   .has-auma .amplitude-song-played-progress{
     height: 6px;
-    margin: 4px 0 8px;    /* was 6px 0 10px */
+    margin: 4px 0 8px;      /* was 6px 0 10px */
     border-radius: 6px;
   }
 
-  /* Slightly smaller play button + tighter spacing */
-  .has-auma .ctrl--main{
-    width: clamp(88px, 20svw, 110px);   /* was 96px, 22svw, 120px */
-    height: clamp(88px, 20svw, 110px);
+  /* Main Play size (covers #playpause/#play-pause variations) */
+  .has-auma .ctrl--main,
+  .has-auma #playpause,
+  .has-auma #play-pause{
+    width: var(--play-size);
+    height: var(--play-size);
     margin-inline: auto;
   }
   .has-auma #prev,
@@ -311,22 +295,19 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
 
   /* AUMA square sized to keep share row in view */
   .has-auma #auma{
-    --box: min(88vw, 46svh);            /* was 50svh */
-    width: var(--box);
-    height: var(--box);
-    aspect-ratio: auto;
-    margin: 8px auto 8px;               /* was 12px auto 8px */
+    width: var(--auma-box);
+    height: var(--auma-box);
+    aspect-ratio: auto;     /* explicit h/w keeps it square */
+    margin: 8px auto 8px;   /* was 12px auto 8px */
   }
 
   /* Share row a bit tighter */
   .has-auma .share-row{
-    margin-top: 8px;                    /* was 10px */
-    gap: 12px;                          /* was 14px */
+    margin-top: 8px;        /* was 10px */
+    gap: 12px;              /* was 14px */
   }
-  
-  .no-brand .has-auma .brand{ display:none; }
 
-  /* Hide track title on phones */
+  /* Hide track title on phones for AUMA */
   .has-auma #track-title{ display: none !important; }
 
   /* Controls: stable 3-column grid (prev | play | next) */
@@ -366,6 +347,7 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
   .single-track .amplitude-next{ display: none !important; }
 
   .single-track #play-pause,
+  .single-track #playpause,
   .single-track .ctrl--main{
     margin-left: auto;
     margin-right: auto;
@@ -373,7 +355,7 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
 
   .has-auma.single-track .controls{
     display: grid !important;
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* play only */
     justify-items: center;
     align-items: center;
     gap: 0;
@@ -391,33 +373,24 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
 /* Make viewport calc more reliable on mobile browsers */
 html, body { min-height: 100svh; }
 
-
 /* ---------- Compact tweaks ---------- */
-html.compact #brand-logo img {
-  max-height: 28px;           /* smaller top logo */
-}
+html.compact #brand-logo img { max-height: 28px; }   /* smaller top logo */
+html.compact .progress-wrap { margin-top: 8px; }
+html.compact .times { font-size: 12px; }             /* smaller time labels */
 
-html.compact .progress-wrap {
-  margin-top: 8px;
-}
-
-html.compact .times {
-  font-size: 12px;            /* smaller time labels */
-}
-
-html.compact .controls {
+html.compact .controls{
   gap: 12px;
   margin: 8px 0 0;
 }
 
-/* Audio-only keeps a generous play size; AUMA gets a smaller one */
-html.compact:not(.has-auma) #playpause {
-  width: 140px;
-  height: 140px;
+/* Audio-only keeps a generous play size; AUMA uses the same var so it won't get overridden */
+html.compact:not(.has-auma) #playpause{
+  width: var(--play-size, 140px);
+  height: var(--play-size, 140px);
 }
-html.compact.has-auma #playpause {
-  width: 120px;
-  height: 120px;
+html.compact.has-auma #playpause{
+  width: var(--play-size, 120px);
+  height: var(--play-size, 120px);
 }
 
 /* Single audio flyer: hide side controls and hard-center the play button */
@@ -429,7 +402,7 @@ html.compact.has-auma #playpause {
   display: none !important;
 }
 
-.single-track .controls {
+.single-track .controls{
   display: grid !important;
   grid-template-columns: 1fr;   /* only the center cell */
   justify-items: center;        /* center the play button */
@@ -438,23 +411,19 @@ html.compact.has-auma #playpause {
 
 .single-track #play-pause,
 .single-track #playpause,       /* safety: if the id ever comes without a hyphen */
-.single-track .ctrl--main {
+.single-track .ctrl--main{
   margin-inline: auto;          /* belt & suspenders centering */
 }
 
 /* Nudge prev/next down a notch on very small screens */
 html.compact #prev,
-html.compact #next {
-  transform: scale(0.9);
-}
+html.compact #next{ transform: scale(0.9); }
 
 /* AUMA image: keep room for the sticky share row */
-html.compact #auma {
-  margin-top: 8px;
-}
+html.compact #auma{ margin-top: 8px; }
 html.compact #auma #auma-image,
 html.compact #auma #auma-img,
-html.compact #auma > img {
+html.compact #auma > img{
   /* Square or rectangular, but don’t let it push share off screen */
   max-height: min(48svh, 420px);
   border-radius: 12px;
@@ -462,16 +431,14 @@ html.compact #auma > img {
 
 /* Tighten general vertical rhythm a bit */
 html.compact section,
-html.compact .auma-card { margin-block: 8px; }
+html.compact .auma-card{ margin-block: 8px; }
 
 /* Optional: hide track title when space is tight and AUMA is present */
-html.compact.has-auma #track-title { display: none; }
+html.compact.has-auma #track-title{ display: none; }
 
 /* Share buttons (generic — works for either <button> or <a>) */
 html.compact #share button,
-html.compact #share a {
-  /* If your round share buttons have fixed px sizes,
-     this gives them a compact size without new classes */
+html.compact #share a{
   width: clamp(52px, 9.5vmin, 64px);
   height: clamp(52px, 9.5vmin, 64px);
   line-height: clamp(52px, 9.5vmin, 64px);
