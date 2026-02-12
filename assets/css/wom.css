@@ -59,7 +59,7 @@ body{
 html.no-brand{ --main-size: 220px; }          /* default was 184px */
 
 /* Trim top whitespace when there is no logo */
-html.no-brand .flyer{ padding-top: 8px; }     /* was 24px */
+html.no-brand .flyer{ padding-top: 16px; }     /* was 24px */
 
 /* Pull timeline up a bit when there is no logo */
 html.no-brand .timeline{ margin: 4px 0 12px; }/* base is 6px 0 28px */
