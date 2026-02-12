@@ -9,7 +9,7 @@
   --logo-height: 42px;    /* header logo height */
 
   /* core sizes (desktop/tablet defaults) */
-  --main-size: 184px;     /* big round play/pause */
+  --main-size: min(368px, 44vmin);     /* big round play/pause */
   --side-size: 64px;      /* prev/next tap target */
   --side-icon: 56px;      /* prev/next glyph */
   --share-size: 72px;     /* text+icon share pills */
