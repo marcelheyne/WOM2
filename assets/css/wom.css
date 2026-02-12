@@ -236,7 +236,6 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
   border-radius: 10px;
   overflow: hidden;
   background: #f5f5f5;
-  box-shadow: 0 2px 12px rgba(0,0,0,.06);
   padding: 0; /* ensure no stray padding affects sizing */
 }
 
@@ -270,6 +269,37 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
   .no-brand{
     --play-size: clamp(104px, 24svw, 132px);
     --auma-box:  min(88vw, 44svh);
+  }
+  
+  /* Less top padding when no logo is present */
+  .no-brand .flyer{ padding-top: 8px; }          /* was 24px */
+  
+  /* Pull the timeline up a bit */
+  .has-auma .amplitude-song-played-progress{
+    margin: 2px 0 8px;                           /* was 4–10px */
+  }
+  
+  /* Controls closer to the image */
+  .has-auma .controls{
+    gap: 12px;
+    margin: 4px 0 8px;                           /* was 10px 0 40px (base) */
+  }
+  
+  /* Bigger Play in no-logo state */
+  .no-brand .has-auma .ctrl--main,
+  .no-brand .has-auma #playpause,
+  .no-brand .has-auma #play-pause{
+    width: clamp(124px, 26svw, 156px);
+    height: clamp(124px, 26svw, 156px);
+    margin-inline: auto;
+  }
+  
+  /* Shrink the image box slightly to keep WhatsApp/Share visible */
+  .no-brand .has-auma #auma{
+    --auma-box: min(88vw, 42svh);                /* was ~46–44svh */
+    width: var(--auma-box);
+    height: var(--auma-box);
+    margin: 8px auto 8px;
   }
 
   /* Header logo (presence without pushing layout down) */
