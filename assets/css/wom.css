@@ -269,12 +269,12 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
 
   /* mobile layout variables */
   :root{
-    --play-size: clamp(176px, 36svw, 220px);  /* default play size on phones */
+    --play-size: clamp(88px, 20svw, 110px);  /* default play size on phones */
     --auma-box:  min(88vw, 46svh);           /* image box height on phones */
   }
   /* no-logo state: bigger Play, slightly smaller image box */
   .no-brand{
-    --play-size: clamp(104px, 24svw, 132px);
+    --play-size: clamp(176px, 36svw, 220px);
     --auma-box:  min(88vw, 44svh);
   }
   
