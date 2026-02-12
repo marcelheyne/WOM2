@@ -262,6 +262,28 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
 
 /* Compact layout ONLY when an AUMA image is present */
 @media (max-width: 480px){
+  
+  /* No logo: make Play larger and tighten spacing */
+  .no-brand .has-auma .ctrl--main{
+    width: clamp(104px, 24svw, 132px);   /* was 88–110px */
+    height: clamp(104px, 24svw, 132px);
+    margin-inline: auto;
+  }
+  
+  .no-brand .has-auma .amplitude-song-played-progress{
+    margin: 2px 0 6px;                   /* slightly tighter */
+  }
+  
+  /* shrink the image box a touch to compensate the larger Play */
+  .no-brand .has-auma #auma{
+    --box: min(88vw, 44svh);             /* was 46–50svh */
+    width: var(--box);
+    height: var(--box);
+    margin: 8px auto 8px;
+  }
+  
+  /* if you render the brand header element at all, hide it in no-brand */
+  .no-brand .has-auma .brand{ display:none; }
 
   /* Header logo (keeps presence without pushing layout down) */
   .has-auma #brand-logo img,
