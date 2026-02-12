@@ -1,0 +1,18 @@
+{
+  "type": "auma",
+  "title": "Maintenance et entretien des panneaux solaires",
+  "analytics": { "siteId": 1 },
+  "branding": {
+    "logo": "images/songo.svg",
+    "primary": "#ff8a00",
+    "accent": "#ffc422",
+    "logoHeight": 52
+  },
+  "tracks": [
+    { "title": "Slide 1", "src": "audio/1.mp3", "image": { "src": "images/1.jpg", "alt": "Votre système solaire est votre partenaire" }},
+    { "title": "Slide 2", "src": "audio/2.mp3", "image": { "src": "images/2.jpg", "alt": "Vérification quotidienne : trois gestes simples" }},
+    { "title": "Slide 3", "src": "audio/3.mp3", "image": { "src": "images/3.jpg", "alt": "Garder les panneaux propres" }},
+    { "title": "Slide 4", "src": "audio/4.mp3", "image": { "src": "images/4.jpg", "alt": "Protéger la batterie" }},
+    { "title": "Slide 5", "src": "audio/5.mp3", "image": { "src": "images/5.jpg", "alt": "Demander de l’aide rapidement" }}
+  ]
+}
