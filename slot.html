@@ -14,39 +14,6 @@
   <!-- Your flyer app logic (fetches config, builds playlist, Matomo, share, etc.) -->
   <script src="/assets/js/app.js" defer data-cfasync="false"></script>
   
-  <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const cfg = window.FLYER_CONFIG || {};
-  
-    // 1) Branding - set logo if provided, otherwise collapse header
-    const logoUrl = cfg.branding && cfg.branding.logo;
-    const logoEl  = document.getElementById('brand-logo');
-    if (logoUrl && logoEl) {
-      logoEl.src = logoUrl;
-      logoEl.alt = (cfg.branding && cfg.branding.alt) || 'Brand';
-    } else {
-      // no logo defined in config → remove the header to save space
-      const header = document.querySelector('.brand');
-      if (header) header.remove();
-      document.documentElement.classList.add('no-brand');
-    }
-  
-    // 2) AUMA image - unhide and load when provided
-    const aumaCfg = cfg.auma || {};
-    if (aumaCfg.image) {
-      const aumaBox = document.getElementById('auma');
-      const aumaImg = document.getElementById('auma-image');
-      if (aumaBox && aumaImg) {
-        aumaImg.addEventListener('load', () => aumaImg.classList.add('ready'));
-        aumaBox.hidden = false;
-        aumaImg.src = aumaCfg.image;
-      }
-    }
-  
-    // (Optional) If you want to flag Auma mode for CSS:
-    document.documentElement.classList.add('has-auma');
-  });
-  </script>
 </head>
 <body>
 
@@ -149,6 +116,40 @@
       </div>
     </section>
   </main>
+  
+  
+  <script>
+  (function initBranding(){
+    const header = document.querySelector('.brand');
+    const logoEl = document.getElementById('brand-logo');
+  
+    function applyBranding(){
+      const cfg = window.FLYER_CONFIG || {};
+      const logoUrl = cfg.branding && cfg.branding.logo;
+  
+      // If a URL is present, set it and treat as "brand present"
+      if (logoUrl){
+        if (logoEl) {
+          // hook load/error so the class always matches reality
+          logoEl.onload  = () => document.documentElement.classList.remove('no-brand');
+          logoEl.onerror = () => document.documentElement.classList.add('no-brand');
+          logoEl.src = logoUrl;
+          logoEl.alt = (cfg.branding && cfg.branding.alt) || 'Brand';
+        }
+        document.documentElement.classList.remove('no-brand');
+        if (header) header.style.display = ''; // ensure visible
+      } else {
+        // No logo in config → compact aesthetic, but keep header available for later
+        document.documentElement.classList.add('no-brand');
+        if (header) header.style.display = ''; // don't hard-hide; CSS handles spacing
+      }
+    }
+  
+    // Run once now, and again when everything has loaded (covers script order)
+    applyBranding();
+    window.addEventListener('load', applyBranding);
+  })();
+  </script>
 
 </body>
 </html>
