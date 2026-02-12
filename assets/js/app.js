@@ -417,6 +417,15 @@
 
     // Branding
     const base = `/flyers/${flyerId}/`;
+    const toAbs = p => !p
+      ? ''
+      : (/^https?:\/\//.test(p) || p.startsWith('/'))
+        ? p            // absolute URL or root path: use as-is
+        : (base + p);  // relative to flyer folder
+    
+    if (cfg.branding.logo && $id('brand-logo')) {
+      $id('brand-logo').src = toAbs(cfg.branding.logo);
+    }
     if (cfg.branding) {
       const root = document.documentElement.style;
       if (cfg.branding.primary) root.setProperty('--brand',  cfg.branding.primary);

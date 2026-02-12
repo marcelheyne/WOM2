@@ -116,40 +116,6 @@
       </div>
     </section>
   </main>
-  
-  
-  <script>
-  (function initBranding(){
-    const header = document.querySelector('.brand');
-    const logoEl = document.getElementById('brand-logo');
-  
-    function applyBranding(){
-      const cfg = window.FLYER_CONFIG || {};
-      const logoUrl = cfg.branding && cfg.branding.logo;
-  
-      // If a URL is present, set it and treat as "brand present"
-      if (logoUrl){
-        if (logoEl) {
-          // hook load/error so the class always matches reality
-          logoEl.onload  = () => document.documentElement.classList.remove('no-brand');
-          logoEl.onerror = () => document.documentElement.classList.add('no-brand');
-          logoEl.src = logoUrl;
-          logoEl.alt = (cfg.branding && cfg.branding.alt) || 'Brand';
-        }
-        document.documentElement.classList.remove('no-brand');
-        if (header) header.style.display = ''; // ensure visible
-      } else {
-        // No logo in config → compact aesthetic, but keep header available for later
-        document.documentElement.classList.add('no-brand');
-        if (header) header.style.display = ''; // don't hard-hide; CSS handles spacing
-      }
-    }
-  
-    // Run once now, and again when everything has loaded (covers script order)
-    applyBranding();
-    window.addEventListener('load', applyBranding);
-  })();
-  </script>
 
 </body>
 </html>
