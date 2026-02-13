@@ -421,18 +421,6 @@
     return null;
   }
 
-// --- DEBUG (temporary) ---
-  function dbg(msg) {
-    try {
-      console.log('[AUMA]', msg);
-      const el = document.getElementById('debuglog');
-      if (!el) return;
-      el.style.display = 'block';
-      el.textContent = `[AUMA] ${msg}\n` + (el.textContent || '');
-      // keep it short
-      if (el.textContent.length > 1200) el.textContent = el.textContent.slice(0, 1200);
-    } catch (_) {}
-  }
 
   // ---- App init ----
   async function main(){
