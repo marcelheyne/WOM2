@@ -478,24 +478,29 @@ const header = document.querySelector('.brand');
     // Mark single-track (for CSS that hides prev/next)
     document.documentElement.classList.toggle('single-track', !multi);
     
-    // AUMA: tapping the illustration directly plays/pauses the real audio element (mobile-safe)
+    // AUMA: tapping the illustration = play/pause (mobile-safe)
     (function bindAumaTapToPlayAfterInit(){
       const auma = document.getElementById('auma');
       const img  = document.getElementById('auma-image');
-      const playBtn = document.getElementById('play-pause');
-      if (!auma || !img || !playBtn) return;
+      if (!auma || !img) return;
     
       const handler = (e) => {
         if (auma.hidden) return;
+    
+        // future-proof: ignore interactive children
         const isInteractiveChild = e.target.closest?.('a, button, input, textarea, select, [role="button"]');
         if (isInteractiveChild) return;
     
-        // trigger the actual user-facing control (Amplitude trusts this path)
-        playBtn.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
-        playBtn.click();
+        // Most reliable: call Amplitude directly from the user gesture
+        try {
+          window.Amplitude?.playPause?.();
+        } catch (err) {
+          // Fallback: click the real button (only if needed)
+          document.getElementById('play-pause')?.click();
+        }
       };
     
-      // bind to image only (avoid any weird container overlay issues)
+      // bind to image only
       img.addEventListener('pointerdown', handler, { passive: true });
       img.addEventListener('click', handler, { passive: true });
     })();
