@@ -75,61 +75,6 @@
     }
   }
   
-(function () {
-    const auma = document.getElementById('auma');
-    if (!auma) return;
-  
-    const getTapTarget = () =>
-      document.getElementById('auma-image') || auma;
-  
-    const togglePlay = () => {
-      // Toggle play/pause via Amplitude if available
-      if (window.Amplitude && typeof window.Amplitude.playPause === 'function') {
-        window.Amplitude.playPause();
-        return;
-      }
-      // Fallback: click the main play button
-      const btn = document.getElementById('play-pause') || document.getElementById('playpause');
-      if (btn) btn.click();
-    };
-  
-    const handler = (e) => {
-      // Ignore if hidden
-      if (auma.hidden) return;
-  
-      // Don't break future interactive children
-      const isInteractiveChild = e.target.closest?.('a, button, input, textarea, select, [role="button"]');
-      if (isInteractiveChild) return;
-  
-      // Avoid double-fire on some mobile browsers
-      if (e.type === 'touchend') e.preventDefault();
-  
-      togglePlay();
-    };
-  
-    const bind = () => {
-      const target = getTapTarget();
-      if (!target) return;
-  
-      // Click for desktop + many mobiles
-      target.addEventListener('click', handler);
-  
-      // Touch/pointer for mobile reliability
-      target.addEventListener('touchend', handler, { passive: false });
-      target.addEventListener('pointerup', handler);
-    };
-  
-    // Defer to ensure the image element exists (it can be swapped/reloaded)
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', bind, { once: true });
-    } else {
-      bind();
-    }
-  
-    // Re-bind once more after the image is set (covers dynamic replacement)
-    const img = document.getElementById('auma-image');
-    if (img) img.addEventListener('load', () => bind(), { once: false });
-  })();
 
   // ---- Matomo wiring (per flyer) ----
   function wireMatomo({ siteId, flyerId, flyerType, title, aliasSlug }) {
@@ -526,31 +471,38 @@ const header = document.querySelector('.brand');
     // Mark single-track (for CSS that hides prev/next)
     document.documentElement.classList.toggle('single-track', !multi);
     
-    // AUMA: tapping the illustration behaves like tapping the main play button
+    // AUMA: tapping the illustration directly plays/pauses the real audio element (mobile-safe)
     (function bindAumaTapToPlayAfterInit(){
       const auma = document.getElementById('auma');
       const img  = document.getElementById('auma-image');
-      const playBtn = document.getElementById('play-pause'); // Amplitude-wired button
+      if (!auma || !img) return;
     
-      if (!auma || !img || !playBtn) return;
-    
-      const handler = (e) => {
+      const toggle = (e) => {
         if (auma.hidden) return;
     
         const isInteractiveChild = e.target.closest?.('a, button, input, textarea, select, [role="button"]');
         if (isInteractiveChild) return;
     
-        // Trigger the real Amplitude play/pause control (most reliable on mobile)
-        playBtn.click();
+        const audio = window.Amplitude?.getAudio?.();
+        if (!audio) return;
+    
+        // Direct audio control = trusted user gesture on mobile
+        if (audio.paused || audio.ended) {
+          audio.play().catch(() => {
+            // fallback: if something blocks it, try amplitude
+            try { window.Amplitude.playPause(); } catch {}
+          });
+        } else {
+          audio.pause();
+        }
       };
     
-      // Bind to BOTH container and image (covers event quirks)
-      auma.addEventListener('click', handler, { passive: true });
-      img.addEventListener('click', handler, { passive: true });
+      // Use pointerdown for immediacy; keep click as fallback
+      auma.addEventListener('pointerdown', toggle, { passive: true });
+      img.addEventListener('pointerdown', toggle, { passive: true });
     
-      // Mobile reliability
-      auma.addEventListener('pointerup', handler, { passive: true });
-      img.addEventListener('pointerup', handler, { passive: true });
+      auma.addEventListener('click', toggle, { passive: true });
+      img.addEventListener('click', toggle, { passive: true });
     })();
 
     // Wire AUMA (v1)
