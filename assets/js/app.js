@@ -75,15 +75,6 @@
     }
   }
   
-  function setMainPlayButtonState(isPlaying) {
-    const btn = document.getElementById('play-pause');
-    if (!btn) return;
-  
-    // common Amplitude pattern:
-    // - when playing, Amplitude adds "amplitude-paused" false and/or "amplitude-playing" true
-    // We'll use a single class you control in CSS.
-    btn.classList.toggle('is-playing', !!isPlaying);
-  }
 
 // AUMA: tapping the illustration toggles play/pause via Amplitude (keeps UI state)
   function bindAumaImageToAmplitudeToggle() {
@@ -107,19 +98,38 @@
       if (!A) return;
   
       const state = (typeof A.getPlayerState === 'function') ? A.getPlayerState() : null;
-  
+      
       // states are usually: 'playing', 'paused', 'stopped'
-     if (state === 'playing') {
-       A.pause();
-       setMainPlayButtonState(false);
-     } else {
-       A.play();
-       setMainPlayButtonState(true);
-     }
+      if (state === 'playing') {
+        if (typeof A.pause === 'function') A.pause();
+      } else {
+        if (typeof A.play === 'function') A.play();
+      }
   
       // usually not needed, but harmless
       try { A.bindNewElements?.(); } catch {}
     }, { passive: false });
+  }
+  
+  function syncAmplitudeUiClasses() {
+    const audio = window.Amplitude?.getAudio?.();
+    if (!audio) return;
+  
+    const root = document.documentElement; // ancestor of everything
+  
+    const reflect = () => {
+      const playing = !audio.paused && !audio.ended;
+      root.classList.toggle('amplitude-playing', playing);
+      root.classList.toggle('amplitude-paused', !playing);
+    };
+  
+    // keep in sync
+    audio.addEventListener('play',  reflect, { passive: true });
+    audio.addEventListener('pause', reflect, { passive: true });
+    audio.addEventListener('ended', reflect, { passive: true });
+  
+    // initial state
+    reflect();
   }
 
   // ---- Matomo wiring (per flyer) ----
@@ -534,6 +544,7 @@ const header = document.querySelector('.brand');
     Amplitude.init({ songs });
     if (startIndex>0 && startIndex<songs.length) Amplitude.playSongAtIndex(startIndex);
     if (isAuma) bindAumaImageToAmplitudeToggle();
+    syncAmplitudeUiClasses();
 
     // Mark single-track (for CSS that hides prev/next)
     document.documentElement.classList.toggle('single-track', !multi);
