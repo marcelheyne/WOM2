@@ -491,10 +491,7 @@ const header = document.querySelector('.brand');
     // Mark single-track (for CSS that hides prev/next)
     document.documentElement.classList.toggle('single-track', !multi);
     
-    console.log('Amplitude API:', Object.keys(window.Amplitude || {}));
-    
-
-    // AUMA: tapping the illustration toggles audio AND keeps Amplitude UI in sync
+    // AUMA: tapping the illustration toggles play/pause via Amplitude (keeps UI in sync)
     (function bindAumaTapToPlayAfterInit(){
       const auma = document.getElementById('auma');
       const img  = document.getElementById('auma-image');
@@ -502,13 +499,28 @@ const header = document.querySelector('.brand');
     
       let lastTap = 0;
     
-      const syncUI = () => {
-        try { window.Amplitude?.bindNewElements?.(); } catch (_) {}
+      const amplitudePlayPause = () => {
+        const A = window.Amplitude;
+        if (!A) return;
+    
+        // Amplitude player states are typically: 'playing', 'paused', 'stopped'
+        const state = (typeof A.getPlayerState === 'function') ? A.getPlayerState() : null;
+    
+        if (state === 'playing') {
+          A.pause();
+        } else {
+          // for 'paused' or 'stopped' -> play
+          A.play();
+        }
+    
+        // Usually not needed, but harmless: ensures DOM bindings are refreshed
+        A.bindNewElements?.();
       };
     
-      const toggle = async (e) => {
-        // make iOS treat this as a deliberate gesture
+      const handler = (e) => {
+        // IMPORTANT: stop the “triple event” situation on mobile
         e.preventDefault();
+        e.stopPropagation();
     
         // debounce
         const now = Date.now();
@@ -517,38 +529,14 @@ const header = document.querySelector('.brand');
     
         if (auma.hidden) return;
     
-        const A = window.Amplitude;
-        const audio = A?.getAudio?.();
-        if (!audio) return;
-    
-        try {
-          // Prefer Amplitude methods if they exist (they update UI state)
-          if (audio.paused || audio.ended) {
-            if (typeof A?.play === 'function') {
-              A.play();
-            } else {
-              await audio.play();
-              audio.dispatchEvent(new Event('play'));
-            }
-          } else {
-            if (typeof A?.pause === 'function') {
-              A.pause();
-            } else {
-              audio.pause();
-              audio.dispatchEvent(new Event('pause'));
-            }
-          }
-        } catch (err) {
-          console.log('[AUMA] toggle error:', err);
-        }
-    
-        // ensure UI updates
-        syncUI();
+        amplitudePlayPause();
       };
     
-      // pointerup + passive:false improves “first tap starts” behavior on iOS
-      img.addEventListener('pointerup', toggle, { passive: false });
+      // Bind ONLY one event to avoid double/triple triggering.
+      // pointerup works well across iOS + Android.
+      img.addEventListener('pointerup', handler, { passive: false });
     })();
+    
 
     // Wire AUMA (v1)
     wireAuma(cfg, base);
