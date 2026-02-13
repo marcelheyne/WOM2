@@ -75,6 +75,36 @@
     }
   }
   
+  // Tap/click on AUMA image = Play/Pause (same as big play button)
+  function bindAumaTapToPlay(){
+    const auma = document.getElementById('auma');
+    const img  = document.getElementById('auma-image') || document.querySelector('#auma img');
+    if (!auma && !img) return;
+  
+    const shouldIgnore = (e) => {
+      // ignore taps on real buttons/links inside the area (if any appear later)
+      const el = e.target;
+      return !!(el && el.closest && el.closest('button,a,input,select,textarea,label'));
+    };
+  
+    const toggle = (e) => {
+      if (shouldIgnore(e)) return;
+      // only if AUMA is actually visible
+      if (auma && (auma.hidden || auma.classList.contains('hidden'))) return;
+  
+      try { Amplitude.playPause(); } catch(_) {}
+    };
+  
+    // pointerdown is the most reliable "tap" for mobile
+    [auma, img].forEach((el) => {
+      if (!el) return;
+      el.addEventListener('pointerdown', toggle, { passive: true });
+      el.addEventListener('click', toggle, { passive: true }); // fallback
+    });
+  }
+  
+  // call once (safe)
+  bindAumaTapToPlay();
 
   // ---- Matomo wiring (per flyer) ----
   function wireMatomo({ siteId, flyerId, flyerType, title, aliasSlug }) {
@@ -490,32 +520,7 @@ const header = document.querySelector('.brand');
     // Audio analytics
     wireAudioEvents();
     wireListenSummary();
-    
-    // ---- AUMA: tap image = play/pause (robust on mobile) ----
-    (function bindAumaTapToPlay(){
-      const auma = document.getElementById('auma');
-      if (!auma) return;
-    
-      const toggle = (e) => {
-        // allow future interactive children if you ever add them
-        const isInteractiveChild = e.target.closest?.('a, button, input, textarea, select, [role="button"]');
-        if (isInteractiveChild) return;
-    
-        if (window.Amplitude && typeof window.Amplitude.playPause === 'function') {
-          window.Amplitude.playPause();
-          return;
-        }
-        // fallback - should exist in your HTML
-        document.getElementById('play-pause')?.click();
-      };
-    
-      // Best for mobile: fires immediately, doesn’t depend on “click”
-      auma.addEventListener('pointerup', toggle, { passive: true });
-    
-      // Fallbacks (older iOS / edge cases)
-      auma.addEventListener('touchend', toggle, { passive: true });
-      auma.addEventListener('click', toggle, { passive: true });
-    })();
+
 
     // Share helpers + nudge
     function buildShareUrl(channel, flyerId){

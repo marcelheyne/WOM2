@@ -275,6 +275,14 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
   transform: scale(0.995);
 }
 
+/* AUMA should feel tappable */
+#auma,
+#auma #auma-image,
+#auma img{
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
 /* ============= Phone layout tweaks (only when AUMA image is present) ============= */
 @media (max-width: 480px){
 
