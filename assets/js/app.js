@@ -82,22 +82,16 @@
     const getTapTarget = () =>
       document.getElementById('auma-image') || auma;
   
-  const togglePlay = async () => {
-        // Use the underlying HTMLAudioElement directly - most reliable on mobile
-        const audio = window.Amplitude?.getAudio?.();
-        if (!audio) return;
-      
-        try {
-          if (audio.paused || audio.ended) {
-            await audio.play();   // trusted gesture playback
-          } else {
-            audio.pause();
-          }
-        } catch (e) {
-          // If playback is blocked, fall back to Amplitude
-          try { window.Amplitude?.playPause?.(); } catch {}
-        }
-      };
+    const togglePlay = () => {
+      // Toggle play/pause via Amplitude if available
+      if (window.Amplitude && typeof window.Amplitude.playPause === 'function') {
+        window.Amplitude.playPause();
+        return;
+      }
+      // Fallback: click the main play button
+      const btn = document.getElementById('play-pause') || document.getElementById('playpause');
+      if (btn) btn.click();
+    };
   
     const handler = (e) => {
       // Ignore if hidden
@@ -531,6 +525,33 @@ const header = document.querySelector('.brand');
 
     // Mark single-track (for CSS that hides prev/next)
     document.documentElement.classList.toggle('single-track', !multi);
+    
+    // AUMA: tapping the illustration behaves like tapping the main play button
+    (function bindAumaTapToPlayAfterInit(){
+      const auma = document.getElementById('auma');
+      const img  = document.getElementById('auma-image');
+      const playBtn = document.getElementById('play-pause'); // Amplitude-wired button
+    
+      if (!auma || !img || !playBtn) return;
+    
+      const handler = (e) => {
+        if (auma.hidden) return;
+    
+        const isInteractiveChild = e.target.closest?.('a, button, input, textarea, select, [role="button"]');
+        if (isInteractiveChild) return;
+    
+        // Trigger the real Amplitude play/pause control (most reliable on mobile)
+        playBtn.click();
+      };
+    
+      // Bind to BOTH container and image (covers event quirks)
+      auma.addEventListener('click', handler, { passive: true });
+      img.addEventListener('click', handler, { passive: true });
+    
+      // Mobile reliability
+      auma.addEventListener('pointerup', handler, { passive: true });
+      img.addEventListener('pointerup', handler, { passive: true });
+    })();
 
     // Wire AUMA (v1)
     wireAuma(cfg, base);
