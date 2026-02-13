@@ -75,31 +75,6 @@
     }
   }
   
-// ---- AUMA: tap image = play/pause (robust on mobile) ----
-  (function bindAumaTapToPlay(){
-    const auma = document.getElementById('auma');
-    if (!auma) return;
-  
-    const toggle = (e) => {
-      // allow future interactive children if you ever add them
-      const isInteractiveChild = e.target.closest?.('a, button, input, textarea, select, [role="button"]');
-      if (isInteractiveChild) return;
-  
-      if (window.Amplitude && typeof window.Amplitude.playPause === 'function') {
-        window.Amplitude.playPause();
-        return;
-      }
-      // fallback - should exist in your HTML
-      document.getElementById('play-pause')?.click();
-    };
-  
-    // Best for mobile: fires immediately, doesn’t depend on “click”
-    auma.addEventListener('pointerup', toggle, { passive: true });
-  
-    // Fallbacks (older iOS / edge cases)
-    auma.addEventListener('touchend', toggle, { passive: true });
-    auma.addEventListener('click', toggle, { passive: true });
-  })();
 
   // ---- Matomo wiring (per flyer) ----
   function wireMatomo({ siteId, flyerId, flyerType, title, aliasSlug }) {
@@ -515,6 +490,32 @@ const header = document.querySelector('.brand');
     // Audio analytics
     wireAudioEvents();
     wireListenSummary();
+    
+    // ---- AUMA: tap image = play/pause (robust on mobile) ----
+    (function bindAumaTapToPlay(){
+      const auma = document.getElementById('auma');
+      if (!auma) return;
+    
+      const toggle = (e) => {
+        // allow future interactive children if you ever add them
+        const isInteractiveChild = e.target.closest?.('a, button, input, textarea, select, [role="button"]');
+        if (isInteractiveChild) return;
+    
+        if (window.Amplitude && typeof window.Amplitude.playPause === 'function') {
+          window.Amplitude.playPause();
+          return;
+        }
+        // fallback - should exist in your HTML
+        document.getElementById('play-pause')?.click();
+      };
+    
+      // Best for mobile: fires immediately, doesn’t depend on “click”
+      auma.addEventListener('pointerup', toggle, { passive: true });
+    
+      // Fallbacks (older iOS / edge cases)
+      auma.addEventListener('touchend', toggle, { passive: true });
+      auma.addEventListener('click', toggle, { passive: true });
+    })();
 
     // Share helpers + nudge
     function buildShareUrl(channel, flyerId){
