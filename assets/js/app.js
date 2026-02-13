@@ -479,51 +479,26 @@ const header = document.querySelector('.brand');
     document.documentElement.classList.toggle('single-track', !multi);
     
     // AUMA: tapping the illustration = play/pause (mobile-safe)
-const dbg = (msg) => {
-      console.log('[AUMA]', msg);
-      const el = document.getElementById('debuglog');
-      if (el) {
-        el.style.display = 'block';
-        el.textContent = `[AUMA] ${msg}\n` + (el.textContent || '').slice(0, 500);
-      }
-    };
+    (function bindAumaTapToPlayAfterInit(){
+      const auma = document.getElementById('auma');
+      const img  = document.getElementById('auma-image');
+      if (!auma || !img) return;
     
-    const handler = (e) => {
-      dbg(`tap event=${e.type} target=${e.target?.id || e.target?.tagName}`);
+      const handler = (e) => {
+        if (auma.hidden) return;
     
-      // Is AUMA visible?
-      dbg(`auma.hidden=${auma.hidden}`);
+        // future-proof: ignore interactive children
+        const isInteractiveChild = e.target.closest?.('a, button, input, textarea, select, [role="button"]');
+        if (isInteractiveChild) return;
     
-      // Do we have Amplitude?
-      dbg(`Amplitude exists=${!!window.Amplitude}`);
-      dbg(`Amplitude.playPause=${typeof window.Amplitude?.playPause}`);
-    
-      // Do we have the audio element?
-      const audio = window.Amplitude?.getAudio?.();
-      dbg(`Amplitude.getAudio=${typeof window.Amplitude?.getAudio} audio=${audio ? 'yes' : 'no'}`);
-    
-      if (audio) {
-        dbg(`audio.paused=${audio.paused} currentTime=${audio.currentTime.toFixed(2)} readyState=${audio.readyState}`);
-      }
-    
-      // Try playPause
-      try {
-        window.Amplitude?.playPause?.();
-        dbg(`called Amplitude.playPause()`);
-      } catch (err) {
-        dbg(`playPause threw: ${err?.message || err}`);
-      }
-    
-      // After 300ms, check if audio actually started
-      setTimeout(() => {
-        const a2 = window.Amplitude?.getAudio?.();
-        if (a2) {
-          dbg(`after 300ms: paused=${a2.paused} currentTime=${a2.currentTime.toFixed(2)} readyState=${a2.readyState}`);
-        } else {
-          dbg(`after 300ms: still no audio element`);
+        // Most reliable: call Amplitude directly from the user gesture
+        try {
+          window.Amplitude?.playPause?.();
+        } catch (err) {
+          // Fallback: click the real button (only if needed)
+          document.getElementById('play-pause')?.click();
         }
-      }, 300);
-    };
+      };
     
       // bind to image only
       img.addEventListener('pointerdown', handler, { passive: true });
