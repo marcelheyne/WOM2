@@ -74,6 +74,16 @@
       showAuma(false);
     }
   }
+  
+  function setMainPlayButtonState(isPlaying) {
+    const btn = document.getElementById('play-pause');
+    if (!btn) return;
+  
+    // common Amplitude pattern:
+    // - when playing, Amplitude adds "amplitude-paused" false and/or "amplitude-playing" true
+    // We'll use a single class you control in CSS.
+    btn.classList.toggle('is-playing', !!isPlaying);
+  }
 
 // AUMA: tapping the illustration toggles play/pause via Amplitude (keeps UI state)
   function bindAumaImageToAmplitudeToggle() {
@@ -99,11 +109,13 @@
       const state = (typeof A.getPlayerState === 'function') ? A.getPlayerState() : null;
   
       // states are usually: 'playing', 'paused', 'stopped'
-      if (state === 'playing') {
-        if (typeof A.pause === 'function') A.pause();
-      } else {
-        if (typeof A.play === 'function') A.play();
-      }
+     if (state === 'playing') {
+       A.pause();
+       setMainPlayButtonState(false);
+     } else {
+       A.play();
+       setMainPlayButtonState(true);
+     }
   
       // usually not needed, but harmless
       try { A.bindNewElements?.(); } catch {}
