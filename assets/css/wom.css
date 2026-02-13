@@ -264,6 +264,17 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
 #auma #auma-image.ready,
 #auma #auma-img.ready{ opacity: 1; }
 
+/* AUMA image should feel tappable */
+.has-auma #auma{
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* optional: tiny press feedback (very subtle) */
+.has-auma #auma:active{
+  transform: scale(0.995);
+}
+
 /* ============= Phone layout tweaks (only when AUMA image is present) ============= */
 @media (max-width: 480px){
 

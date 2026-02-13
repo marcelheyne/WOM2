@@ -74,6 +74,27 @@
       showAuma(false);
     }
   }
+  
+  (function () {
+    const auma = document.getElementById('auma');
+    if (!auma) return;
+  
+    auma.addEventListener('click', (e) => {
+      // If we ever add overlays/links inside #auma later, don't break them:
+      const isInteractiveChild = e.target.closest('a, button, input, textarea, select, [role="button"]');
+      if (isInteractiveChild) return;
+  
+      // Toggle play/pause via Amplitude
+      if (window.Amplitude && typeof window.Amplitude.playPause === 'function') {
+        window.Amplitude.playPause();
+        return;
+      }
+  
+      // Fallback: click the main play button if Amplitude isn't available yet
+      const btn = document.getElementById('play-pause') || document.getElementById('playpause');
+      if (btn) btn.click();
+    }, { passive: true });
+  })();
 
   // ---- Matomo wiring (per flyer) ----
   function wireMatomo({ siteId, flyerId, flyerType, title, aliasSlug }) {
