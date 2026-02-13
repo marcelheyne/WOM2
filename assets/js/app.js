@@ -492,7 +492,7 @@ const header = document.querySelector('.brand');
     document.documentElement.classList.toggle('single-track', !multi);
     
 
-// AUMA: tapping the illustration toggles audio (Amplitude.playPause is not available)
+    // AUMA: tapping the illustration toggles audio AND keeps Amplitude UI in sync
     (function bindAumaTapToPlayAfterInit(){
       const auma = document.getElementById('auma');
       const img  = document.getElementById('auma-image');
@@ -500,30 +500,52 @@ const header = document.querySelector('.brand');
     
       let lastTap = 0;
     
+      const syncUI = () => {
+        try { window.Amplitude?.bindNewElements?.(); } catch (_) {}
+      };
+    
       const toggle = async (e) => {
-        // Prevent triple fire (pointerdown + touchstart + click)
+        // make iOS treat this as a deliberate gesture
+        e.preventDefault();
+    
+        // debounce
         const now = Date.now();
-        if (now - lastTap < 500) return;
+        if (now - lastTap < 400) return;
         lastTap = now;
     
         if (auma.hidden) return;
     
-        const audio = window.Amplitude?.getAudio?.();
+        const A = window.Amplitude;
+        const audio = A?.getAudio?.();
         if (!audio) return;
     
         try {
+          // Prefer Amplitude methods if they exist (they update UI state)
           if (audio.paused || audio.ended) {
-            await audio.play();   // trusted user gesture
+            if (typeof A?.play === 'function') {
+              A.play();
+            } else {
+              await audio.play();
+              audio.dispatchEvent(new Event('play'));
+            }
           } else {
-            audio.pause();
+            if (typeof A?.pause === 'function') {
+              A.pause();
+            } else {
+              audio.pause();
+              audio.dispatchEvent(new Event('pause'));
+            }
           }
         } catch (err) {
-          console.log('[AUMA] audio.play blocked:', err);
+          console.log('[AUMA] toggle error:', err);
         }
+    
+        // ensure UI updates
+        syncUI();
       };
     
-      // Bind only one event - pointerdown is most reliable on mobile
-      img.addEventListener('pointerdown', toggle, { passive: true });
+      // pointerup + passive:false improves “first tap starts” behavior on iOS
+      img.addEventListener('pointerup', toggle, { passive: false });
     })();
 
     // Wire AUMA (v1)
