@@ -491,34 +491,39 @@ const header = document.querySelector('.brand');
     // Mark single-track (for CSS that hides prev/next)
     document.documentElement.classList.toggle('single-track', !multi);
     
-    // AUMA: tapping the illustration triggers the SAME play control as the big button
+
+// AUMA: tapping the illustration toggles audio (Amplitude.playPause is not available)
     (function bindAumaTapToPlayAfterInit(){
       const auma = document.getElementById('auma');
       const img  = document.getElementById('auma-image');
-      const playBtn = document.getElementById('play-pause'); // Amplitude-wired element
-      if (!auma || !img || !playBtn) return;
+      if (!auma || !img) return;
     
-      const fire = (e) => {
-        dbg(`tap event=${e.type}`);
-        dbg(`auma.hidden=${auma?.hidden}`);
-        dbg(`Amplitude=${!!window.Amplitude} playPause=${typeof window.Amplitude?.playPause}`);
-        dbg(`getAudio=${typeof window.Amplitude?.getAudio}`);
-        const audio = window.Amplitude?.getAudio?.();
-        dbg(`audio=${audio ? 'yes' : 'no'}`);
-        if (audio) dbg(`paused=${audio.paused} time=${audio.currentTime.toFixed(2)} readyState=${audio.readyState}`);
+      let lastTap = 0;
+    
+      const toggle = async (e) => {
+        // Prevent triple fire (pointerdown + touchstart + click)
+        const now = Date.now();
+        if (now - lastTap < 500) return;
+        lastTap = now;
+    
         if (auma.hidden) return;
     
-        const isInteractiveChild = e.target.closest?.('a, button, input, textarea, select, [role="button"]');
-        if (isInteractiveChild) return;
+        const audio = window.Amplitude?.getAudio?.();
+        if (!audio) return;
     
-        // Forward the gesture to the real control
-        HTMLElement.prototype.click.call(playBtn);
+        try {
+          if (audio.paused || audio.ended) {
+            await audio.play();   // trusted user gesture
+          } else {
+            audio.pause();
+          }
+        } catch (err) {
+          console.log('[AUMA] audio.play blocked:', err);
+        }
       };
     
-      // Use early gesture events for mobile reliability
-      img.addEventListener('touchstart', fire, { passive: true });
-      img.addEventListener('pointerdown', fire, { passive: true });
-      img.addEventListener('click', fire, { passive: true });
+      // Bind only one event - pointerdown is most reliable on mobile
+      img.addEventListener('pointerdown', toggle, { passive: true });
     })();
 
     // Wire AUMA (v1)
