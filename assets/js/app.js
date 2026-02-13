@@ -74,29 +74,39 @@
       showAuma(false);
     }
   }
-  // AUMA: tapping the illustration toggles play/pause 
-  function bindAumaImageToMainPlayButton() {
-    const img = document.querySelector('#auma img, #auma-image, .auma-figure img');
-    const playBtn = document.getElementById('play-pause'); // exists in slot.html  [oai_citation:1‡slot.html](sediment://file_0000000037a07243b6394169449281b8)
-    if (!img || !playBtn) return;
+
+// AUMA: tapping the illustration toggles play/pause via Amplitude (keeps UI state)
+  function bindAumaImageToAmplitudeToggle() {
+    const img = document.getElementById('auma-image') || document.querySelector('#auma img');
+    if (!img) return;
   
-    // Make taps feel immediate on mobile
     img.style.touchAction = 'manipulation';
   
-    // Prevent multi-fire (pointer events already cover touch + mouse)
     let lastTap = 0;
   
     img.addEventListener('pointerup', (e) => {
-      // ignore synthetic duplicates
-      const now = Date.now();
-      if (now - lastTap < 350) return;
-      lastTap = now;
-  
+      // prevent multi-fire + keep it a trusted gesture
       e.preventDefault();
       e.stopPropagation();
   
-      // This is the key: let Amplitude handle everything (UI + state)
-      playBtn.click();
+      const now = Date.now();
+      if (now - lastTap < 400) return;
+      lastTap = now;
+  
+      const A = window.Amplitude;
+      if (!A) return;
+  
+      const state = (typeof A.getPlayerState === 'function') ? A.getPlayerState() : null;
+  
+      // states are usually: 'playing', 'paused', 'stopped'
+      if (state === 'playing') {
+        if (typeof A.pause === 'function') A.pause();
+      } else {
+        if (typeof A.play === 'function') A.play();
+      }
+  
+      // usually not needed, but harmless
+      try { A.bindNewElements?.(); } catch {}
     }, { passive: false });
   }
 
@@ -435,7 +445,6 @@
 
     // AUMA flag for CSS
     const isAuma = (cfg.type === 'auma' || cfg.type === 'auma-seq');
-    bindAumaImageToMainPlayButton();
     document.documentElement.classList.toggle('has-auma', isAuma);
 
     document.title = cfg.title || `WOM.fm / ${flyerId}`;
@@ -512,6 +521,7 @@ const header = document.querySelector('.brand');
 
     Amplitude.init({ songs });
     if (startIndex>0 && startIndex<songs.length) Amplitude.playSongAtIndex(startIndex);
+    if (isAuma) bindAumaImageToAmplitudeToggle();
 
     // Mark single-track (for CSS that hides prev/next)
     document.documentElement.classList.toggle('single-track', !multi);
