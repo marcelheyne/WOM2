@@ -478,31 +478,27 @@ const header = document.querySelector('.brand');
     // Mark single-track (for CSS that hides prev/next)
     document.documentElement.classList.toggle('single-track', !multi);
     
-    // AUMA: tapping the illustration = play/pause (mobile-safe)
+    // AUMA: tapping the illustration triggers the SAME play control as the big button
     (function bindAumaTapToPlayAfterInit(){
       const auma = document.getElementById('auma');
       const img  = document.getElementById('auma-image');
-      if (!auma || !img) return;
+      const playBtn = document.getElementById('play-pause'); // Amplitude-wired element
+      if (!auma || !img || !playBtn) return;
     
-      const handler = (e) => {
+      const fire = (e) => {
         if (auma.hidden) return;
     
-        // future-proof: ignore interactive children
         const isInteractiveChild = e.target.closest?.('a, button, input, textarea, select, [role="button"]');
         if (isInteractiveChild) return;
     
-        // Most reliable: call Amplitude directly from the user gesture
-        try {
-          window.Amplitude?.playPause?.();
-        } catch (err) {
-          // Fallback: click the real button (only if needed)
-          document.getElementById('play-pause')?.click();
-        }
+        // Forward the gesture to the real control
+        HTMLElement.prototype.click.call(playBtn);
       };
     
-      // bind to image only
-      img.addEventListener('pointerdown', handler, { passive: true });
-      img.addEventListener('click', handler, { passive: true });
+      // Use early gesture events for mobile reliability
+      img.addEventListener('touchstart', fire, { passive: true });
+      img.addEventListener('pointerdown', fire, { passive: true });
+      img.addEventListener('click', fire, { passive: true });
     })();
 
     // Wire AUMA (v1)
