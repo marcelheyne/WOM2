@@ -449,12 +449,19 @@ const header = document.querySelector('.brand');
     }
 
     // Build songs from tracks for ALL types; AUMA layer handles images
-    let songs = (cfg.tracks || []).map(t => ({
+    let songs = (cfg.tracks || []).map(t => {
+    // support t.image as string or {src:"..."}
+    const imgSrc =
+      typeof t.image === 'string' ? t.image :
+      (t.image && typeof t.image === 'object' ? t.image.src : null);
+  
+    return {
       name: t.title || '',
       url:  base + t.src,
-      // optional cover for Amplitude's internal UI (not required for AUMA)
-      cover_art_url: t.image?.src ? (base + t.image.src) : (cfg.cover ? base + cfg.cover : undefined)
-    }));
+      cover_art_url: imgSrc ? (imgSrc.startsWith('/') ? imgSrc : (base + imgSrc)) 
+                            : (cfg.cover ? base + cfg.cover : undefined)
+    };
+  });
 
     if (!songs.length){
       document.body.innerHTML='<p style="padding:24px">No audio configured.</p>';
@@ -475,34 +482,22 @@ const header = document.querySelector('.brand');
     (function bindAumaTapToPlayAfterInit(){
       const auma = document.getElementById('auma');
       const img  = document.getElementById('auma-image');
-      if (!auma || !img) return;
+      const playBtn = document.getElementById('play-pause');
+      if (!auma || !img || !playBtn) return;
     
-      const toggle = (e) => {
+      const handler = (e) => {
         if (auma.hidden) return;
-    
         const isInteractiveChild = e.target.closest?.('a, button, input, textarea, select, [role="button"]');
         if (isInteractiveChild) return;
     
-        const audio = window.Amplitude?.getAudio?.();
-        if (!audio) return;
-    
-        // Direct audio control = trusted user gesture on mobile
-        if (audio.paused || audio.ended) {
-          audio.play().catch(() => {
-            // fallback: if something blocks it, try amplitude
-            try { window.Amplitude.playPause(); } catch {}
-          });
-        } else {
-          audio.pause();
-        }
+        // trigger the actual user-facing control (Amplitude trusts this path)
+        playBtn.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
+        playBtn.click();
       };
     
-      // Use pointerdown for immediacy; keep click as fallback
-      auma.addEventListener('pointerdown', toggle, { passive: true });
-      img.addEventListener('pointerdown', toggle, { passive: true });
-    
-      auma.addEventListener('click', toggle, { passive: true });
-      img.addEventListener('click', toggle, { passive: true });
+      // bind to image only (avoid any weird container overlay issues)
+      img.addEventListener('pointerdown', handler, { passive: true });
+      img.addEventListener('click', handler, { passive: true });
     })();
 
     // Wire AUMA (v1)
