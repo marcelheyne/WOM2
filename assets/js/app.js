@@ -82,16 +82,22 @@
     const getTapTarget = () =>
       document.getElementById('auma-image') || auma;
   
-    const togglePlay = () => {
-      // Toggle play/pause via Amplitude if available
-      if (window.Amplitude && typeof window.Amplitude.playPause === 'function') {
-        window.Amplitude.playPause();
-        return;
-      }
-      // Fallback: click the main play button
-      const btn = document.getElementById('play-pause') || document.getElementById('playpause');
-      if (btn) btn.click();
-    };
+  const togglePlay = async () => {
+        // Use the underlying HTMLAudioElement directly - most reliable on mobile
+        const audio = window.Amplitude?.getAudio?.();
+        if (!audio) return;
+      
+        try {
+          if (audio.paused || audio.ended) {
+            await audio.play();   // trusted gesture playback
+          } else {
+            audio.pause();
+          }
+        } catch (e) {
+          // If playback is blocked, fall back to Amplitude
+          try { window.Amplitude?.playPause?.(); } catch {}
+        }
+      };
   
     const handler = (e) => {
       // Ignore if hidden
