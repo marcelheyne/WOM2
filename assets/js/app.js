@@ -74,7 +74,31 @@
       showAuma(false);
     }
   }
+  // AUMA: tapping the illustration toggles play/pause 
+  function bindAumaImageToMainPlayButton() {
+    const img = document.querySelector('#auma img, #auma-image, .auma-figure img');
+    const playBtn = document.getElementById('play-pause'); // exists in slot.html  [oai_citation:1‡slot.html](sediment://file_0000000037a07243b6394169449281b8)
+    if (!img || !playBtn) return;
   
+    // Make taps feel immediate on mobile
+    img.style.touchAction = 'manipulation';
+  
+    // Prevent multi-fire (pointer events already cover touch + mouse)
+    let lastTap = 0;
+  
+    img.addEventListener('pointerup', (e) => {
+      // ignore synthetic duplicates
+      const now = Date.now();
+      if (now - lastTap < 350) return;
+      lastTap = now;
+  
+      e.preventDefault();
+      e.stopPropagation();
+  
+      // This is the key: let Amplitude handle everything (UI + state)
+      playBtn.click();
+    }, { passive: false });
+  }
 
   // ---- Matomo wiring (per flyer) ----
   function wireMatomo({ siteId, flyerId, flyerType, title, aliasSlug }) {
@@ -411,6 +435,7 @@
 
     // AUMA flag for CSS
     const isAuma = (cfg.type === 'auma' || cfg.type === 'auma-seq');
+    bindAumaImageToMainPlayButton();
     document.documentElement.classList.toggle('has-auma', isAuma);
 
     document.title = cfg.title || `WOM.fm / ${flyerId}`;
@@ -490,52 +515,6 @@ const header = document.querySelector('.brand');
 
     // Mark single-track (for CSS that hides prev/next)
     document.documentElement.classList.toggle('single-track', !multi);
-    
-    // AUMA: tapping the illustration toggles play/pause via Amplitude (keeps UI in sync)
-    (function bindAumaTapToPlayAfterInit(){
-      const auma = document.getElementById('auma');
-      const img  = document.getElementById('auma-image');
-      if (!auma || !img) return;
-    
-      let lastTap = 0;
-    
-      const amplitudePlayPause = () => {
-        const A = window.Amplitude;
-        if (!A) return;
-    
-        // Amplitude player states are typically: 'playing', 'paused', 'stopped'
-        const state = (typeof A.getPlayerState === 'function') ? A.getPlayerState() : null;
-    
-        if (state === 'playing') {
-          A.pause();
-        } else {
-          // for 'paused' or 'stopped' -> play
-          A.play();
-        }
-    
-        // Usually not needed, but harmless: ensures DOM bindings are refreshed
-        A.bindNewElements?.();
-      };
-    
-      const handler = (e) => {
-        // IMPORTANT: stop the “triple event” situation on mobile
-        e.preventDefault();
-        e.stopPropagation();
-    
-        // debounce
-        const now = Date.now();
-        if (now - lastTap < 400) return;
-        lastTap = now;
-    
-        if (auma.hidden) return;
-    
-        amplitudePlayPause();
-      };
-    
-      // Bind ONLY one event to avoid double/triple triggering.
-      // pointerup works well across iOS + Android.
-      img.addEventListener('pointerup', handler, { passive: false });
-    })();
     
 
     // Wire AUMA (v1)
