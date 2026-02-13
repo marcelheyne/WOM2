@@ -75,36 +75,61 @@
     }
   }
   
-  // Tap/click on AUMA image = Play/Pause (same as big play button)
-  function bindAumaTapToPlay(){
+(function () {
     const auma = document.getElementById('auma');
-    const img  = document.getElementById('auma-image') || document.querySelector('#auma img');
-    if (!auma && !img) return;
+    if (!auma) return;
   
-    const shouldIgnore = (e) => {
-      // ignore taps on real buttons/links inside the area (if any appear later)
-      const el = e.target;
-      return !!(el && el.closest && el.closest('button,a,input,select,textarea,label'));
+    const getTapTarget = () =>
+      document.getElementById('auma-image') || auma;
+  
+    const togglePlay = () => {
+      // Toggle play/pause via Amplitude if available
+      if (window.Amplitude && typeof window.Amplitude.playPause === 'function') {
+        window.Amplitude.playPause();
+        return;
+      }
+      // Fallback: click the main play button
+      const btn = document.getElementById('play-pause') || document.getElementById('playpause');
+      if (btn) btn.click();
     };
   
-    const toggle = (e) => {
-      if (shouldIgnore(e)) return;
-      // only if AUMA is actually visible
-      if (auma && (auma.hidden || auma.classList.contains('hidden'))) return;
+    const handler = (e) => {
+      // Ignore if hidden
+      if (auma.hidden) return;
   
-      try { Amplitude.playPause(); } catch(_) {}
+      // Don't break future interactive children
+      const isInteractiveChild = e.target.closest?.('a, button, input, textarea, select, [role="button"]');
+      if (isInteractiveChild) return;
+  
+      // Avoid double-fire on some mobile browsers
+      if (e.type === 'touchend') e.preventDefault();
+  
+      togglePlay();
     };
   
-    // pointerdown is the most reliable "tap" for mobile
-    [auma, img].forEach((el) => {
-      if (!el) return;
-      el.addEventListener('pointerdown', toggle, { passive: true });
-      el.addEventListener('click', toggle, { passive: true }); // fallback
-    });
-  }
+    const bind = () => {
+      const target = getTapTarget();
+      if (!target) return;
   
-  // call once (safe)
-  bindAumaTapToPlay();
+      // Click for desktop + many mobiles
+      target.addEventListener('click', handler);
+  
+      // Touch/pointer for mobile reliability
+      target.addEventListener('touchend', handler, { passive: false });
+      target.addEventListener('pointerup', handler);
+    };
+  
+    // Defer to ensure the image element exists (it can be swapped/reloaded)
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', bind, { once: true });
+    } else {
+      bind();
+    }
+  
+    // Re-bind once more after the image is set (covers dynamic replacement)
+    const img = document.getElementById('auma-image');
+    if (img) img.addEventListener('load', () => bind(), { once: false });
+  })();
 
   // ---- Matomo wiring (per flyer) ----
   function wireMatomo({ siteId, flyerId, flyerType, title, aliasSlug }) {
