@@ -69,7 +69,6 @@
     if (art?.src){
       setAumaImage(art.src, art.alt);
       showAuma(true);
-      try { window._paq?.push(['trackEvent','Auma','Image', String(Amplitude.getActiveIndex?.() ?? 0)]); } catch(e){}
     } else {
       showAuma(false);
     }
@@ -105,10 +104,7 @@
       } else {
         if (typeof A.play === 'function') A.play();
       }
-  
-      // usually not needed, but harmless
-      try { A.bindNewElements?.(); } catch {}
-    }, { passive: false });
+      }, { passive: false });
   }
   
   function syncAmplitudeUiClasses() {
@@ -531,8 +527,9 @@ const header = document.querySelector('.brand');
 
     Amplitude.init({ songs });
     if (startIndex>0 && startIndex<songs.length) Amplitude.playSongAtIndex(startIndex);
-    if (isAuma) bindAumaImageToAmplitudeToggle();
     syncAmplitudeUiClasses();
+    if (isAuma) bindAumaImageToAmplitudeToggle();
+
 
     // Mark single-track (for CSS that hides prev/next)
     document.documentElement.classList.toggle('single-track', !multi);
