@@ -491,6 +491,8 @@ const header = document.querySelector('.brand');
     // Mark single-track (for CSS that hides prev/next)
     document.documentElement.classList.toggle('single-track', !multi);
     
+    console.log('Amplitude API:', Object.keys(window.Amplitude || {}));
+    
 
     // AUMA: tapping the illustration toggles audio AND keeps Amplitude UI in sync
     (function bindAumaTapToPlayAfterInit(){
