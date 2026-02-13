@@ -365,6 +365,19 @@
     return null;
   }
 
+// --- DEBUG (temporary) ---
+  function dbg(msg) {
+    try {
+      console.log('[AUMA]', msg);
+      const el = document.getElementById('debuglog');
+      if (!el) return;
+      el.style.display = 'block';
+      el.textContent = `[AUMA] ${msg}\n` + (el.textContent || '');
+      // keep it short
+      if (el.textContent.length > 1200) el.textContent = el.textContent.slice(0, 1200);
+    } catch (_) {}
+  }
+
   // ---- App init ----
   async function main(){
     // Prefer edge-injected id/alias
@@ -486,6 +499,13 @@ const header = document.querySelector('.brand');
       if (!auma || !img || !playBtn) return;
     
       const fire = (e) => {
+        dbg(`tap event=${e.type}`);
+        dbg(`auma.hidden=${auma?.hidden}`);
+        dbg(`Amplitude=${!!window.Amplitude} playPause=${typeof window.Amplitude?.playPause}`);
+        dbg(`getAudio=${typeof window.Amplitude?.getAudio}`);
+        const audio = window.Amplitude?.getAudio?.();
+        dbg(`audio=${audio ? 'yes' : 'no'}`);
+        if (audio) dbg(`paused=${audio.paused} time=${audio.currentTime.toFixed(2)} readyState=${audio.readyState}`);
         if (auma.hidden) return;
     
         const isInteractiveChild = e.target.closest?.('a, button, input, textarea, select, [role="button"]');
