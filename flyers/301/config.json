@@ -5,7 +5,7 @@
 "branding": {
   "logo": "images/basf.png",
   "primary": "#65ac1e",
-  "accent": "#D9EBE2",
+  "accent": "#65ac1e",
   "logoHeight": 70
 },
   "tracks": [
