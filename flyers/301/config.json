@@ -3,7 +3,6 @@
 "title": "BASF PPE Campaign",
 "analytics": { "siteId": 7 },
 "branding": {
-  "logo": "images/basf.png",
   "primary": "#65ac1e",
   "accent": "#65ac1e",
   "logoHeight": 70
