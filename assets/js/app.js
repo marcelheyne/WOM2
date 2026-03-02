@@ -572,6 +572,23 @@ const header = document.querySelector('.brand');
       window.open(wa, '_blank', 'noopener');
       try { window._paq?.push(['trackEvent', 'Share', 'WhatsApp', flyerId]); } catch(e){}
     }
+    async function shareNative(cfg, flyerId){
+      const text = cfg.title || 'Listen on WOM.fm';
+      const url  = buildShareUrl('native', flyerId);
+      if (navigator.share){
+        try {
+          await navigator.share({ title: text, text, url });
+          window._paq?.push(['trackEvent', 'Share', 'Native', flyerId]);
+          return;
+        } catch(e){ /* canceled or OS error */ }
+      }
+      try {
+        await navigator.clipboard?.writeText(url);
+        alert('Link copied to clipboard 👍');
+      } catch(e) {
+        window.open(url, '_blank', 'noopener');
+      }
+    }
 
 function normalizeCta(cfg){
       const cta = cfg?.cta || {};
@@ -645,7 +662,6 @@ function normalizeCta(cfg){
     });
 
     document.getElementById('share-wa')?.addEventListener('click', () => shareWhatsApp(cfg, flyerId));
-    document.getElementById('share-native')?.addEventListener('click', () => shareNative(cfg, flyerId));
   }
 
   window.addEventListener('DOMContentLoaded', main);
