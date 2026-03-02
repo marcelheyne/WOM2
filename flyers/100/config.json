@@ -8,6 +8,12 @@
   "accent": "#ea2264",
   "logoHeight": 50
   },
+  "cta": {
+    "mode": "cta",
+    "type": "url",
+    "url": "https://wom.fm/",
+    "label": "Visit WOM.fm"
+  }
   "tracks": [
   { "title": "Welcome to WOM.fm!", "src": "audio/audio.mp3" }
   ]
