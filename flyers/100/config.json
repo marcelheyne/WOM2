@@ -4,17 +4,17 @@
   "analytics": { "siteId": 2 },
   "branding": {
     "logo": "images/wom.png",
-  "primary": "#ffb713",
-  "accent": "#ea2264",
-  "logoHeight": 50
+    "primary": "#ffb713",
+    "accent": "#ea2264",
+    "logoHeight": 50
   },
+  "tracks": [
+    { "title": "Welcome to WOM.fm!", "src": "audio/audio.mp3" }
+  ],
   "cta": {
     "mode": "cta",
     "type": "url",
     "url": "https://wom.fm/",
     "label": "Visit WOM.fm"
   }
-  "tracks": [
-  { "title": "Welcome to WOM.fm!", "src": "audio/audio.mp3" }
-  ]
 }
