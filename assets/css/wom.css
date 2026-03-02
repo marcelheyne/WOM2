@@ -520,7 +520,7 @@ html.compact #share a{
  If your .pill--more already has border etc, you can leave it. */
  
 /* Icon switching */
-#share-native .icon { display: none; width: 28px; height: 28px; }
+#share-native .icon { display: none; width: 30px; height: 30px; }
 #share-native[data-type="native"] .icon--share { display: inline-block; }
 #share-native[data-type="url"]    .icon--url   { display: inline-block; }
 #share-native[data-type="call"]   .icon--call  { display: inline-block; }
