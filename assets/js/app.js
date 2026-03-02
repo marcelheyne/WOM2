@@ -657,6 +657,11 @@ function normalizeCta(cfg){
       // Fallback: share
       return shareNative(cfg, flyerId);
     }
+    
+    applySecondaryButtonUi(cfg);
+    
+    document.getElementById('share-native')
+      ?.addEventListener('click', () => handleSecondaryAction(cfg, flyerId));
 
     scheduleNudgeAfterEngagement(flyerId, {
       enabled: cfg.nudge !== false,
