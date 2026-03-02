@@ -591,51 +591,57 @@ const header = document.querySelector('.brand');
     }
 
 function normalizeCta(cfg){
-      const cta = cfg?.cta || {};
-      const mode = (cta.mode || 'share').toLowerCase();  // 'share' | 'cta'
-      const type = (cta.type || 'native').toLowerCase(); // 'native' | 'url' | 'call'
+      const c = (cfg && cfg.cta) ? cfg.cta : {};
+      const mode = String(c.mode || 'share').toLowerCase();     // share | cta
+      const type = String(c.type || 'native').toLowerCase();    // native | url | call
       return {
         mode,
         type,
-        label: cta.label || (mode === 'cta'
-          ? (type === 'call' ? 'Call' : 'Learn more')
-          : 'Share'),
-        url: cta.url || '',
-        phone: cta.phone || ''
+        url: c.url || '',
+        phone: c.phone || '',
+        color: c.color || '' // optional override
       };
     }
     
-    function applySecondaryButtonUi(cta){
+    function applySecondaryButtonUi(cfg){
       const btn = document.getElementById('share-native');
       if (!btn) return;
     
-      btn.dataset.mode = cta.mode;
-      btn.dataset.type = cta.type;
+      const cta = normalizeCta(cfg);
     
-      // Accessibility + tooltip
-      const aria = (cta.mode === 'cta')
-        ? (cta.type === 'call' ? 'Call now' : 'Visit website')
-        : 'Share';
-      btn.setAttribute('aria-label', aria);
-      btn.setAttribute('title', aria);
+      const isCta = (cta.mode === 'cta' && (cta.type === 'url' || cta.type === 'call'));
+      btn.classList.toggle('is-cta', isCta);
     
-      // Optional: swap icon by adding classes
-      btn.classList.toggle('pill--cta', cta.mode === 'cta');
-      btn.classList.toggle('pill--cta-call', cta.mode === 'cta' && cta.type === 'call');
-      btn.classList.toggle('pill--cta-url',  cta.mode === 'cta' && cta.type === 'url');
+      // Decide icon
+      if (isCta) {
+        btn.dataset.type = cta.type; // url | call
+        const aria = (cta.type === 'call') ? 'Call now' : 'Visit website';
+        btn.setAttribute('aria-label', aria);
+        btn.setAttribute('title', aria);
+    
+        // Set CTA color (override > branding accent > fallback)
+        const accent = (cta.color && cta.color.trim())
+          || (cfg?.branding?.accent)
+          || '#ea2264';
+        btn.style.setProperty('--cta-bg', accent);
+      } else {
+        btn.dataset.type = 'native';
+        btn.setAttribute('aria-label', 'Share');
+        btn.setAttribute('title', 'Share');
+        btn.style.removeProperty('--cta-bg');
+      }
     }
     
     async function handleSecondaryAction(cfg, flyerId){
       const cta = normalizeCta(cfg);
     
-      // default: share
+      // Default: native share
       if (cta.mode !== 'cta') {
         return shareNative(cfg, flyerId);
       }
     
       // CTA: visit website
       if (cta.type === 'url' && cta.url) {
-        mtmTrack('CTA', 'Click', 'Visit website', flyerId);
         try { window._paq?.push(['trackEvent', 'CTA', 'Visit website', cta.url]); } catch(e){}
         window.open(cta.url, '_blank', 'noopener');
         return;
@@ -643,13 +649,12 @@ function normalizeCta(cfg){
     
       // CTA: call now
       if (cta.type === 'call' && cta.phone) {
-        mtmTrack('CTA', 'Click', 'Call now', flyerId);
         try { window._paq?.push(['trackEvent', 'CTA', 'Call now', cta.phone]); } catch(e){}
         location.href = `tel:${cta.phone}`;
         return;
       }
     
-      // Fallback: if misconfigured, fall back to share
+      // Fallback: share
       return shareNative(cfg, flyerId);
     }
 

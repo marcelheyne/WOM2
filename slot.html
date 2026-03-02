@@ -105,14 +105,32 @@
           </svg>
         </button>
     
-        <!-- More (native share) -->
+        <!-- More (native share or CTA) -->
         <button id="share-native" class="pill pill--more"
-                aria-label="Share" title="Share"       
+                aria-label="Share" title="Share"
                 data-mode="share" data-type="native">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
+        
+          <!-- Share (default) -->
+          <svg class="icon icon--share" viewBox="0 0 24 24" aria-hidden="true">
             <path fill="currentColor"
               d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.06-.24.09-.47.09-.7s-.03-.46-.09-.7l7.13-4.16a3 3 0 1 0-.99-1.67L7.92 9.63a3 3 0 1 0 0 4.74l7.13 4.16a3 3 0 1 0 2.95-2.45z"/>
           </svg>
+        
+          <!-- Visit website (external link) -->
+          <svg class="icon icon--url" viewBox="0 0 24 24" aria-hidden="true">
+            <!-- Bold external-link: square + arrow out -->
+            <path fill="currentColor"
+              d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z"/>
+            <path fill="currentColor"
+              d="M19 19H5V5h7V3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7z"/>
+          </svg>
+        
+          <!-- Call now -->
+          <svg class="icon icon--call" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor"
+              d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1C10.07 21 3 13.93 3 5c0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.24.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+          </svg>
+        
         </button>
       </div>
     </section>

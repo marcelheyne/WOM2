@@ -516,3 +516,20 @@ html.compact #share a{
   height: clamp(52px, 9.5vmin, 64px);
   line-height: clamp(52px, 9.5vmin, 64px);
 }
+/* Default (share) look stays as your current pill styling.
+ If your .pill--more already has border etc, you can leave it. */
+ 
+/* Icon switching */
+#share-native .icon { display: none; width: 22px; height: 22px; }
+#share-native[data-type="native"] .icon--share { display: inline-block; }
+#share-native[data-type="url"]    .icon--url   { display: inline-block; }
+#share-native[data-type="call"]   .icon--call  { display: inline-block; }
+
+/* CTA look */
+#share-native.is-cta {
+  background: var(--cta-bg, #ea2264);
+  color: #fff;
+  border: none;
+  box-shadow: 0 0 0 6px rgba(234, 34, 100, 0.22);
+}
+
