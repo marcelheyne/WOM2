@@ -444,6 +444,13 @@
     }
     const cfg = await cfgRes.json();
     window.cfg = cfg; // expose for auma wiring
+    
+    // Define CTA
+    const cta = normalizeCta(cfg);
+    applySecondaryButtonUi(cta);
+    
+    document.getElementById('share-native')
+      ?.addEventListener('click', () => handleSecondaryAction(cfg, flyerId));
 
     // Mark single-track flyers so CSS can center the play button
     const nTracks = (cfg.tracks && cfg.tracks.length) || 0;
@@ -456,11 +463,6 @@
     document.title = cfg.title || `WOM.fm / ${flyerId}`;
     const tt = $('#track-title');
     if (tt) tt.textContent = cfg.title || 'WOM.fm Audio Flyer';
-
-    if (cfg.cta?.url) {
-      const cta=$('#cta');
-      if (cta) { cta.hidden=false; cta.href=cfg.cta.url; cta.textContent=cfg.cta.label||'Learn more'; }
-    }
 
     // Matomo per-flyer siteId from config + normalized type
     const typeRaw  = (cfg.type || 'audio').toLowerCase();
@@ -570,22 +572,68 @@ const header = document.querySelector('.brand');
       window.open(wa, '_blank', 'noopener');
       try { window._paq?.push(['trackEvent', 'Share', 'WhatsApp', flyerId]); } catch(e){}
     }
-    async function shareNative(cfg, flyerId){
-      const text = cfg.title || 'Listen on WOM.fm';
-      const url  = buildShareUrl('native', flyerId);
-      if (navigator.share){
-        try {
-          await navigator.share({ title: text, text, url });
-          window._paq?.push(['trackEvent', 'Share', 'Native', flyerId]);
-          return;
-        } catch(e){ /* canceled or OS error */ }
+
+function normalizeCta(cfg){
+      const cta = cfg?.cta || {};
+      const mode = (cta.mode || 'share').toLowerCase();  // 'share' | 'cta'
+      const type = (cta.type || 'native').toLowerCase(); // 'native' | 'url' | 'call'
+      return {
+        mode,
+        type,
+        label: cta.label || (mode === 'cta'
+          ? (type === 'call' ? 'Call' : 'Learn more')
+          : 'Share'),
+        url: cta.url || '',
+        phone: cta.phone || ''
+      };
+    }
+    
+    function applySecondaryButtonUi(cta){
+      const btn = document.getElementById('share-native');
+      if (!btn) return;
+    
+      btn.dataset.mode = cta.mode;
+      btn.dataset.type = cta.type;
+    
+      // Accessibility + tooltip
+      const aria = (cta.mode === 'cta')
+        ? (cta.type === 'call' ? 'Call now' : 'Visit website')
+        : 'Share';
+      btn.setAttribute('aria-label', aria);
+      btn.setAttribute('title', aria);
+    
+      // Optional: swap icon by adding classes
+      btn.classList.toggle('pill--cta', cta.mode === 'cta');
+      btn.classList.toggle('pill--cta-call', cta.mode === 'cta' && cta.type === 'call');
+      btn.classList.toggle('pill--cta-url',  cta.mode === 'cta' && cta.type === 'url');
+    }
+    
+    async function handleSecondaryAction(cfg, flyerId){
+      const cta = normalizeCta(cfg);
+    
+      // default: share
+      if (cta.mode !== 'cta') {
+        return shareNative(cfg, flyerId);
       }
-      try {
-        await navigator.clipboard?.writeText(url);
-        alert('Link copied to clipboard 👍');
-      } catch(e) {
-        window.open(url, '_blank', 'noopener');
+    
+      // CTA: visit website
+      if (cta.type === 'url' && cta.url) {
+        mtmTrack('CTA', 'Click', 'Visit website', flyerId);
+        try { window._paq?.push(['trackEvent', 'CTA', 'Visit website', cta.url]); } catch(e){}
+        window.open(cta.url, '_blank', 'noopener');
+        return;
       }
+    
+      // CTA: call now
+      if (cta.type === 'call' && cta.phone) {
+        mtmTrack('CTA', 'Click', 'Call now', flyerId);
+        try { window._paq?.push(['trackEvent', 'CTA', 'Call now', cta.phone]); } catch(e){}
+        location.href = `tel:${cta.phone}`;
+        return;
+      }
+    
+      // Fallback: if misconfigured, fall back to share
+      return shareNative(cfg, flyerId);
     }
 
     scheduleNudgeAfterEngagement(flyerId, {
