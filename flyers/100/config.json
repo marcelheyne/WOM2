@@ -11,12 +11,6 @@
   "tracks": [
     { "title": "Welcome to WOM.fm!", "src": "audio/audio.mp3" }
   ],
-  "cta": {
-    "mode": "cta",
-    "type": "url",
-    "url": "https://wom.fm/",
-    "label": "Visit WOM.fm"
-  },
   "feedback": {
     "enabled": true,
     "showAfter": "play",
