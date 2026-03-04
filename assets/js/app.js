@@ -419,14 +419,16 @@
   
   // ---- Micro-feedback (Yes/No) ----
   function wireMicroFeedback(cfg, flyerId, base){
-    const fbCfg = cfg?.feedback || cfg?.ui?.feedback || null;
-    const enabled = !!(fbCfg && fbCfg.enabled === true);
-    if (!enabled) return;
+  const feedbackWrap = document.getElementById('feedback');
+  if (feedbackWrap) feedbackWrap.hidden = true;
   
-    const feedbackWrap = document.getElementById('feedback');
-    const yesBtn = document.getElementById('fb-yes');
-    const noBtn  = document.getElementById('fb-no');
-    if (!feedbackWrap || !yesBtn || !noBtn) return;
+  const fbCfg = cfg?.feedback || cfg?.ui?.feedback || null;
+  const enabled = !!(fbCfg && fbCfg.enabled === true);
+  if (!enabled) return;
+  
+  const yesBtn = document.getElementById('fb-yes');
+  const noBtn  = document.getElementById('fb-no');
+  if (!feedbackWrap || !yesBtn || !noBtn) return;
   
     // Config
     const showAfter = String(fbCfg.showAfter || 'play').toLowerCase(); // 'play' | 'complete'
@@ -499,12 +501,6 @@
   
     // Start hidden
     hide();
-    
-    if (!enabled) {
-      const feedbackWrap = document.getElementById('feedback');
-      if (feedbackWrap) feedbackWrap.hidden = true;
-      return;
-    }
   
     // Reveal logic
     if (showAfter === 'complete'){
@@ -569,30 +565,26 @@
     const cfg = await cfgRes.json();
     window.cfg = cfg; // expose for auma wiring
     
-    // --- Feedback vs Share/CTA toggle (run right after cfg is loaded) ---
-    const fbEnabled = !!cfg?.feedback?.enabled;
+// --- Feedback vs Share/CTA toggle (run right after cfg is loaded) ---
+    const fbEnabled = (cfg?.feedback?.enabled === true);
     const fbMode = String(cfg?.feedback?.mode || 'replace').toLowerCase(); // replace | append
     
     const actionsEl = document.getElementById('actions');
     const feedbackEl = document.getElementById('feedback');
     
-    if (fbEnabled && fbMode !== 'append') {
-      // Feedback replaces share/CTA actions entirely
-      actionsEl?.classList.add('is-hidden');
+    // Always force-hide feedback on load. wireMicroFeedback will reveal later if enabled.
+    if (feedbackEl) feedbackEl.hidden = true;
     
-      // Keep feedback hidden for now - your existing "showAfter" logic will unhide it
-      // (so we do NOT force feedbackEl.hidden = false here)
+    if (fbEnabled && fbMode === 'replace') {
+      // Feedback replaces actions entirely
+      actionsEl?.classList.add('is-hidden');
     } else {
-      // Default: share/CTA remains available
       actionsEl?.classList.remove('is-hidden');
     }
     
     // Define CTA
     const cta = normalizeCta(cfg);
     applySecondaryButtonUi(cta);
-    
-    document.getElementById('share-native')
-      ?.addEventListener('click', () => handleSecondaryAction(cfg, flyerId));
 
     // Mark single-track flyers so CSS can center the play button
     const nTracks = (cfg.tracks && cfg.tracks.length) || 0;
@@ -678,10 +670,6 @@ const header = document.querySelector('.brand');
     // Mark single-track (for CSS that hides prev/next)
     document.documentElement.classList.toggle('single-track', !multi);
     
-    // Micro-feedback (Yes/No)
-    wireMicroFeedback(cfg, flyerId, base);
-    const feedbackWrap = document.getElementById('feedback');
-    if (feedbackWrap) feedbackWrap.hidden = true;
     
 
     // Wire AUMA (v1)
