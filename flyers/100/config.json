@@ -11,7 +11,7 @@
   "tracks": [
     { "title": "Welcome to WOM.fm!", "src": "audio/audio.mp3" }
   ],
-  "interaction": { "preset": "feedback_basic" },
+  "interaction": { "preset": "feedback_2step_cta" },
   "feedback": { "enabled": true, "showAfter": "play", "thankYouAudioUrl": "audio/thanks.mp3" },
   "button": { "mode": "cta", "type": "url", "url": "https://wom.fm", "label": "Learn more" }
 }
