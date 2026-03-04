@@ -432,9 +432,10 @@
   if (!feedbackWrap || !yesBtn || !noBtn) return;
   
     // Config
-    const showAfter = String(fbCfg.showAfter || 'play').toLowerCase(); // 'play' | 'complete'
+    const showAfter = String(fbCfg?.showAfter || 'play').toLowerCase(); // 'play' | 'complete'
+    
     const thankYouUrlRaw =
-      fbCfg.thankYouAudioUrl || fbCfg.thankYouAudio || fbCfg.thanks || null;
+      fbCfg?.thankYouAudioUrl || fbCfg?.thankYouAudio || fbCfg?.thanks || null;
       
     const phase = String(fbCfg?.phase || ix.feedbackPhase || 'inline').toLowerCase(); // inline | two-step
     const afterTapReveal = ix.afterTapReveal; // 'share' | 'cta' | null
@@ -450,12 +451,27 @@
     let answered = false;
   
     const audioEl = window.Amplitude?.getAudio?.();
+    
+    function isLastTrack(){
+      try {
+        const idx = Number(window.Amplitude?.getActiveIndex?.() ?? 0);
+        const total = Number(window.Amplitude?.getSongs?.()?.length ?? 1);
+        return idx >= (total - 1);
+      } catch (e) {
+        // Fail-open: don't block feedback forever if Amplitude API differs
+        return true;
+      }
+    }
   
     function show(){
       if (shown || answered) return;
+    
+      // If configured for "complete", only show on the last track
+      if (showAfter === 'complete' && !isLastTrack()) return;
+    
       shown = true;
       feedbackWrap.hidden = false;
-  
+    
       // Matomo
       try { mtmTrack('Feedback', 'Shown', String(flyerId)); } catch(e){}
     }
