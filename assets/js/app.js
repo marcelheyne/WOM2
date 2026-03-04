@@ -680,7 +680,7 @@
     document.documentElement.classList.toggle('single-track', nTracks <= 1);
 
     // AUMA flag for CSS
-    const isAuma = (cfg.type === 'auma' || cfg.type === 'auma-seq');
+    const isAuma = (cfg.type === 'auma');
     document.documentElement.classList.toggle('has-auma', isAuma);
 
     document.title = cfg.title || `WOM.fm / ${flyerId}`;
