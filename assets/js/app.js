@@ -423,7 +423,8 @@
   if (feedbackWrap) feedbackWrap.hidden = true;
   
   const fbCfg = cfg?.feedback || cfg?.ui?.feedback || null;
-  const enabled = !!(fbCfg && fbCfg.enabled === true);
+  const ix = window.__ix || {};
+  const enabled = (fbCfg?.enabled === true) || (ix.feedbackEnabled === true);
   if (!enabled) return;
   
   const yesBtn = document.getElementById('fb-yes');
@@ -434,6 +435,9 @@
     const showAfter = String(fbCfg.showAfter || 'play').toLowerCase(); // 'play' | 'complete'
     const thankYouUrlRaw =
       fbCfg.thankYouAudioUrl || fbCfg.thankYouAudio || fbCfg.thanks || null;
+      
+    const phase = String(fbCfg?.phase || ix.feedbackPhase || 'inline').toLowerCase(); // inline | two-step
+    const afterTapReveal = ix.afterTapReveal; // 'share' | 'cta' | null
   
     const toAbs = (p) => !p
       ? ''
@@ -490,9 +494,16 @@
       // Optional thanks
       playThanks();
   
-      // Collapse after a short moment (keeps it simple, avoids double taps)
       setTimeout(() => {
         hide();
+      
+        // Two-step: after feedback, reveal actions (share or cta)
+        if (phase === 'two-step' && afterTapReveal) {
+          revealActionsNow(ix);
+      
+          // If afterTapReveal is 'share', you may want to force secondary into share mode:
+          // (optional) For now, we rely on the existing CTA config. Share preset should just have CTA mode not set.
+        }
       }, 600);
     }
   
@@ -537,6 +548,101 @@
     }
   }
 
+// ---- Interaction presets (Step 1) ----------------------------------------
+  function applyInteractionPreset(cfg){
+    const preset = String(cfg?.interaction?.preset || 'share').toLowerCase();
+  
+    // Default visibility toggles (optional)
+    const actionsCfg = cfg?.actions || {};
+    const waBtn  = document.getElementById('share-wa');
+    const secBtn = document.getElementById('share-native');
+    if (waBtn)  waBtn.hidden  = (actionsCfg.whatsapp === false);
+    if (secBtn) secBtn.hidden = (actionsCfg.secondary === false);
+  
+    const actionsEl  = document.getElementById('actions');
+    const feedbackEl = document.getElementById('feedback');
+  
+    // Always force-hide feedback on load (safety; showAfter will unhide later)
+    if (feedbackEl) feedbackEl.hidden = true;
+  
+    // Interaction state returned to main/wireMicroFeedback
+    const ix = {
+      preset,
+      feedbackEnabled: false,
+      feedbackMode: 'replace',    // replace | append
+      feedbackPhase: 'inline',    // inline | two-step
+      afterTapReveal: null        // null | 'share' | 'cta'
+    };
+  
+    // Helper to hide actions hard
+    const hideActions = () => actionsEl?.classList.add('is-hidden');
+    const showActions = () => actionsEl?.classList.remove('is-hidden');
+  
+    // Apply preset mapping
+    switch (preset) {
+      case 'cta':
+        // same UI as share, just CTA config defines the secondary button behavior
+        ix.feedbackEnabled = false;
+        showActions();
+        break;
+  
+      case 'feedback_basic':
+        ix.feedbackEnabled = true;
+        ix.feedbackMode = 'replace';
+        ix.feedbackPhase = 'inline';
+        ix.afterTapReveal = null;
+        hideActions();
+        break;
+  
+      case 'feedback_2step_share':
+        ix.feedbackEnabled = true;
+        ix.feedbackMode = 'replace';
+        ix.feedbackPhase = 'two-step';
+        ix.afterTapReveal = 'share';
+        hideActions();
+        break;
+  
+      case 'feedback_2step_cta':
+        ix.feedbackEnabled = true;
+        ix.feedbackMode = 'replace';
+        ix.feedbackPhase = 'two-step';
+        ix.afterTapReveal = 'cta';
+        hideActions();
+        break;
+  
+      case 'share':
+      default:
+        ix.feedbackEnabled = false;
+        showActions();
+        break;
+    }
+  
+    // If feedback is explicitly enabled in config, it can override presets:
+    // (keeps backward compatibility with your existing feedback configs)
+    if (cfg?.feedback?.enabled === true) {
+      ix.feedbackEnabled = true;
+      ix.feedbackMode = String(cfg?.feedback?.mode || ix.feedbackMode).toLowerCase();
+      ix.feedbackPhase = String(cfg?.feedback?.phase || ix.feedbackPhase).toLowerCase();
+      // Only set afterTapReveal from preset; config can add later if you want.
+      if (ix.feedbackMode === 'replace') hideActions();
+      if (ix.feedbackMode === 'append') showActions();
+    }
+  
+    // If feedback is not enabled, ensure feedback stays hidden
+    if (!ix.feedbackEnabled && feedbackEl) feedbackEl.hidden = true;
+  
+    return ix;
+  }
+  
+  // Utility: reveal actions immediately (used by 2-step feedback)
+  function revealActionsNow(ix){
+    const actionsEl = document.getElementById('actions');
+    if (!actionsEl) return;
+  
+    // If we're in two-step mode, actions were hidden initially
+    actionsEl.classList.remove('is-hidden');
+    actionsEl.classList.add('is-visible'); // uses your existing CSS reveal mechanic
+  }
 
   // ---- App init ----
   async function main(){
@@ -565,22 +671,9 @@
     const cfg = await cfgRes.json();
     window.cfg = cfg; // expose for auma wiring
     
-// --- Feedback vs Share/CTA toggle (run right after cfg is loaded) ---
-    const fbEnabled = (cfg?.feedback?.enabled === true);
-    const fbMode = String(cfg?.feedback?.mode || 'replace').toLowerCase(); // replace | append
-    
-    const actionsEl = document.getElementById('actions');
-    const feedbackEl = document.getElementById('feedback');
-    
-    // Always force-hide feedback on load. wireMicroFeedback will reveal later if enabled.
-    if (feedbackEl) feedbackEl.hidden = true;
-    
-    if (fbEnabled && fbMode === 'replace') {
-      // Feedback replaces actions entirely
-      actionsEl?.classList.add('is-hidden');
-    } else {
-      actionsEl?.classList.remove('is-hidden');
-    }
+    // Apply interaction preset (Step 1)
+    const ix = applyInteractionPreset(cfg);
+    window.__ix = ix; // optional debug
 
     // Mark single-track flyers so CSS can center the play button
     const nTracks = (cfg.tracks && cfg.tracks.length) || 0;
