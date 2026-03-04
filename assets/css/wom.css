@@ -590,3 +590,6 @@ html.compact #share a{
   height: calc(var(--share-icon) - 4px);
 }
 
+/* Ensure hidden feedback never renders */
+#feedback[hidden] { display: none !important; }
+
