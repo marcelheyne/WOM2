@@ -581,10 +581,6 @@
     } else {
       actionsEl?.classList.remove('is-hidden');
     }
-    
-    // Define CTA
-    const cta = normalizeCta(cfg);
-    applySecondaryButtonUi(cta);
 
     // Mark single-track flyers so CSS can center the play button
     const nTracks = (cfg.tracks && cfg.tracks.length) || 0;
@@ -665,11 +661,11 @@ const header = document.querySelector('.brand');
     if (startIndex>0 && startIndex<songs.length) Amplitude.playSongAtIndex(startIndex);
     syncAmplitudeUiClasses();
     if (isAuma) bindAumaImageToAmplitudeToggle();
-
+    
+    wireMicroFeedback(cfg, flyerId, base);
 
     // Mark single-track (for CSS that hides prev/next)
     document.documentElement.classList.toggle('single-track', !multi);
-    
     
 
     // Wire AUMA (v1)
