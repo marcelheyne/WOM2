@@ -593,3 +593,5 @@ html.compact #share a{
 /* Ensure hidden feedback never renders */
 #feedback[hidden] { display: none !important; }
 
+.is-hidden { display: none !important; }
+

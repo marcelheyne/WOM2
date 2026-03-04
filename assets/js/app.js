@@ -569,6 +569,24 @@
     const cfg = await cfgRes.json();
     window.cfg = cfg; // expose for auma wiring
     
+    // --- Feedback vs Share/CTA toggle (run right after cfg is loaded) ---
+    const fbEnabled = !!cfg?.feedback?.enabled;
+    const fbMode = String(cfg?.feedback?.mode || 'replace').toLowerCase(); // replace | append
+    
+    const actionsEl = document.getElementById('actions');
+    const feedbackEl = document.getElementById('feedback');
+    
+    if (fbEnabled && fbMode !== 'append') {
+      // Feedback replaces share/CTA actions entirely
+      actionsEl?.classList.add('is-hidden');
+    
+      // Keep feedback hidden for now - your existing "showAfter" logic will unhide it
+      // (so we do NOT force feedbackEl.hidden = false here)
+    } else {
+      // Default: share/CTA remains available
+      actionsEl?.classList.remove('is-hidden');
+    }
+    
     // Define CTA
     const cta = normalizeCta(cfg);
     applySecondaryButtonUi(cta);

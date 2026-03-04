@@ -11,8 +11,9 @@
   "tracks": [
     { "title": "Welcome to WOM.fm!", "src": "audio/audio.mp3" }
   ],
-  "feedback": {
+"feedback": {
     "enabled": true,
+    "mode": "replace",
     "showAfter": "play",
     "questionAudioUrl": null,
     "thankYouAudioUrl": "audio/thanks.mp3"
