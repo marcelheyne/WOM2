@@ -812,16 +812,10 @@ function normalizeCta(cfg){
       const actions = document.getElementById('actions');
       const playBtn = document.getElementById('play-pause');
     
-      if (actions) {
+      if (actions && !actions.classList.contains('is-hidden')) {
         // Start hidden (CSS does the hiding). Reveal once user interacts.
         const reveal = () => actions.classList.add('is-visible');
-    
-        // Reveal when the user taps play (works even if audio can't start yet)
         playBtn?.addEventListener('click', reveal, { once: true });
-    
-        // Fallback: if playback is started via other means, reveal on first "play" event
-        // (Only if you have access to the underlying audio element - optional)
-        // audioEl?.addEventListener('play', reveal, { once: true });
       }
     } else {
       // If explicitly disabled in config, show actions immediately
