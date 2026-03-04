@@ -16,5 +16,11 @@
     "type": "url",
     "url": "https://wom.fm/",
     "label": "Visit WOM.fm"
+  },
+  "feedback": {
+    "enabled": true,
+    "showAfter": "play",   // "play" or "complete"
+    "questionAudioUrl": null,
+    "thankYouAudioUrl": "audio/thanks.mp3"
   }
 }
