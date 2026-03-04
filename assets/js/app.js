@@ -420,7 +420,7 @@
   // ---- Micro-feedback (Yes/No) ----
   function wireMicroFeedback(cfg, flyerId, base){
     const fbCfg = cfg?.feedback || cfg?.ui?.feedback || null;
-    const enabled = !!(fbCfg && (fbCfg.enabled !== false)); // default: off unless provided? -> if you want default on, set enabled = !!fbCfg
+    const enabled = !!(fbCfg && fbCfg.enabled === true);
     if (!enabled) return;
   
     const feedbackWrap = document.getElementById('feedback');
