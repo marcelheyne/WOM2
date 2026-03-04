@@ -19,7 +19,7 @@
   },
   "feedback": {
     "enabled": true,
-    "showAfter": "play",   // "play" or "complete"
+    "showAfter": "play",
     "questionAudioUrl": null,
     "thankYouAudioUrl": "audio/thanks.mp3"
   }
