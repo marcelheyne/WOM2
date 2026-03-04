@@ -499,6 +499,12 @@
   
     // Start hidden
     hide();
+    
+    if (!enabled) {
+      const feedbackWrap = document.getElementById('feedback');
+      if (feedbackWrap) feedbackWrap.hidden = true;
+      return;
+    }
   
     // Reveal logic
     if (showAfter === 'complete'){
