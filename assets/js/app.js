@@ -901,6 +901,9 @@ function normalizeCta(cfg){
       return shareNative(cfg, flyerId);
     }
     
+    // Actions reveal behavior (default: reveal after first play)
+    const actionsAfterPlay = (cfg?.ui?.actionsAfterPlay !== false);
+    
     // Hide actions on load and reveal after first user play gesture
 if (actionsAfterPlay) {
       const actions = document.getElementById('actions');
