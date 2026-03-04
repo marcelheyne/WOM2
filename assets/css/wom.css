@@ -594,4 +594,53 @@ html.compact #share a{
 #feedback[hidden] { display: none !important; }
 
 .is-hidden { display: none !important; }
+/* =========================================================
+   Solid action style (Share + CTA + Feedback)
+   ========================================================= */
+
+/* 1) Make the secondary (native share / url / call) button solid by default */
+.pill--more{
+  background: var(--accent); /* solid fill */
+  border: none;
+  color: #fff;
+}
+
+/* Keep icon visibility consistent */
+.pill--more svg{ fill: currentColor; }
+
+/* Optional: subtle outer ring (matches your CTA glow idea but lighter) */
+.pill--more{
+  box-shadow: 0 0 0 6px rgba(0,0,0,0.06), 0 6px 16px rgba(0,0,0,.08);
+}
+
+/* 2) CTA state stays as you already have it - just ensure it wins */
+#share-native.is-cta{
+  background: var(--cta-bg, #ea2264);
+  color: #fff;
+  border: none;
+}
+
+/* 3) Feedback buttons: solid fills + white icons */
+.pill--fb{
+  border: none;
+  color: #fff;
+}
+
+/* Yes: use brand (so you can say "press the yellow button") */
+.pill--yes{
+  background: var(--brand);
+}
+
+/* No: neutral gray (clear contrast, not “alarm red”) */
+.pill--no{
+  background: #bdbdbd;
+}
+
+/* Keep feedback SVG consistent */
+.pill--fb svg{ fill: currentColor; }
+
+/* Optional: selection feedback remains (your existing class) */
+.pill--fb.is-selected{
+  box-shadow: 0 10px 20px rgba(0,0,0,.12);
+}
 
