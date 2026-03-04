@@ -547,3 +547,46 @@ html.compact #share a{
   transform: translateY(0);
 }
 
+/* ============= Micro-feedback (Yes/No) ============= */
+/* Assumes slot.html contains:
+   <div id="feedback" class="feedback" hidden> ... #fb-yes #fb-no ... </div>
+*/
+
+.feedback{
+  display:flex;
+  gap:16px;
+  justify-content:center;
+  align-items:center;
+  margin-top: 0; /* keep aligned with other action pills */
+}
+
+/* Use the existing .pill base styling */
+.pill--fb{
+  background:#fff;
+  border:2px solid rgba(0,0,0,.10);
+  color:#111;
+}
+
+/* Thumbs up: brand colored outline */
+.pill--yes{
+  border-color: var(--brand);
+  color: var(--brand);
+}
+
+/* Thumbs down: neutral outline */
+.pill--no{
+  border-color: #cfcfcf;
+  color: #666;
+}
+
+/* Optional: subtle highlight after selection */
+.pill--fb.is-selected{
+  box-shadow: 0 10px 20px rgba(0,0,0,.10);
+}
+
+/* Slightly smaller glyph than share icon */
+.pill--fb svg{
+  width: calc(var(--share-icon) - 4px);
+  height: calc(var(--share-icon) - 4px);
+}
+

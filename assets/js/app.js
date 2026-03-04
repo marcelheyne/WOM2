@@ -416,6 +416,124 @@
     } catch {}
     return null;
   }
+  
+  // ---- Micro-feedback (Yes/No) ----
+  function wireMicroFeedback(cfg, flyerId, base){
+    const fbCfg = cfg?.feedback || cfg?.ui?.feedback || null;
+    const enabled = !!(fbCfg && (fbCfg.enabled !== false)); // default: off unless provided? -> if you want default on, set enabled = !!fbCfg
+    if (!enabled) return;
+  
+    const feedbackWrap = document.getElementById('feedback');
+    const yesBtn = document.getElementById('fb-yes');
+    const noBtn  = document.getElementById('fb-no');
+    if (!feedbackWrap || !yesBtn || !noBtn) return;
+  
+    // Config
+    const showAfter = String(fbCfg.showAfter || 'play').toLowerCase(); // 'play' | 'complete'
+    const thankYouUrlRaw =
+      fbCfg.thankYouAudioUrl || fbCfg.thankYouAudio || fbCfg.thanks || null;
+  
+    const toAbs = (p) => !p
+      ? ''
+      : (/^https?:\/\//.test(p) || p.startsWith('/')) ? p : (base + p);
+  
+    const thankYouUrl = toAbs(thankYouUrlRaw);
+  
+    // State
+    let shown = false;
+    let answered = false;
+  
+    const audioEl = window.Amplitude?.getAudio?.();
+  
+    function show(){
+      if (shown || answered) return;
+      shown = true;
+      feedbackWrap.hidden = false;
+  
+      // Matomo
+      try { mtmTrack('Feedback', 'Shown', String(flyerId)); } catch(e){}
+    }
+  
+    function hide(){
+      feedbackWrap.hidden = true;
+    }
+  
+    function playThanks(){
+      if (!thankYouUrl) return;
+  
+      try {
+        // Pause main audio to avoid overlap
+        if (audioEl && !audioEl.paused && !audioEl.ended) audioEl.pause();
+      } catch(e){}
+  
+      // Play a short thank you clip on user gesture
+      try {
+        const a = new Audio(thankYouUrl);
+        a.preload = 'auto';
+        a.play().catch(()=>{});
+      } catch(e){}
+    }
+  
+    function answer(which){
+      if (answered) return;
+      answered = true;
+  
+      // UI feedback
+      if (which === 'yes') yesBtn.classList.add('is-selected');
+      if (which === 'no')  noBtn.classList.add('is-selected');
+  
+      // Matomo
+      try { mtmTrack('Feedback', which === 'yes' ? 'Yes' : 'No', String(flyerId)); } catch(e){}
+  
+      // Optional thanks
+      playThanks();
+  
+      // Collapse after a short moment (keeps it simple, avoids double taps)
+      setTimeout(() => {
+        hide();
+      }, 600);
+    }
+  
+    yesBtn.addEventListener('click', () => answer('yes'), { passive: true });
+    noBtn .addEventListener('click', () => answer('no'),  { passive: true });
+  
+    // Start hidden
+    hide();
+  
+    // Reveal logic
+    if (showAfter === 'complete'){
+      if (!audioEl) return;
+  
+      // Show when near-complete, or on ended
+      let maxPct = 0;
+      const onTime = () => {
+        const d = audioEl.duration || 0;
+        const t = audioEl.currentTime || 0;
+        if (!d) return;
+        const pct = (t / d);
+        if (pct > maxPct) maxPct = pct;
+        if (maxPct >= 0.95) {
+          audioEl.removeEventListener('timeupdate', onTime);
+          show();
+        }
+      };
+      audioEl.addEventListener('timeupdate', onTime, { passive: true });
+      audioEl.addEventListener('ended', () => show(), { once: true, passive: true });
+  
+    } else {
+      // Default: show after first play gesture
+      const playBtn = document.getElementById('play-pause') || document.getElementById('playpause');
+      playBtn?.addEventListener('click', () => {
+        // If actions are configured to appear after play, feedback will now sit in that area
+        show();
+      }, { once: true, passive: true });
+  
+      // Fallback: if audio starts by another gesture, show on first play event
+      if (audioEl){
+        audioEl.addEventListener('play', () => show(), { once: true, passive: true });
+      }
+    }
+  }
 
 
   // ---- App init ----
@@ -535,6 +653,9 @@ const header = document.querySelector('.brand');
 
     // Mark single-track (for CSS that hides prev/next)
     document.documentElement.classList.toggle('single-track', !multi);
+    
+    // Micro-feedback (Yes/No)
+    wireMicroFeedback(cfg, flyerId, base);
     
 
     // Wire AUMA (v1)
