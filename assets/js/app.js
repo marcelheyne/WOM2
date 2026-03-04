@@ -662,6 +662,8 @@ const header = document.querySelector('.brand');
     
     // Micro-feedback (Yes/No)
     wireMicroFeedback(cfg, flyerId, base);
+    const feedbackWrap = document.getElementById('feedback');
+    if (feedbackWrap) feedbackWrap.hidden = true;
     
 
     // Wire AUMA (v1)
