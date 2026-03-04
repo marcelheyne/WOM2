@@ -902,19 +902,22 @@ function normalizeCta(cfg){
     }
     
     // Hide actions on load and reveal after first user play gesture
-    const actionsAfterPlay = cfg?.ui?.actionsAfterPlay ?? true;
-    
-    if (actionsAfterPlay) {
+if (actionsAfterPlay) {
       const actions = document.getElementById('actions');
       const playBtn = document.getElementById('play-pause');
+      const audioEl = window.Amplitude?.getAudio?.();
     
       if (actions && !actions.classList.contains('is-hidden')) {
-        // Start hidden (CSS does the hiding). Reveal once user interacts.
+        // Start hidden (CSS does the hiding). Reveal once playback starts.
         const reveal = () => actions.classList.add('is-visible');
+    
+        // Primary: explicit play button tap
         playBtn?.addEventListener('click', reveal, { once: true });
+    
+        // Fallback: covers AUMA image tap (Amplitude.play()) and any other start path
+        audioEl?.addEventListener('play', reveal, { once: true, passive: true });
       }
     } else {
-      // If explicitly disabled in config, show actions immediately
       document.getElementById('actions')?.classList.add('is-visible');
     }
     
