@@ -671,6 +671,25 @@
     const cfg = await cfgRes.json();
     window.cfg = cfg; // expose for auma wiring
     
+    // ---- Map button -> cta (backward compatible) ----
+    // Canonical going forward: cfg.button
+    // Execution currently uses cfg.cta via normalizeCta(cfg)
+    if (!cfg.cta && cfg.button) {
+      const b = cfg.button;
+    
+      // Normalize common shapes
+      const mode = String(b.mode || 'cta').toLowerCase();         // 'cta' expected
+      const type = String(b.type || b.action || 'url').toLowerCase(); // 'url' | 'call' | 'native'
+    
+      cfg.cta = {
+        mode: mode,                 // 'cta' or 'share'
+        type: type,                 // 'url' | 'call' | 'native'
+        url: b.url || b.href || b.link || undefined,
+        phone: b.phone || b.tel || undefined,
+        color: b.color || undefined
+      };
+    }
+    
     // Apply interaction preset (Step 1)
     const ix = applyInteractionPreset(cfg);
     window.__ix = ix; // optional debug
