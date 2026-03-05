@@ -391,16 +391,28 @@
   }
   
   function applySentimentUiRules(cfg){
-    const kind = String(cfg?.feedback?.kind || cfg?.ui?.feedback?.kind || 'thumbs').toLowerCase();
+    const fb = cfg?.feedback || cfg?.ui?.feedback || {};
+    const kind = String(fb?.kind || 'thumbs').toLowerCase();
     const isSentiment = (kind === 'sentiment');
   
+    // Hide track title in sentiment mode
     const titleEl = document.getElementById('track-title');
     if (titleEl) titleEl.hidden = isSentiment;
   
-    // Optional: if you ever want to show the question text in B2B mode
+    // Question text (optional)
     const qEl = document.getElementById('ambient-question');
-    const showQuestionText = (cfg?.feedback?.showQuestionText !== false);
-    if (qEl) qEl.hidden = !(isSentiment && showQuestionText);
+    if (!qEl) return;
+  
+    const showQuestionText = (fb?.showQuestionText === true);
+    const q = String(fb?.question || '').trim();
+  
+    if (isSentiment && showQuestionText && q) {
+      qEl.textContent = q;
+      qEl.hidden = false;
+    } else {
+      qEl.hidden = true;
+      qEl.textContent = '';
+    }
   }
 
   // --- Alias → id resolver (fallback when edge did not inject) -------------
