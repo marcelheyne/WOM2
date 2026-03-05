@@ -684,41 +684,51 @@ html.compact #share a{
   gap:16px;
 }
 
-.ambient-btn{
-  width:72px;
-  height:72px;
-  border-radius:50%;
-  border:none;
+/* Ambient Feedback - non-literate UI */
+.ambient-feedback{
+  text-align:center;
+  margin-top:18px;
+}
+
+.ambient-question{
+  font-size:18px;
+  font-weight:700;
+  margin: 0 0 18px;
+}
+
+.ambient-options{
   display:flex;
-  flex-direction:column;
+  justify-content:center;
+  gap:18px;
+}
+
+.ambient-btn{
+  width:86px;
+  height:86px;
+  border-radius:999px;
+  border:none;
+  padding:0;
+  display:flex;
   align-items:center;
   justify-content:center;
-  color:white;
   cursor:pointer;
-  box-shadow:0 4px 10px rgba(0,0,0,0.15);
+  box-shadow: 0 10px 24px rgba(0,0,0,.12);
 }
 
-.ambient-btn .face{
-  font-size:26px;
+.ambient-btn:active{
+  transform: scale(.96);
 }
 
-.ambient-btn .label{
-  font-size:11px;
-  margin-top:4px;
-}
+.ambient-btn.good{ background:#39c36b; }
+.ambient-btn.neutral{ background:#ffc422; }
+.ambient-btn.poor{ background:#e14b4b; }
 
-.ambient-btn.good{
-  background:#34C759;
+/* Face icon uses "currentColor" for stroke/fill */
+.face-icon{
+  width:56px;
+  height:56px;
+  color:#111; /* black outline like your sample */
 }
-
-.ambient-btn.neutral{
-  background:#FFC107;
-}
-
-.ambient-btn.poor{
-  background:#F44336;
-}
-
 .ambient-btn:active{
   transform:scale(0.92);
 }

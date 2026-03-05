@@ -150,31 +150,37 @@
             </button>
           </div>
 
-<div id="ambient-feedback" class="ambient-feedback" hidden>
+          <div id="ambient-feedback" class="ambient-feedback" hidden>
+          <div id="ambient-question" class="ambient-question" hidden></div>
           
-            <div class="ambient-question">
-              How is the air quality in your area today?
+            <div class="ambient-options" role="group" aria-label="Ambient Feedback">
+              <button class="ambient-btn good" data-value="Good" aria-label="Good">
+                <svg class="face-icon" viewBox="0 0 64 64" aria-hidden="true">
+                  <circle cx="32" cy="32" r="26" fill="none" stroke="currentColor" stroke-width="5"/>
+                  <circle cx="23" cy="26" r="4.5" fill="currentColor"/>
+                  <circle cx="41" cy="26" r="4.5" fill="currentColor"/>
+                  <path d="M20 38c4 6 20 6 24 0" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+                </svg>
+              </button>
+          
+              <button class="ambient-btn neutral" data-value="Neutral" aria-label="Neutral">
+                <svg class="face-icon" viewBox="0 0 64 64" aria-hidden="true">
+                  <circle cx="32" cy="32" r="26" fill="none" stroke="currentColor" stroke-width="5"/>
+                  <circle cx="23" cy="26" r="4.5" fill="currentColor"/>
+                  <circle cx="41" cy="26" r="4.5" fill="currentColor"/>
+                  <path d="M22 40h20" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+                </svg>
+              </button>
+          
+              <button class="ambient-btn poor" data-value="Poor" aria-label="Poor">
+                <svg class="face-icon" viewBox="0 0 64 64" aria-hidden="true">
+                  <circle cx="32" cy="32" r="26" fill="none" stroke="currentColor" stroke-width="5"/>
+                  <circle cx="23" cy="26" r="4.5" fill="currentColor"/>
+                  <circle cx="41" cy="26" r="4.5" fill="currentColor"/>
+                  <path d="M20 44c4-6 20-6 24 0" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+                </svg>
+              </button>
             </div>
-          
-            <div class="ambient-options">
-          
-              <button class="ambient-btn good" data-value="good">
-                <span class="face">🙂</span>
-                <span class="label">Good</span>
-              </button>
-          
-              <button class="ambient-btn neutral" data-value="neutral">
-                <span class="face">😐</span>
-                <span class="label">Okay</span>
-              </button>
-          
-              <button class="ambient-btn poor" data-value="poor">
-                <span class="face">☹</span>
-                <span class="label">Poor</span>
-              </button>
-          
-            </div>
-          
           </div>
 
     </section>
