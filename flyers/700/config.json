@@ -1,0 +1,23 @@
+{
+  "type": "playlist",
+  "title": "Welcome to WOM.fm!",
+  "analytics": { "siteId": 2 },
+  "branding": {
+    "logo": "images/wom.png",
+    "primary": "#ffb713",
+    "accent": "#ea2264",
+    "logoHeight": 50
+  },
+  "tracks": [
+    { "title": "Welcome to WOM.fm!", "src": "audio/audio.mp3" }
+  ],
+  "interaction": { "preset": "feedback_2step_share" },
+ "feedback": {
+   "enabled": true,
+   "kind": "sentiment",
+   "showAfter": "play",
+   "thankYouAudioUrl": "audio/thanks.mp3",
+   "showQuestionText": true,
+   "question": "How is the air quality in your area today?"
+ }
+}
