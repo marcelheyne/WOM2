@@ -389,6 +389,19 @@
     const alias = (typeof window !== 'undefined' && window.__aliasSlug) ? String(window.__aliasSlug) : null;
     return { id, alias };
   }
+  
+  function applySentimentUiRules(cfg){
+    const kind = String(cfg?.feedback?.kind || cfg?.ui?.feedback?.kind || 'thumbs').toLowerCase();
+    const isSentiment = (kind === 'sentiment');
+  
+    const titleEl = document.getElementById('track-title');
+    if (titleEl) titleEl.hidden = isSentiment;
+  
+    // Optional: if you ever want to show the question text in B2B mode
+    const qEl = document.getElementById('ambient-question');
+    const showQuestionText = (cfg?.feedback?.showQuestionText !== false);
+    if (qEl) qEl.hidden = !(isSentiment && showQuestionText);
+  }
 
   // --- Alias → id resolver (fallback when edge did not inject) -------------
   function lastSeg() {
@@ -704,6 +717,8 @@
     }
     const cfg = await cfgRes.json();
     window.cfg = cfg; // expose for auma wiring
+    
+    applySentimentUiRules(cfg);
     
     // ---- Map button -> cta (backward compatible) ----
     // Canonical going forward: cfg.button
