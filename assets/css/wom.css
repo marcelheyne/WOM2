@@ -667,110 +667,59 @@ html.compact #share a{
 .pill--neutral{ background: #ffc422; }  /* yellow (matches your accent) */
 .pill--bad{ background: #e14b4b; }      /* red */
 
-/* Simple “face” icons (pure CSS - reliable, no SVG hassles) */
-.face{
-  display: inline-block;
-  width: 28px;
-  height: 28px;
-  position: relative;
+.ambient-feedback{
+  text-align:center;
+  margin-top:18px;
 }
 
-.face::before, .face::after{
-  content: "";
-  position: absolute;
-  top: 7px;
-  width: 5px;
-  height: 5px;
-  background: #fff;
-  border-radius: 50%;
+.ambient-question{
+  font-size:18px;
+  font-weight:600;
+  margin-bottom:18px;
 }
 
-.face::before{ left: 7px; }
-.face::after{ right: 7px; }
-
-.face--smile{ }
-.face--smile span{ display:none; }
-.face--smile{ }
-.face--smile::marker{ content:""; }
-
-.face--smile::after{ } /* keep eyes from ::after */
-
-.face--smile{
-}
-.face--smile::before{ left: 7px; }
-.face--smile::after{ right: 7px; }
-
-.face--smile::selection{ background: transparent; }
-
-.face--smile{
-}
-.face--smile::after{ }
-
-.face--smile{
-}
-.face--smile::after{ }
-
-.face--smile{
-}
-.face--smile::after{ }
-
-.face--smile{
-}
-.face--smile::after{ }
-
-.face--smile{
-}
-.face--smile::after{ }
-
-/* Mouth lines */
-.face--smile .mouth,
-.face--neutral .mouth,
-.face--sad .mouth{ display:none; }
-
-.face--smile{
-}
-.face--smile::before, .face--smile::after{ top: 7px; }
-
-.face--smile{
-}
-.face--smile::after{ }
-
-/* Mouth via a third pseudo element */
-.face--smile::after{
-  /* keep as eye - mouth added below */
+.ambient-options{
+  display:flex;
+  justify-content:center;
+  gap:16px;
 }
 
-.face--smile::before{
+.ambient-btn{
+  width:72px;
+  height:72px;
+  border-radius:50%;
+  border:none;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  color:white;
+  cursor:pointer;
+  box-shadow:0 4px 10px rgba(0,0,0,0.15);
 }
 
-.face--smile{
-}
-.face--smile::after{
-}
-
-/* Add mouth using background linear-gradient trick */
-.face--smile{
-  background:
-    radial-gradient(circle at 50% 72%, transparent 9px, #fff 9px, #fff 10px, transparent 10px);
-  border-radius: 999px;
-}
-.face--neutral{
-  background:
-    linear-gradient(#fff,#fff) center 72% / 18px 3px no-repeat;
-  border-radius: 999px;
-}
-.face--sad{
-  background:
-    radial-gradient(circle at 50% 78%, transparent 9px, #fff 9px, #fff 10px, transparent 10px);
-  border-radius: 999px;
-  transform: scaleY(-1); /* flip smile into frown */
+.ambient-btn .face{
+  font-size:26px;
 }
 
-/* Message under buttons */
-.feedback-msg{
-  margin-top: 12px;
-  font-size: 14px;
-  opacity: .9;
-  text-align: center;
+.ambient-btn .label{
+  font-size:11px;
+  margin-top:4px;
+}
+
+.ambient-btn.good{
+  background:#34C759;
+}
+
+.ambient-btn.neutral{
+  background:#FFC107;
+}
+
+.ambient-btn.poor{
+  background:#F44336;
+}
+
+.ambient-btn:active{
+  transform:scale(0.92);
 }
 
