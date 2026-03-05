@@ -422,6 +422,11 @@
   const feedbackWrap = document.getElementById('feedback');
   if (feedbackWrap) feedbackWrap.hidden = true;
   
+  const qEl = document.getElementById('feedback-question');
+  const thumbsRow = document.getElementById('feedback-thumbs');
+  const sentRow = document.getElementById('feedback-sentiment');
+  const msgEl = document.getElementById('feedback-msg');
+  
   const fbCfg = cfg?.feedback || cfg?.ui?.feedback || null;
   const ix = window.__ix || {};
   const enabled = (fbCfg?.enabled === true) || (ix.feedbackEnabled === true);
@@ -429,6 +434,11 @@
   
   const yesBtn = document.getElementById('fb-yes');
   const noBtn  = document.getElementById('fb-no');
+  
+  const goodBtn    = document.getElementById('fb-good');
+  const neutralBtn = document.getElementById('fb-neutral');
+  const badBtn     = document.getElementById('fb-bad');
+  
   if (!feedbackWrap || !yesBtn || !noBtn) return;
   
     // Config
@@ -445,6 +455,33 @@
       : (/^https?:\/\//.test(p) || p.startsWith('/')) ? p : (base + p);
   
     const thankYouUrl = toAbs(thankYouUrlRaw);
+  
+  const kind = String(fbCfg?.kind || 'thumbs').toLowerCase(); // thumbs | sentiment
+  const question = fbCfg?.question || null;
+  const thankYouMessage = fbCfg?.thankYouMessage || null;
+  
+  if (kind === 'sentiment') {
+    if (!goodBtn || !neutralBtn || !badBtn) return;
+  
+    goodBtn.addEventListener('click', () => answer('Good', goodBtn));
+    neutralBtn.addEventListener('click', () => answer('Neutral', neutralBtn));
+    badBtn.addEventListener('click', () => answer('Poor', badBtn));
+  } else {
+    if (!yesBtn || !noBtn) return;
+  
+    yesBtn.addEventListener('click', () => answer('Yes', yesBtn));
+    noBtn.addEventListener('click', () => answer('No', noBtn));
+  }
+  
+  if (qEl) qEl.textContent = question || (kind === 'sentiment'
+    ? 'How do you feel about this?'
+    : 'Did you like this?'
+  );
+  
+  // Switch UI rows
+  if (thumbsRow) thumbsRow.hidden = (kind === 'sentiment');
+  if (sentRow) sentRow.hidden = (kind !== 'sentiment');
+  if (msgEl) { msgEl.hidden = true; msgEl.textContent = ''; } 
   
     // State
     let shown = false;
@@ -496,33 +533,42 @@
       } catch(e){}
     }
   
-    function answer(which){
+  function answer(label, btnEl){
       if (answered) return;
       answered = true;
-  
-      // UI feedback
-      if (which === 'yes') yesBtn.classList.add('is-selected');
-      if (which === 'no')  noBtn.classList.add('is-selected');
-  
-      // Matomo
-      try { mtmTrack('Feedback', which === 'yes' ? 'Yes' : 'No', String(flyerId)); } catch(e){}
-  
-      // Optional thanks
-      playThanks();
-  
+    
+      // Visual select
+      try {
+        document.querySelectorAll('.pill--fb').forEach(b => b.classList.remove('is-selected'));
+        btnEl?.classList.add('is-selected');
+      } catch(e){}
+    
+      // Track
+      try { mtmTrack('AmbientFeedback', label, String(flyerId)); } catch(e){}
+      // Backward compat: also keep the old category if you want
+      // try { mtmTrack('Feedback', label, String(flyerId)); } catch(e){}
+    
+      // Play thanks
+      try {
+        if (thanksAudio) { thanksAudio.currentTime = 0; thanksAudio.play().catch(()=>{}); }
+      } catch(e){}
+    
+      // Show share encouragement message
+      if (msgEl && (thankYouMessage || kind === 'sentiment')) {
+        msgEl.textContent = thankYouMessage || 'Thanks! Please share this with someone nearby.';
+        msgEl.hidden = false;
+      }
+    
+      // Hide buttons shortly after tap (keeps your existing UX)
       setTimeout(() => {
         hide();
-      
-        // Two-step: after feedback, reveal actions (share or cta)
-        if (phase === 'two-step' && afterTapReveal) {
-          revealActionsNow(ix);
-      
-          // If afterTapReveal is 'share', you may want to force secondary into share mode:
-          // (optional) For now, we rely on the existing CTA config. Share preset should just have CTA mode not set.
+    
+        // Two-step reveal (share/CTA)
+        if (phase === 'two-step' && (window.__ix?.afterTapReveal)) {
+          revealActionsNow(window.__ix);
         }
       }, 600);
-    }
-  
+    }  
     yesBtn.addEventListener('click', () => answer('yes'), { passive: true });
     noBtn .addEventListener('click', () => answer('no'),  { passive: true });
   
