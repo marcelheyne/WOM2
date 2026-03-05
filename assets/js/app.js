@@ -529,7 +529,7 @@
       // For now: message is handled by the thank-you audio and then actions reveal.
   
      
-     // Visual confirmation: highlight selection for ~400ms
+     // Visual confirmation: highlight selection for ~500ms
      try{
        const btns = ambientWrap?.querySelectorAll?.('.ambient-btn') || [];
        btns.forEach(b => b.classList.add('is-disabled'));
@@ -544,7 +544,7 @@
        if (phase === 'two-step' && (window.__ix?.afterTapReveal)) {
          revealActionsNow(window.__ix);
        }
-     }, 420);
+     }, 500);
     }
   
     // --- Wire buttons based on kind ---
