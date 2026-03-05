@@ -9,7 +9,7 @@
     "logoHeight": 50
   },
   "tracks": [
-    { "title": "Welcome to WOM.fm!", "src": "audio/audio.mp3" }
+    { "title": "How is the air quality in your area today?"", "src": "audio/audio.mp3" }
   ],
   "interaction": { "preset": "feedback_2step_share" },
  "feedback": {
