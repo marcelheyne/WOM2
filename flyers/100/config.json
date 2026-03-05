@@ -18,6 +18,6 @@
    "showAfter": "play",
    "thankYouAudioUrl": "audio/thanks.mp3",
    "question": "How is the air quality in your area today?"
- }
+ },
   "cta": { "mode": "cta", "type": "url", "url": "https://wom.fm" }
 }
