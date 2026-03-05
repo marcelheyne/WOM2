@@ -417,38 +417,28 @@
     return null;
   }
   
-  // ---- Micro-feedback (Yes/No) ----
+  // ---- Micro-feedback (Thumbs + Ambient Feedback sentiment) ----
   function wireMicroFeedback(cfg, flyerId, base){
-  const feedbackWrap = document.getElementById('feedback');
-  if (feedbackWrap) feedbackWrap.hidden = true;
+    const feedbackWrap = document.getElementById('feedback');            // thumbs UI
+    const ambientWrap  = document.getElementById('ambient-feedback');    // new sentiment UI
   
-  const qEl = document.getElementById('feedback-question');
-  const thumbsRow = document.getElementById('feedback-thumbs');
-  const sentRow = document.getElementById('feedback-sentiment');
-  const msgEl = document.getElementById('feedback-msg');
+    // Always start hidden (safety)
+    if (feedbackWrap) feedbackWrap.hidden = true;
+    if (ambientWrap)  ambientWrap.hidden  = true;
   
-  const fbCfg = cfg?.feedback || cfg?.ui?.feedback || null;
-  const ix = window.__ix || {};
-  const enabled = (fbCfg?.enabled === true) || (ix.feedbackEnabled === true);
-  if (!enabled) return;
+    const fbCfg = cfg?.feedback || cfg?.ui?.feedback || null;
+    const ix = window.__ix || {};
+    const enabled = (fbCfg?.enabled === true) || (ix.feedbackEnabled === true);
+    if (!enabled) return;
   
-  const yesBtn = document.getElementById('fb-yes');
-  const noBtn  = document.getElementById('fb-no');
+    const kind = String(fbCfg?.kind || 'thumbs').toLowerCase(); // thumbs | sentiment
+    const showAfter = String(fbCfg?.showAfter || 'play').toLowerCase(); // play | complete
   
-  const goodBtn    = document.getElementById('fb-good');
-  const neutralBtn = document.getElementById('fb-neutral');
-  const badBtn     = document.getElementById('fb-bad');
-  
-  if (!feedbackWrap || !yesBtn || !noBtn) return;
-  
-    // Config
-    const showAfter = String(fbCfg?.showAfter || 'play').toLowerCase(); // 'play' | 'complete'
-    
     const thankYouUrlRaw =
       fbCfg?.thankYouAudioUrl || fbCfg?.thankYouAudio || fbCfg?.thanks || null;
-      
+  
     const phase = String(fbCfg?.phase || ix.feedbackPhase || 'inline').toLowerCase(); // inline | two-step
-    const afterTapReveal = ix.afterTapReveal; // 'share' | 'cta' | null
+    const thankYouMessage = fbCfg?.thankYouMessage || null;
   
     const toAbs = (p) => !p
       ? ''
@@ -456,28 +446,141 @@
   
     const thankYouUrl = toAbs(thankYouUrlRaw);
   
-  const kind = String(fbCfg?.kind || 'thumbs').toLowerCase(); // thumbs | sentiment
-  const question = fbCfg?.question || null;
-  const thankYouMessage = fbCfg?.thankYouMessage || null;
+    const audioEl = window.Amplitude?.getAudio?.();
+    let shown = false;
+    let answered = false;
   
-  if (kind === 'sentiment') {
-    if (!goodBtn || !neutralBtn || !badBtn) return;
+    function isLastTrack(){
+      try {
+        const idx = Number(window.Amplitude?.getActiveIndex?.() ?? 0);
+        const total = Number(window.Amplitude?.getSongs?.()?.length ?? 1);
+        return idx >= (total - 1);
+      } catch (e) {
+        return true;
+      }
+    }
   
-    goodBtn.addEventListener('click', () => answer('Good', goodBtn));
-    neutralBtn.addEventListener('click', () => answer('Neutral', neutralBtn));
-    badBtn.addEventListener('click', () => answer('Poor', badBtn));
-  } else {
-    if (!yesBtn || !noBtn) return;
+    function playThanks(){
+      if (!thankYouUrl) return;
   
-    yesBtn.addEventListener('click', () => answer('Yes', yesBtn));
-    noBtn.addEventListener('click', () => answer('No', noBtn));
+      try {
+        if (audioEl && !audioEl.paused && !audioEl.ended) audioEl.pause();
+      } catch(e){}
+  
+      try {
+        const a = new Audio(thankYouUrl);
+        a.preload = 'auto';
+        a.play().catch(()=>{});
+      } catch(e){}
+    }
+  
+    function hideAll(){
+      if (feedbackWrap) feedbackWrap.hidden = true;
+      if (ambientWrap)  ambientWrap.hidden  = true;
+    }
+  
+    function showWhich(){
+      if (shown || answered) return;
+  
+      if (showAfter === 'complete' && !isLastTrack()) return;
+  
+      shown = true;
+  
+      // Show only one UI
+      if (kind === 'sentiment' && ambientWrap) {
+        if (feedbackWrap) feedbackWrap.hidden = true;
+        ambientWrap.hidden = false;
+        try { mtmTrack('AmbientFeedback', 'Shown', String(flyerId)); } catch(e){}
+      } else {
+        // fallback to thumbs
+        if (ambientWrap) ambientWrap.hidden = true;
+        if (feedbackWrap) feedbackWrap.hidden = false;
+        try { mtmTrack('Feedback', 'Shown', String(flyerId)); } catch(e){}
+      }
+    }
+  
+    function answer(label){
+      if (answered) return;
+      answered = true;
+  
+      // Track
+      try {
+        if (kind === 'sentiment') mtmTrack('AmbientFeedback', label, String(flyerId));
+        else mtmTrack('Feedback', label, String(flyerId));
+      } catch(e){}
+  
+      // Thank you audio
+      playThanks();
+  
+      // Optional message (uses your existing area if you add one later)
+      // For now: message is handled by the thank-you audio and then actions reveal.
+  
+      // Hide feedback UI and reveal actions if two-step
+      setTimeout(() => {
+        hideAll();
+  
+        if (phase === 'two-step' && (window.__ix?.afterTapReveal)) {
+          revealActionsNow(window.__ix);
+        }
+      }, 600);
+    }
+  
+    // --- Wire buttons based on kind ---
+    if (kind === 'sentiment' && ambientWrap) {
+      const goodBtn    = ambientWrap.querySelector('.ambient-btn.good');
+      const neutralBtn = ambientWrap.querySelector('.ambient-btn.neutral');
+      const poorBtn    = ambientWrap.querySelector('.ambient-btn.poor');
+  
+      if (!goodBtn || !neutralBtn || !poorBtn) return;
+  
+      goodBtn.addEventListener('click',    () => answer('Good'),    { passive: true });
+      neutralBtn.addEventListener('click', () => answer('Neutral'), { passive: true });
+      poorBtn.addEventListener('click',    () => answer('Poor'),    { passive: true });
+  
+    } else {
+      // thumbs mode
+      if (!feedbackWrap) return;
+  
+      const yesBtn = document.getElementById('fb-yes');
+      const noBtn  = document.getElementById('fb-no');
+      if (!yesBtn || !noBtn) return;
+  
+      yesBtn.addEventListener('click', () => answer('Yes'), { passive: true });
+      noBtn .addEventListener('click', () => answer('No'),  { passive: true });
+    }
+  
+    // Start hidden
+    hideAll();
+  
+    // --- Reveal logic ---
+    if (showAfter === 'complete'){
+      if (!audioEl) return;
+  
+      let maxPct = 0;
+      const onTime = () => {
+        const d = audioEl.duration || 0;
+        const t = audioEl.currentTime || 0;
+        if (!d) return;
+        const pct = (t / d);
+        if (pct > maxPct) maxPct = pct;
+        if (maxPct >= 0.95) {
+          audioEl.removeEventListener('timeupdate', onTime);
+          showWhich();
+        }
+      };
+  
+      audioEl.addEventListener('timeupdate', onTime, { passive: true });
+      audioEl.addEventListener('ended', () => showWhich(), { once: true, passive: true });
+  
+    } else {
+      const playBtn = document.getElementById('play-pause') || document.getElementById('playpause');
+      playBtn?.addEventListener('click', () => showWhich(), { once: true, passive: true });
+  
+      // Covers AUMA image tap (Amplitude.play()) etc.
+      audioEl?.addEventListener('play', () => showWhich(), { once: true, passive: true });
+    }
   }
-  
-  if (qEl) qEl.textContent = question || (kind === 'sentiment'
-    ? 'How do you feel about this?'
-    : 'Did you like this?'
-  );
-  
+    
   // Switch UI rows
   if (thumbsRow) thumbsRow.hidden = (kind === 'sentiment');
   if (sentRow) sentRow.hidden = (kind !== 'sentiment');
