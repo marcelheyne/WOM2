@@ -17,6 +17,7 @@
    "kind": "sentiment",
    "showAfter": "play",
    "thankYouAudioUrl": "audio/thanks.mp3",
+   "showQuestionText": true,
    "question": "How is the air quality in your area today?"
  }
 }
