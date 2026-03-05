@@ -528,14 +528,23 @@
       // Optional message (uses your existing area if you add one later)
       // For now: message is handled by the thank-you audio and then actions reveal.
   
-      // Hide feedback UI and reveal actions if two-step
-      setTimeout(() => {
-        hideAll();
-  
-        if (phase === 'two-step' && (window.__ix?.afterTapReveal)) {
-          revealActionsNow(window.__ix);
-        }
-      }, 600);
+     
+     // Visual confirmation: highlight selection for ~400ms
+     try{
+       const btns = ambientWrap?.querySelectorAll?.('.ambient-btn') || [];
+       btns.forEach(b => b.classList.add('is-disabled'));
+       const selected = ambientWrap?.querySelector?.(`.ambient-btn[data-value="${label}"]`);
+       selected?.classList.remove('is-disabled');
+       selected?.classList.add('is-selected');
+     }catch(e){}
+     
+     setTimeout(() => {
+       hideAll();
+     
+       if (phase === 'two-step' && (window.__ix?.afterTapReveal)) {
+         revealActionsNow(window.__ix);
+       }
+     }, 420);
     }
   
     // --- Wire buttons based on kind ---

@@ -733,3 +733,13 @@ html.compact #share a{
   transform:scale(0.92);
 }
 
+/* Ambient Feedback - selection highlight */
+.ambient-btn.is-selected{
+  transform: scale(0.96);
+  box-shadow: 0 0 0 8px rgba(0,0,0,.08), 0 12px 28px rgba(0,0,0,.18);
+}
+
+.ambient-btn.is-disabled{
+  opacity: 0.55;
+}
+
