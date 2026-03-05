@@ -15,7 +15,7 @@
  "feedback": {
    "enabled": true,
    "kind": "sentiment",
-   "showAfter": "complete",
+   "showAfter": "play",
    "thankYouAudioUrl": "audio/thanks.mp3",
    "question": "How is the air quality in your area today?"
  }
