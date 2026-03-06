@@ -6,7 +6,7 @@
     "logo": "images/mango_fizz_logo.png",
     "primary": "#ffb713",
     "accent": "#ea2264",
-    "logoHeight": 50
+    "logoHeight": 150
   },
   "tracks": [
     { "title": "How is the air quality in your area today?", "src": "audio/audio.mp3" }
