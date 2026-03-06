@@ -20,5 +20,8 @@
    "showQuestionText": true,
    "question": "What’s your first reaction to Mango Fizz?"
  },
- "cta": { "mode": "cta", "type": "url", "url": "https://wom.fm" }
+ "cta": { "mode": "cta", "type": "url", "url": "https://wom.fm" },
+ "actions": {
+   "whatsapp": false
+ }
 }
