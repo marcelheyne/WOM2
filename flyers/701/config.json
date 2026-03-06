@@ -11,13 +11,13 @@
   "tracks": [
     { "title": "Say Hello to Mango Fizz", "src": "audio/audio.mp3" }
   ],
-  "interaction": { "preset": "feedback_2step_share" },
+  "interaction": { "preset": "feedback_2step_cta" },
  "feedback": {
    "enabled": true,
    "kind": "sentiment",
    "showAfter": "play",
    "thankYouAudioUrl": "audio/thanks.mp3",
    "showQuestionText": true,
-   "question": "How is the air quality in your area today?"
+   "question": "What’s your first reaction to Mango Fizz?"
  }
 }
