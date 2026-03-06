@@ -709,18 +709,29 @@ function setElVisible(el, visible){
   }
   
   // Utility: reveal actions immediately (used by 2-step feedback)
-function revealActionsNow(ix){
+  function revealActionsNow(ix){
     const actionsEl = document.getElementById('actions');
     if (!actionsEl) return;
   
     const waBtn = document.getElementById('share-wa');
     const secondaryBtn = document.getElementById('share-native');
   
-    // Respect config when revealing after feedback
     const actionsCfg = window.cfg?.actions || {};
   
-    setElVisible(waBtn, actionsCfg.whatsapp !== false);
-    setElVisible(secondaryBtn, actionsCfg.secondary !== false);
+    // Preset-specific reveal behavior
+    if (ix?.afterTapReveal === 'cta') {
+      // CTA flow = only CTA button
+      setElVisible(waBtn, false);
+      setElVisible(secondaryBtn, actionsCfg.secondary !== false);
+    } else if (ix?.afterTapReveal === 'share') {
+      // Share flow = WhatsApp + optional secondary
+      setElVisible(waBtn, actionsCfg.whatsapp !== false);
+      setElVisible(secondaryBtn, actionsCfg.secondary !== false);
+    } else {
+      // Fallback
+      setElVisible(waBtn, actionsCfg.whatsapp !== false);
+      setElVisible(secondaryBtn, actionsCfg.secondary !== false);
+    }
   
     actionsEl.classList.remove('is-hidden');
     actionsEl.classList.add('is-visible');
