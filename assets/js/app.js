@@ -703,13 +703,21 @@
   }
   
   // Utility: reveal actions immediately (used by 2-step feedback)
-  function revealActionsNow(ix){
+function revealActionsNow(ix){
     const actionsEl = document.getElementById('actions');
     if (!actionsEl) return;
   
-    // If we're in two-step mode, actions were hidden initially
+    const waBtn = document.getElementById('share-wa');
+    const secondaryBtn = document.getElementById('share-native');
+  
+    // Respect config when revealing after feedback
+    const actionsCfg = window.cfg?.actions || {};
+  
+    if (waBtn) waBtn.hidden = (actionsCfg.whatsapp === false);
+    if (secondaryBtn) secondaryBtn.hidden = (actionsCfg.secondary === false);
+  
     actionsEl.classList.remove('is-hidden');
-    actionsEl.classList.add('is-visible'); // uses your existing CSS reveal mechanic
+    actionsEl.classList.add('is-visible');
   }
 
   // ---- App init ----
@@ -995,6 +1003,9 @@ if (actionsAfterPlay) {
     }
     
     applySecondaryButtonUi(cfg);
+    
+    const waBtn = document.getElementById('share-wa');
+    if (waBtn) waBtn.hidden = (cfg?.actions?.whatsapp === false);
     
     document.getElementById('share-native')
       ?.addEventListener('click', () => handleSecondaryAction(cfg, flyerId));
