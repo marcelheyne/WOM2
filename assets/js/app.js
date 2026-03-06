@@ -31,6 +31,12 @@
     } catch {}
   }
 
+function setElVisible(el, visible){
+    if (!el) return;
+    el.hidden = !visible;
+    el.style.display = visible ? '' : 'none';
+  }
+  
   // ---------- AUMA v1 helpers (one image per track, no timing) ----------
   function showAuma(show){
     const sec = $id('auma');
@@ -624,9 +630,9 @@
     const actionsCfg = cfg?.actions || {};
     const waBtn  = document.getElementById('share-wa');
     const secBtn = document.getElementById('share-native');
-    if (waBtn)  waBtn.hidden  = (actionsCfg.whatsapp === false);
-    if (secBtn) secBtn.hidden = (actionsCfg.secondary === false);
-  
+    setElVisible(waBtn,  actionsCfg.whatsapp !== false);
+    setElVisible(secBtn, actionsCfg.secondary !== false);
+    
     const actionsEl  = document.getElementById('actions');
     const feedbackEl = document.getElementById('feedback');
   
@@ -713,8 +719,8 @@ function revealActionsNow(ix){
     // Respect config when revealing after feedback
     const actionsCfg = window.cfg?.actions || {};
   
-    if (waBtn) waBtn.hidden = (actionsCfg.whatsapp === false);
-    if (secondaryBtn) secondaryBtn.hidden = (actionsCfg.secondary === false);
+    setElVisible(waBtn, actionsCfg.whatsapp !== false);
+    setElVisible(secondaryBtn, actionsCfg.secondary !== false);
   
     actionsEl.classList.remove('is-hidden');
     actionsEl.classList.add('is-visible');
@@ -1005,7 +1011,7 @@ if (actionsAfterPlay) {
     applySecondaryButtonUi(cfg);
     
     const waBtn = document.getElementById('share-wa');
-    if (waBtn) waBtn.hidden = (cfg?.actions?.whatsapp === false);
+    setElVisible(waBtn, cfg?.actions?.whatsapp !== false);
     
     document.getElementById('share-native')
       ?.addEventListener('click', () => handleSecondaryAction(cfg, flyerId));
