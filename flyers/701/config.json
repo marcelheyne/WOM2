@@ -1,6 +1,6 @@
 {
   "type": "playlist",
-  "title": "Welcome to WOM.fm!",
+  "title": "Say Hello to Mango Fizz",
   "analytics": { "siteId": 2 },
   "branding": {
     "logo": "images/mango_fizz_logo.png",
@@ -9,7 +9,7 @@
     "logoHeight": 150
   },
   "tracks": [
-    { "title": "How is the air quality in your area today?", "src": "audio/audio.mp3" }
+    { "title": "Say Hello to Mango Fizz", "src": "audio/audio.mp3" }
   ],
   "interaction": { "preset": "feedback_2step_share" },
  "feedback": {
