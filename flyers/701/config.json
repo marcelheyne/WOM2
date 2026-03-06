@@ -19,5 +19,6 @@
    "thankYouAudioUrl": "audio/thanks.mp3",
    "showQuestionText": true,
    "question": "What’s your first reaction to Mango Fizz?"
- }
+ },
+ "cta": { "mode": "cta", "type": "url", "url": "https://wom.fm" }
 }
