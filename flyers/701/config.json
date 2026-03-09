@@ -1,7 +1,7 @@
 {
   "type": "playlist",
-  "title": "Say Hello to Mango Fizz!",
-  "analytics": { "siteId": 2 },
+  "title": "Mango Fizz Demo Campaign",
+  "analytics": { "siteId": 8 },
   "branding": {
     "logo": "images/mango_fizz_logo.png",
     "primary": "#ffb713",
