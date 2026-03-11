@@ -6,7 +6,7 @@
     "logo": "images/moh_logo.png",
     "primary": "#ffb713",
     "accent": "#ea2264",
-    "logoHeight": 150
+    "logoHeight": 80
   },
   "tracks": [
     { "title": "Say Hello to Mango Fizz", "src": "audio/audio.mp3" }
