@@ -20,8 +20,8 @@
    "showQuestionText": true,
    "question": "How does the heat feel where you are right now?"
  },
- "cta": { "mode": "cta", "type": "url", "url": "https://wom.fm" },
+ "cta": { "mode": "cta", "type": "url", "url": "https://www.who.int/india/beat-the-heat" },
  "actions": {
-   "whatsapp": false
+   "whatsapp": true
  }
 }
