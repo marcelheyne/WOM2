@@ -1,15 +1,15 @@
 {
-  "type": "playlist",
-  "title": "Mango Fizz Demo Campaign",
+  "type": "single",
+  "title": "Heat Wave Check",
   "analytics": { "siteId": 8 },
   "branding": {
     "logo": "images/moh_logo.png",
-    "primary": "#ffb713",
-    "accent": "#ea2264",
+    "primary": "#002874",
+    "accent": "#0057b2",
     "logoHeight": 80
   },
   "tracks": [
-    { "title": "Say Hello to Mango Fizz", "src": "audio/audio.mp3" }
+    { "title": "Heat Wave Check", "src": "audio/audio.mp3" }
   ],
   "interaction": { "preset": "feedback_2step_cta" },
  "feedback": {
@@ -18,7 +18,7 @@
    "showAfter": "play",
    "thankYouAudioUrl": "audio/thanks.mp3",
    "showQuestionText": true,
-   "question": "What’s your first reaction to Mango Fizz?"
+   "question": "How does the heat feel where you are right now?"
  },
  "cta": { "mode": "cta", "type": "url", "url": "https://wom.fm" },
  "actions": {
