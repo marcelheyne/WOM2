@@ -1,0 +1,21 @@
+{
+  "type": "auma",
+  "title": "Entretien de votre système solaire",
+  "analytics": { "siteId": 1 },
+  "branding": {
+    "primary": "#ff8a00",
+    "accent": "#ffc422",
+    "logoHeight": 40
+  },
+  "tracks": [
+    { "title": "Votre système solaire est votre partenaire", "src": "audio/1.mp3", "image": { "src": "images/1.jpg", "alt": "Votre système solaire est votre partenaire" }},
+    { "title": "Vérification quotidienne : trois gestes simples", "src": "audio/2.mp3", "image": { "src": "images/2.jpg", "alt": "Vérification quotidienne : trois gestes simples" }},
+    { "title": "Garder les panneaux propres", "src": "audio/3.mp3", "image": { "src": "images/3.jpg", "alt": "Garder les panneaux propres" }},
+    { "title": "Protéger la batterie", "src": "audio/4.mp3", "image": { "src": "images/4.jpg", "alt": "Protéger la batterie" }},
+    { "title": "Comprendre les voyants du boîtier de commande", "src": "audio/5.mp3", "image": { "src": "images/5.jpg", "alt": "Comprendre les voyants du boîtier de commande" }},
+    { "title": "Voyant système - l’énergie est là", "src": "audio/6.mp3", "image": { "src": "images/6.jpg", "alt": "Voyant système - l’énergie est là" }},
+    { "title": "Voyant pompe - la pompe fonctionne ou a un problème", "src": "audio/7.mp3", "image": { "src": "images/7.jpg", "alt": "Voyant pompe - la pompe fonctionne ou a un problème" }},
+    { "title": "Voyant source d’eau - le niveau d’eau est trop bas", "src": "audio/8.mp3", "image": { "src": "images/8.jpg", "alt": "Voyant source d’eau - le niveau d’eau est trop bas" }},
+    { "title": "Demander de l’aide rapidement", "src": "audio/9.mp3", "image": { "src": "images/9.jpg", "alt": "Demander de l’aide rapidement" }}
+  ]
+}
