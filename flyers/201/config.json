@@ -6,7 +6,7 @@
     "logo": "images/Yas_logo.png",
   "primary": "#73FAFE",
     "accent": "#FFD100",
-    "logoHeight": 45
+    "logoHeight": 100
   },
   "tracks": [
   { "title": "Ujuzi wa Pesa za Simu", "src": "audio/SwDFL01.mp3" },
