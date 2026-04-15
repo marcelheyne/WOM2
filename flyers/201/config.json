@@ -4,8 +4,8 @@
   "analytics": { "siteId": 3 },
   "branding": {
     "logo": "images/Yas_logo.png",
-  "primary": "#E60000",
-    "accent": "#E60000",
+  "primary": "#73FAFE",
+    "accent": "#FFD100",
     "logoHeight": 45
   },
   "tracks": [
