@@ -3,8 +3,8 @@
   "title": "Mariage coutumier",
   "analytics": { "siteId": 1 },
   "branding": {
-    "logo": "GIZ-Cameroon.jpg",
-  "primary": "#E60000",
+    "logo": "images/GIZ-Cameroon.jpg",
+  "primary": "#A32414",
     "accent": "#30b54a",
     "logoHeight": 70
   },
