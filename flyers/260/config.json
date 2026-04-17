@@ -1,0 +1,17 @@
+{
+  "type": "single",
+  "title": "Mariage coutumier",
+  "analytics": { "siteId": 1 },
+  "branding": {
+    "logo": "GIZ-Cameroon.jpg",
+  "primary": "#E60000",
+    "accent": "#30b54a",
+    "logoHeight": 70
+  },
+  "tracks": [
+  { "title": "Mariage coutumier = mariage légal !", "src": "audio/marriage.mp3" }
+  
+  
+  
+  ]
+}
