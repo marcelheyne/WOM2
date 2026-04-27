@@ -1,0 +1,19 @@
+{
+  "type": "auma",
+  "title": "Is my child breathing normally?",
+  "analytics": { "siteId": 1 },
+  "branding": {
+    "primary": "#ff8a00",
+    "accent": "#ffc422",
+    "logoHeight": 40
+  },
+  "tracks": [
+    { "title": "Your solar system is your partner", "src": "audio/1.mp3", "image": { "src": "images/1.jpg", "alt": "Your solar system is your partner" }},        
+    { "title": "Daily check: three simple steps", "src": "audio/2.mp3", "image": { "src": "images/2.jpg", "alt": "Daily check: three simple steps" }},
+        { "title": "Keep the panels clean", "src": "audio/3.mp3", "image": { "src": "images/3.jpg", "alt": "Keep the panels clean" }},
+        { "title": "Protect the battery", "src": "audio/4.mp3", "image": { "src": "images/4.jpg", "alt": "Protect the battery" }},
+        { "title": "Understanding the control box indicators", "src": "audio/5.mp3", "image": { "src": "images/5.jpg", "alt": "Understanding the control box indicators" }},
+        { "title": "System light – power is on", "src": "audio/6.mp3", "image": { "src": "images/6.jpg", "alt": "System light – power is on" }},
+        { "title": "Pump indicator light – the pump is running or has a fault", "src": "audio/7.mp3", "image": { "src": "images/7.jpg", "alt": "Pump indicator light – the pump is running or has a fault" }}
+  ]
+}
