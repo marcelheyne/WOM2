@@ -16,7 +16,7 @@
         { "title": "System light – power is on", "src": "audio/6.mp3", "image": { "src": "images/6.jpg", "alt": "System light – power is on" }},
         { "title": "Pump indicator light – the pump is running or has a fault", "src": "audio/7.mp3", "image": { "src": "images/7.jpg", "alt": "Pump indicator light – the pump is running or has a fault" }}
   ],
-    "interaction": { "preset": "feedback_2step_cta" },
+    "interaction": { "preset": "feedback_2step_share" },
    "feedback": {
      "enabled": true,
      "kind": "sentiment",
@@ -25,8 +25,9 @@
      "showQuestionText": true,
      "question": "Was this information helpful?"
    },
-   "cta": { "mode": "cta", "type": "url", "url": "https://wom.fm" },
+
    "actions": {
-     "whatsapp": false
+     "whatsapp": true,
+     "secondary": true
    }
   }
