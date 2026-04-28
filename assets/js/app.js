@@ -595,22 +595,28 @@ function setElVisible(el, visible){
     // --- Reveal logic ---
     if (showAfter === 'complete'){
       if (!audioEl) return;
-  
-      let maxPct = 0;
-      const onTime = () => {
+    
+      const maybeShowOnLastTrack = () => {
+        if (shown || answered) return;
+    
+        // Only reveal on the final track
+        if (!isLastTrack()) return;
+    
         const d = audioEl.duration || 0;
         const t = audioEl.currentTime || 0;
-        if (!d) return;
-        const pct = (t / d);
-        if (pct > maxPct) maxPct = pct;
-        if (maxPct >= 0.95) {
-          audioEl.removeEventListener('timeupdate', onTime);
+        const nearEnd = d > 0 && (t / d) >= 0.95;
+        const ended = audioEl.ended;
+    
+        if (nearEnd || ended) {
           showWhich();
+          audioEl.removeEventListener('timeupdate', maybeShowOnLastTrack);
+          audioEl.removeEventListener('ended', maybeShowOnLastTrack);
         }
       };
-  
-      audioEl.addEventListener('timeupdate', onTime, { passive: true });
-      audioEl.addEventListener('ended', () => showWhich(), { once: true, passive: true });
+    
+      audioEl.addEventListener('timeupdate', maybeShowOnLastTrack, { passive: true });
+      audioEl.addEventListener('ended', maybeShowOnLastTrack, { passive: true });
+    
   
     } else {
       const playBtn = document.getElementById('play-pause') || document.getElementById('playpause');
