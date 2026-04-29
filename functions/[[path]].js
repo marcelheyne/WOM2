@@ -3,13 +3,22 @@ export async function onRequest({ request, next }) {
   const url = new URL(request.url);
   const p = url.pathname.replace(/\/+$/, ""); // "", "/123", "/alias", "/assets/.."
 
+  // ---------- Hard redirect for www.cit.fm ----------
+  if (/^www\.cit\.fm$/i.test(url.hostname)) {
+    return Response.redirect("https://www.wom.fm", 301);
+  }
+
   // ---------- Brand / host detection ----------
   function getBrand(hostname) {
     const h = String(hostname || "").toLowerCase();
-    if (h === "cit.fm" || h === "www.cit.fm" || h === "stage.cit.fm") return "cit";
+    if (h === "cit.fm" || h === "stage.cit.fm") return "cit";
     return "wom";
   }
   const brand = getBrand(url.hostname);
+
+  function fallbackHome() {
+    return "https://www.wom.fm";
+  }
 
   // ---------- Staging detection ----------
   const isStage = /^stage\.(wom|cit)\.fm$/i.test(url.hostname);
@@ -20,12 +29,9 @@ export async function onRequest({ request, next }) {
     return new Response(r.body, { status: r.status, headers });
   }
 
-  // 1) Root -> domain-appropriate homepage
+  // 1) Root -> fallback homepage
   if (p === "") {
-    if (brand === "cit") {
-      return Response.redirect("https://cit.fm", 301);
-    }
-    return Response.redirect("https://www.wom.fm", 301);
+    return Response.redirect(fallbackHome(), 301);
   }
 
   // 2) Static / reserved passthrough
@@ -78,12 +84,10 @@ export async function onRequest({ request, next }) {
   }
 
   async function fetchAsset(pathname) {
-    // Re-enter function; RESERVED will send it to next()
     return fetch(new URL(pathname, url).toString(), { headers: request.headers });
   }
 
   async function serveSlotInject({ id = null, slug = null, brand = "wom" }) {
-    // Try /slot first, then /slot.html
     let slotResp = await fetchAsset("/slot");
     if (!slotResp.ok || !(slotResp.headers.get("content-type") || "").includes("text/html")) {
       slotResp = await fetchAsset("/slot.html");
@@ -137,7 +141,6 @@ window.__brand="${brand}";
 
   const aliases = await loadAliases(brand);
 
-  // Resolve a key in aliases map to a normalized shape
   function resolveAliasEntry(key) {
     const raw = aliases?.[key];
     if (!raw) return null;
@@ -167,7 +170,6 @@ window.__brand="${brand}";
     return null;
   }
 
-  // Find canonical alias for a given id
   function canonicalForId(id) {
     id = String(id);
     for (const [slug, obj] of Object.entries(aliases)) {
@@ -178,7 +180,7 @@ window.__brand="${brand}";
     return null;
   }
 
-  // 3) Single-segment flyer code: /123, /1001, /whh, /welthungerhilfe
+  // 3) Single-segment flyer code: /123, /1001, /alias
   const m = p.match(/^\/(\d{3,6}|[a-z0-9-]{3,64})$/i);
   if (m) {
     const code = m[1];
@@ -195,14 +197,13 @@ window.__brand="${brand}";
         return serveSlotInject({ id: lower, slug: null, brand });
       }
 
-      return Response.redirect(brand === "cit" ? "https://cit.fm" : "https://www.wom.fm", 301);
+      return Response.redirect(fallbackHome(), 301);
     }
 
     // Alias path
     if (isSlug(lower)) {
       const entry = resolveAliasEntry(lower);
       if (entry) {
-        // Alias points directly to an id
         if (entry.id) {
           const canon = canonicalForId(entry.id);
           if (canon && lower !== canon) {
@@ -213,10 +214,9 @@ window.__brand="${brand}";
             return serveSlotInject({ id: entry.id, slug: (canon || lower), brand });
           }
 
-          return Response.redirect(brand === "cit" ? "https://cit.fm" : "https://www.wom.fm", 301);
+          return Response.redirect(fallbackHome(), 301);
         }
 
-        // Legacy alias points to another slug
         if (entry.slug) {
           if (entry.redirect) {
             return Response.redirect(new URL(`/${entry.slug}`, url).toString(), 301);
@@ -231,14 +231,14 @@ window.__brand="${brand}";
         }
       }
 
-      return Response.redirect(brand === "cit" ? "https://cit.fm" : "https://www.wom.fm", 301);
+      return Response.redirect(fallbackHome(), 301);
     }
   }
 
-  // 4) Anything else: let static try; if 404, go to domain homepage
+  // 4) Anything else: let static try; if 404, go to fallback homepage
   const res = await next();
   if (res.status === 404) {
-    return Response.redirect(brand === "cit" ? "https://cit.fm" : "https://www.wom.fm", 301);
+    return Response.redirect(fallbackHome(), 301);
   }
   return withStageRobots(res);
 }
