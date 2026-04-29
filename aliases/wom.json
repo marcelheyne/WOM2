@@ -6,5 +6,6 @@
   "avega": { "id": "1001", "canonical": true },
   "ppe": { "id": "300", "canonical": true },
   "demo": { "id": "800", "canonical": true },
+  "breath": { "id": "801", "canonical": true },
   "lgkp": { "id": "1002", "canonical": true } 
 }
