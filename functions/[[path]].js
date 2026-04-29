@@ -63,20 +63,9 @@ export async function onRequest({ request, next }) {
   }
 
   async function getFlyerConfigPath(id, brand) {
-    const candidates = [
-      `/flyers/${brand}/${id}/config.json`
-    ];
-
-    // Temporary WOM fallback during migration
-    if (brand === "wom") {
-      candidates.push(`/flyers/${id}/config.json`);
-    }
-
-    for (const candidate of candidates) {
-      const r = await fetchJson(candidate);
-      if (r) return candidate;
-    }
-    return null;
+    const candidate = `/flyers/${brand}/${id}/config.json`;
+    const r = await fetchJson(candidate);
+    return r ? candidate : null;
   }
 
   async function flyerExistsById(id, brand) {
@@ -119,24 +108,14 @@ window.__brand="${brand}";
 
   // ---------- Load aliases ----------
   async function loadAliases(brand) {
-    const candidates = [
-      `/aliases/${brand}.json`
-    ];
-
-    // Temporary WOM fallback during migration
-    if (brand === "wom") {
-      candidates.push("/aliases.json");
+    const candidate = `/aliases/${brand}.json`;
+    const r = await fetchJson(candidate);
+    if (!r) return {};
+    try {
+      return await r.json();
+    } catch {
+      return {};
     }
-
-    for (const candidate of candidates) {
-      const r = await fetchJson(candidate);
-      if (r) {
-        try {
-          return await r.json();
-        } catch {}
-      }
-    }
-    return {};
   }
 
   const aliases = await loadAliases(brand);
