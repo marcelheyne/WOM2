@@ -1,0 +1,17 @@
+{
+  "type": "auma",
+  "title": "Maintenance of your solar system",
+  "analytics": { "siteId": 1 },
+  "branding": {
+    "primary": "#ff8a00",
+    "accent": "#ffc422",
+    "logoHeight": 40
+  },
+  "tracks": [
+    { "title": "Your Solar System Is Your Partner", "src": "audio/1.mp3", "image": { "src": "images/1.jpg", "alt": "Your Solar System Is Your Partner" }},
+    { "title": "Daily Check: Three Simple Steps", "src": "audio/2.mp3", "image": { "src": "images/2.jpg", "alt": "Daily Check: Three Simple Steps" }},
+    { "title": "Keep the Solar Panels Clean", "src": "audio/3.mp3", "image": { "src": "images/3.jpg", "alt": "Keep the Solar Panels Clean" }},
+    { "title": "Protect the Battery", "src": "audio/4.mp3", "image": { "src": "images/4.jpg", "alt": "Protect the Battery" }},
+    { "title": "Ask for Help Early", "src": "audio/5.mp3", "image": { "src": "images/5.jpg", "alt": "Ask for Help Early" }}
+  ]
+}

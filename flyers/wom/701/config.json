@@ -1,0 +1,27 @@
+{
+  "type": "playlist",
+  "title": "Mango Fizz Demo Campaign",
+  "analytics": { "siteId": 8 },
+  "branding": {
+    "logo": "images/mango_fizz_logo.png",
+    "primary": "#ffb713",
+    "accent": "#ea2264",
+    "logoHeight": 150
+  },
+  "tracks": [
+    { "title": "Say Hello to Mango Fizz", "src": "audio/audio.mp3" }
+  ],
+  "interaction": { "preset": "feedback_2step_cta" },
+ "feedback": {
+   "enabled": true,
+   "kind": "sentiment",
+   "showAfter": "play",
+   "thankYouAudioUrl": "audio/thanks.mp3",
+   "showQuestionText": true,
+   "question": "What’s your first reaction to Mango Fizz?"
+ },
+ "cta": { "mode": "cta", "type": "url", "url": "https://wom.fm" },
+ "actions": {
+   "whatsapp": false
+ }
+}

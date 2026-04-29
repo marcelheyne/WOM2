@@ -1,0 +1,33 @@
+{
+  "type": "auma",
+  "title": "Is my child breathing normally?",
+  "analytics": { "siteId": 1 },
+  "branding": {
+    "primary": "#ff8a00",
+    "accent": "#ffc422",
+    "logoHeight": 40
+  },
+  "tracks": [
+    { "title": "Your child has a cough or fever", "src": "audio/1.mp3", "image": { "src": "images/1.jpg", "alt": "Your child has a cough or fever" }},        
+    { "title": "Watch the chest and belly", "src": "audio/2.mp3", "image": { "src": "images/2.jpg", "alt": "Watch the chest and belly" }},
+        { "title": "Breathing looks hard", "src": "audio/3.mp3", "image": { "src": "images/3.jpg", "alt": "Breathing looks hard" }},
+        { "title": "Look below the ribs", "src": "audio/4.mp3", "image": { "src": "images/4.jpg", "alt": "Look below the ribs" }},
+        { "title": "Normal breathing", "src": "audio/5.mp3", "image": { "src": "images/5.jpg", "alt": "Normal breathing" }},
+        { "title": "Danger sign: chest pulls in", "src": "audio/6.mp3", "image": { "src": "images/6.jpg", "alt": "Danger sign: chest pulls in" }},
+        { "title": "Seek help", "src": "audio/7.mp3", "image": { "src": "images/7.jpg", "alt": "Seek help" }}
+  ],
+    "interaction": { "preset": "feedback_2step_share" },
+   "feedback": {
+     "enabled": true,
+     "kind": "sentiment",
+     "showAfter": "complete",
+     "thankYouAudioUrl": "audio/thanks.mp3",
+     "showQuestionText": true,
+     "question": "Was this information helpful?"
+   },
+
+   "actions": {
+     "whatsapp": true,
+     "secondary": true
+   }
+  }
