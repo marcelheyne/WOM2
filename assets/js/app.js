@@ -42,16 +42,12 @@
       : 'wom';
   }
 
-  function flyerBaseCandidates(flyerId, brand) {
-    const out = [`/flyers/${brand}/${flyerId}/`];
-    if (brand === 'wom') out.push(`/flyers/${flyerId}/`); // temporary migration fallback
-    return out;
-  }
+ function flyerBaseCandidates(flyerId, brand) {
+   return [`/flyers/${brand}/${flyerId}/`];
+ }
 
   function aliasFileCandidates(brand) {
-    const out = [`/aliases/${brand}.json`];
-    if (brand === 'wom') out.push('/aliases.json'); // temporary migration fallback
-    return out;
+    return [`/aliases/${brand}.json`];
   }
 
   async function fetchFirstJson(candidates) {
