@@ -15,7 +15,7 @@
  "feedback": {
    "enabled": true,
    "kind": "sentiment",
-   "showAfter": "play",
+   "showAfter": "complete",
    "thankYouAudioUrl": "audio/thanks.mp3",
    "showQuestionText": true,
    "question": "How does the heat feel where you are right now?"
