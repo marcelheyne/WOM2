@@ -4,8 +4,8 @@
   "analytics": { "siteId": 8 },
   "branding": {
     "logo": "images/ril_logo.png",
-    "primary": "#002874",
-    "accent": "#0057b2",
+    "primary": "#1457D8",
+    "accent": "#4D8DFF",
     "logoHeight": 80
   },
   "tracks": [
