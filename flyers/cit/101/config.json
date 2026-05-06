@@ -1,6 +1,6 @@
 {
   "type": "single",
-  "title": "Heat Wave Check",
+  "title": "Women and girls safety",
   "analytics": { "siteId": 8 },
   "branding": {
     "logo": "images/ril_logo.png",
@@ -9,7 +9,7 @@
     "logoHeight": 80
   },
   "tracks": [
-    { "title": "Heat Wave Check", "src": "audio/audio.mp3" }
+    { "title": "How safe does this place feel for women and girls today?", "src": "audio/audio.mp3" }
   ],
   "interaction": { "preset": "feedback_2step_cta" },
  "feedback": {
@@ -18,9 +18,9 @@
    "showAfter": "complete",
    "thankYouAudioUrl": "audio/thanks.mp3",
    "showQuestionText": true,
-   "question": "How does the heat feel where you are right now?"
+   "question": "How safe does this place feel for women and girls today?"
  },
- "cta": { "mode": "cta", "type": "url", "url": "https://www.who.int/india/beat-the-heat" },
+ "cta": { "mode": "cta", "type": "url", "url": "https://help.unhcr.org/lebanon/en/welcome/gender-based-violence/" },
  "actions": {
    "whatsapp": true
  }
