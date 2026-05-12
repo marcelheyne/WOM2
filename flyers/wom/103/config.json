@@ -1,0 +1,19 @@
+{
+  "type": "playlist",
+  "title": "Consejos de negocio para mujeres agricultoras",
+  "analytics": { "siteId": 2 },
+  "branding": {
+    "logo": "images/sifora.png",
+    "primary": "#2FAB16",
+    "accent": "#43db25",
+    "logoHeight": 70
+  },
+  "tracks": [
+  { "title": "Bienvenida a la serie", "src": "audio/1.mp3" },
+  { "title": "Separa la plata del negocio", "src": "audio/2.mp3" },
+  { "title": "Anota lo que entra y sale", "src": "audio/3.mp3" },
+  { "title": "Conoce tu verdadera ganancia", "src": "audio/4.mp3" },
+  { "title": "Planea antes de vender", "src": "audio/5.mp3" },
+  { "title": "Empieza con un paso pequeño", "src": "audio/6.mp3" }
+  ]
+}
