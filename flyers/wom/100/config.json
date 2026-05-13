@@ -11,13 +11,11 @@
   "tracks": [
     { "title": "Welcome to WOM.fm!", "src": "audio/audio.mp3" }
   ],
-  "interaction": { "preset": "feedback_2step_share" },
- "feedback": {
-   "enabled": true,
-   "kind": "sentiment",
-   "showAfter": "play",
-   "thankYouAudioUrl": "audio/thanks.mp3",
-   "showQuestionText": true,
-   "question": "How is the air quality in your area today?"
- }
+  "interaction": { "preset": "feedback_2step_cta" },
+"cta": {
+    "mode": "cta",
+    "type": "url",
+    "url": "https://wom.fm",
+    "color": "#ea2264"
+  }
 }
