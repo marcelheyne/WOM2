@@ -4,8 +4,8 @@
   "analytics": { "siteId": 2 },
   "branding": {
     "logo": "images/sifora.png",
-    "primary": "#007C89",
-    "accent": "#A6CE22",
+    "primary": "#A6CE22",
+    "accent": "#007C89",
     "logoHeight": 70
   },
   "tracks": [
