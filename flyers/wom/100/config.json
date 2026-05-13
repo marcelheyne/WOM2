@@ -1,7 +1,7 @@
 {
   "type": "playlist",
   "title": "Welcome to WOM.fm!",
-  "analytics": { "siteId": 2 },
+  "analytics": { "siteId": 1 },
   "branding": {
     "logo": "images/wom.png",
     "primary": "#ffb713",
