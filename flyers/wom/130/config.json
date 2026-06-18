@@ -17,7 +17,7 @@
     { "title": "Voyant jaune - la batterie est presque pleine", "src": "audio/7.mp3", "image": { "src": "images/7.jpg", "alt": "Voyant jaune - la batterie est presque pleine" }},
     { "title": "Voyant vert - la batterie est pleine", "src": "audio/8.mp3", "image": { "src": "images/8.jpg", "alt": "Voyant vert - la batterie est pleine" }},
     { "title": "Voyant bleu clignotant - il n’y a pas assez de soleil", "src": "audio/9.mp3", "image": { "src": "images/9.jpg", "alt": "Voyant bleu clignotant - il n’y a pas assez de soleil" }},
-    { "title": "Demander de l’aide rapidement", "src": "audio/8.mp3", "image": { "src": "images/10.jpg", "alt": "Demander de l’aide rapidement" }},
-    { "title": "Bien utiliser le congélateur", "src": "audio/8.mp3", "image": { "src": "images/11.jpg", "alt": "Bien utiliser le congélateur" }}
+    { "title": "Demander de l’aide rapidement", "src": "audio/10.mp3", "image": { "src": "images/10.jpg", "alt": "Demander de l’aide rapidement" }},
+    { "title": "Bien utiliser le congélateur", "src": "audio/11.mp3", "image": { "src": "images/11.jpg", "alt": "Bien utiliser le congélateur" }}
   ]
 }
