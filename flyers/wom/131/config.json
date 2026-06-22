@@ -1,0 +1,23 @@
+{
+  "type": "auma",
+  "title": "Entretien de votre système solaire",
+  "analytics": { "siteId": 1 },
+  "branding": {
+    "primary": "#ff8a00",
+    "accent": "#ffc422",
+    "logoHeight": 40
+  },
+  "tracks": [
+    { "title": "Votre système solaire est votre partenaire", "src": "audio/1.mp3", "image": { "src": "images/1.jpg", "alt": "Votre système solaire est votre partenaire" }},
+    { "title": "Vérification quotidienne : trois gestes simples", "src": "audio/2.mp3", "image": { "src": "images/2.jpg", "alt": "Vérification quotidienne : trois gestes simples" }},
+    { "title": "Garder les panneaux propres", "src": "audio/3.mp3", "image": { "src": "images/3.jpg", "alt": "Garder les panneaux propres" }},
+    { "title": "Protéger la batterie", "src": "audio/4.mp3", "image": { "src": "images/4.jpg", "alt": "Protéger la batterie" }},
+    { "title": "Comprendre les voyants du régulateur de charge", "src": "audio/5.mp3", "image": { "src": "images/5.jpg", "alt": "CComprendre les voyants du régulateur de charge" }},
+    { "title": "Voyant bleu - la batterie se charge", "src": "audio/6.mp3", "image": { "src": "images/6.jpg", "alt": "Voyant bleu - la batterie se charge" }},
+    { "title": "Voyant jaune - la batterie est presque pleine", "src": "audio/7.mp3", "image": { "src": "images/7.jpg", "alt": "Voyant jaune - la batterie est presque pleine" }},
+    { "title": "Voyant vert - la batterie est pleine", "src": "audio/8.mp3", "image": { "src": "images/8.jpg", "alt": "Voyant vert - la batterie est pleine" }},
+    { "title": "Voyant bleu clignotant - il n’y a pas assez de soleil", "src": "audio/9.mp3", "image": { "src": "images/9.jpg", "alt": "Voyant bleu clignotant - il n’y a pas assez de soleil" }},
+    { "title": "Demander de l’aide rapidement", "src": "audio/10.mp3", "image": { "src": "images/10.jpg", "alt": "Demander de l’aide rapidement" }},
+    { "title": "Bien utiliser le congélateur", "src": "audio/11.mp3", "image": { "src": "images/11.jpg", "alt": "Bien utiliser le congélateur" }}
+  ]
+}
