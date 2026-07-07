@@ -4,9 +4,9 @@
   "analytics": { "siteId": 1 },
   "branding": {
     "logo": "images/Evi-logo.jpg",
-    "primary": "#2FAB16",
-    "accent": "#43db25",
-    "logoHeight": 70
+    "primary": "#2b8690",
+    "accent": "#fbc430",
+    "logoHeight": 90
   },
   "tracks": [
   { "title": "Alcohol and the Family", "src": "audio/1.mp3" },
