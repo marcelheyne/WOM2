@@ -1,0 +1,18 @@
+{
+  "type": "playlist",
+  "title": "Mental Health Ghana",
+  "analytics": { "siteId": 1 },
+  "branding": {
+    "logo": "images/Evi-logo.jpg",
+    "primary": "#2FAB16",
+    "accent": "#43db25",
+    "logoHeight": 70
+  },
+  "tracks": [
+  { "title": "Alcohol and the Family", "src": "audio/1.mp3" },
+  { "title": "Talking Saves Lives", "src": "audio/2.mp3" },
+  { "title": "Understanding Sadness and Depression", "src": "audio/3.mp3" },
+  { "title": "When Drinking Hurts Than the Drinker", "src": "audio/4.mp3" },
+  { "title": "When the Mind Feels Heavy", "src": "audio/5.mp3" }
+  ]
+}
