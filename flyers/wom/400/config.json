@@ -1,0 +1,14 @@
+{
+  "type": "single",
+  "title": "Stop Breeding Mosquitos",
+  "analytics": { "siteId": 1 },
+  "branding": {
+    "logo": "images/wom.png",
+    "primary": "#ffb713",
+    "accent": "#ea2264",
+    "logoHeight": 50
+  },
+  "tracks": [
+    { "title": "Stop Breeding Mosquitos", "src": "audio/audio.mp3" }
+  ]
+}
