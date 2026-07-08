@@ -1,6 +1,6 @@
 {
   "type": "single",
-  "title": "Stop Breeding Mosquitos",
+  "title": "Stop Breeding Mosquitos!",
   "analytics": { "siteId": 1 },
   "branding": {
     "logo": "images/Carpha.png",
@@ -9,6 +9,6 @@
     "logoHeight": 110
   },
   "tracks": [
-    { "title": "Stop Breeding Mosquitos", "src": "audio/audio.mp3" }
+    { "title": "Stop Breeding Mosquitos!", "src": "audio/audio.mp3" }
   ]
 }
