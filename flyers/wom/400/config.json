@@ -6,7 +6,7 @@
     "logo": "images/Carpha.png",
     "primary": "#fab24d",
     "accent": "#a3c542",
-    "logoHeight": 50
+    "logoHeight": 110
   },
   "tracks": [
     { "title": "Stop Breeding Mosquitos", "src": "audio/audio.mp3" }
