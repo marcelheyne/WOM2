@@ -3,9 +3,9 @@
   "title": "Stop Breeding Mosquitos",
   "analytics": { "siteId": 1 },
   "branding": {
-    "logo": "images/wom.png",
-    "primary": "#ffb713",
-    "accent": "#ea2264",
+    "logo": "images/Carpha.png",
+    "primary": "#fab24d",
+    "accent": "#a3c542",
     "logoHeight": 50
   },
   "tracks": [
