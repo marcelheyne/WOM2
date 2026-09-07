@@ -4,8 +4,8 @@
   "analytics": { "siteId": 3 },
   "branding": {
     "logo": "images/audiopedia.png",
-  "primary": "#E60000",
-    "accent": "#E60000",
+  "primary": "#C8A2C8",
+    "accent": "#C8A2C8",
     "logoHeight": 45
   },
   "tracks": [
