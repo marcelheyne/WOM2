@@ -710,6 +710,83 @@
     actionsEl.classList.add('is-visible');
   }
 
+  function setupPlaylistOverview(cfg){
+    if (cfg?.ui?.showPlaylist !== true) return () => {};
+
+    document.documentElement.classList.add('show-playlist');
+
+    const flyer = document.getElementById('flyer');
+    const timeline = flyer?.querySelector('.timeline');
+    if (!flyer || !timeline) return () => {};
+
+    const summary = document.createElement('section');
+    summary.className = 'playlist-summary';
+    summary.setAttribute('aria-labelledby', 'playlist-title');
+
+    const title = document.createElement('h1');
+    title.id = 'playlist-title';
+    title.textContent = cfg.title || '';
+    summary.appendChild(title);
+
+    if (cfg.subtitle) {
+      const subtitle = document.createElement('p');
+      subtitle.className = 'playlist-subtitle';
+      subtitle.textContent = cfg.subtitle;
+      summary.appendChild(subtitle);
+    }
+
+    timeline.before(summary);
+
+    const share = flyer.querySelector('.share');
+    const overview = document.createElement('section');
+    overview.className = 'playlist-overview';
+    overview.setAttribute('aria-label', 'Contenido de la playlist');
+
+    const list = document.createElement('ol');
+    list.className = 'playlist-track-list';
+
+    (cfg.tracks || []).forEach((track, index) => {
+      const item = document.createElement('li');
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.dataset.trackIndex = String(index);
+      button.textContent = track.title || '';
+      item.appendChild(button);
+      list.appendChild(item);
+    });
+
+    overview.appendChild(list);
+    (share || flyer.lastElementChild)?.after(overview);
+
+    const buttons = Array.from(list.querySelectorAll('button[data-track-index]'));
+    const setActive = (index) => {
+      buttons.forEach((button, i) => {
+        const active = i === Number(index);
+        button.classList.toggle('is-active', active);
+        if (active) button.setAttribute('aria-current', 'true');
+        else button.removeAttribute('aria-current');
+      });
+    };
+
+    setActive(0);
+
+    return () => {
+      buttons.forEach(button => {
+        button.addEventListener('click', () => {
+          const index = Number(button.dataset.trackIndex);
+          if (Number.isInteger(index)) {
+            Amplitude.playSongAtIndex(index);
+            setActive(index);
+          }
+        });
+      });
+
+      const refresh = () => setActive(Amplitude.getActiveIndex?.() ?? 0);
+      document.addEventListener('amplitude-song-change', refresh);
+      Amplitude.getAudio?.()?.addEventListener('loadedmetadata', refresh, { passive: true });
+    };
+  }
+
   // ---- App init ----
   async function main(){
     const brand = getInjectedBrand();
@@ -740,6 +817,8 @@
 
     const cfg = cfgHit.json;
     window.cfg = cfg;
+
+    const bindPlaylistOverview = setupPlaylistOverview(cfg);
 
     applySentimentUiRules(cfg);
 
@@ -807,6 +886,21 @@
       if (cfg.branding.logoHeight) root.setProperty('--logo-height', cfg.branding.logoHeight + 'px');
     }
 
+    if (header && cfg?.branding?.textMark) {
+      header.classList.add('brand--co-branded');
+      const textMark = document.createElement('span');
+      textMark.className = 'brand-text-mark';
+      textMark.textContent = cfg.branding.textMark;
+      header.insertBefore(textMark, logoEl || null);
+    }
+
+    if (header && cfg.reviewLabel) {
+      const reviewLabel = document.createElement('span');
+      reviewLabel.className = 'review-label';
+      reviewLabel.textContent = cfg.reviewLabel;
+      header.appendChild(reviewLabel);
+    }
+
     let songs = (cfg.tracks || []).map(t => {
       const imgSrc =
         typeof t.image === 'string' ? t.image :
@@ -831,6 +925,7 @@
 
     Amplitude.init({ songs });
     if (startIndex>0 && startIndex<songs.length) Amplitude.playSongAtIndex(startIndex);
+    bindPlaylistOverview();
     syncAmplitudeUiClasses();
     if (isAuma) bindAumaImageToAmplitudeToggle();
 
