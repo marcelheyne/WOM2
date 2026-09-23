@@ -54,50 +54,6 @@ body{
 .flyer #brand-logo[src=""],
 .flyer #brand-logo:not([src]){ display: none; }
 
-.brand--co-branded{
-  display:flex;
-  flex-wrap:wrap;
-  align-items:center;
-  justify-content:center;
-  gap:10px 16px;
-}
-.brand--co-branded #brand-logo{ margin:0; max-width:min(58vw, 230px); }
-.brand-text-mark{
-  font-size:22px;
-  font-weight:750;
-  letter-spacing:.01em;
-  color:#222;
-}
-.review-label{
-  flex-basis:100%;
-  width:max-content;
-  max-width:100%;
-  margin:2px auto 0;
-  color:#6a5a2b;
-  font-size:12px;
-  font-weight:700;
-  letter-spacing:.04em;
-  text-transform:uppercase;
-}
-
-.playlist-summary{
-  margin:-10px 0 24px;
-  text-align:left;
-}
-.playlist-summary h1{
-  margin:0;
-  color:#222;
-  font-size:clamp(26px, 8vw, 38px);
-  line-height:1.08;
-  letter-spacing:-.025em;
-}
-.playlist-subtitle{
-  margin:9px 0 0;
-  color:#666;
-  font-size:15px;
-  line-height:1.45;
-}
-
 
 /* Bigger Play when there is no logo, on all viewports */
 html.no-brand{ --main-size: 250px; }          /* default was 184px */
@@ -176,66 +132,6 @@ progress[value]::-moz-progress-bar{ background:var(--accent) }
 #track-title{
   font-size: 16px; font-weight:600; margin:0; color:#333;
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-}
-
-.show-playlist #track-title{
-  white-space:normal;
-  overflow:visible;
-  text-overflow:clip;
-  line-height:1.35;
-}
-
-.playlist-overview{
-  margin:32px 0 0;
-  padding-top:22px;
-  border-top:1px solid #ececec;
-  text-align:left;
-}
-.playlist-track-list{
-  margin:0;
-  padding:0;
-  list-style:none;
-  counter-reset:playlist-track;
-  display:grid;
-  gap:8px;
-}
-.playlist-track-list li{ counter-increment:playlist-track; }
-.playlist-track-list button{
-  width:100%;
-  display:grid;
-  grid-template-columns:2.1em 1fr;
-  gap:8px;
-  align-items:start;
-  padding:11px 12px;
-  border:1px solid #e5e5e5;
-  border-radius:12px;
-  background:#fff;
-  color:#333;
-  font:inherit;
-  font-size:14px;
-  line-height:1.4;
-  text-align:left;
-  cursor:pointer;
-}
-.playlist-track-list button::before{
-  content:counter(playlist-track, decimal-leading-zero);
-  color:#8a8a8a;
-  font-size:12px;
-  font-weight:750;
-  letter-spacing:.04em;
-  padding-top:2px;
-}
-.playlist-track-list button.is-active{
-  border-color:var(--accent);
-  background:#fffaf0;
-  color:#1f1f1f;
-}
-.playlist-track-list button.is-active::before{ color:var(--brand); }
-
-@media (max-width:360px){
-  .brand--co-branded{ gap:8px 12px; }
-  .brand-text-mark{ font-size:19px; }
-  .playlist-summary h1{ font-size:26px; }
 }
 
 /* ============= Share ============= */
@@ -846,3 +742,4 @@ html.compact #share a{
 .ambient-btn.is-disabled{
   opacity: 0.55;
 }
+
