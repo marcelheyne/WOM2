@@ -1,0 +1,52 @@
+{
+  "type": "playlist",
+  "title": "Cuidar a nuestros niños",
+  "subtitle": "Información práctica para cuidar la salud de niñas y niños",
+  "reviewLabel": "Prototipo para revisión",
+  "analytics": { "siteId": 6 },
+  "branding": {
+    "logo": "images/audiopedia.png",
+    "alt": "Audiopedia Foundation",
+    "textMark": "Servindi",
+    "primary": "#ff8a00",
+    "accent": "#ffc422",
+    "logoHeight": 38
+  },
+  "ui": {
+    "showPlaylist": true
+  },
+  "tracks": [
+    {
+      "title": "Señales de alarma: cuándo un niño necesita ayuda urgente",
+      "src": "audio/01-senales-de-alarma.mp3"
+    },
+    {
+      "title": "Cuando un niño tiene dificultad para respirar",
+      "src": "audio/02-dificultad-para-respirar.mp3"
+    },
+    {
+      "title": "Diarrea: evitar la deshidratación",
+      "src": "audio/03-diarrea-y-deshidratacion.mp3"
+    },
+    {
+      "title": "Cómo prevenir intoxicaciones en niños",
+      "src": "audio/04-prevenir-intoxicaciones.mp3"
+    },
+    {
+      "title": "Cómo evitar accidentes graves en casa",
+      "src": "audio/05-evitar-accidentes-en-casa.mp3"
+    },
+    {
+      "title": "Alimentación después de los seis meses",
+      "src": "audio/06-alimentacion-despues-de-seis-meses.mp3"
+    },
+    {
+      "title": "Cómo ayudar a que un niño crezca sano",
+      "src": "audio/07-crecer-sano.mp3"
+    },
+    {
+      "title": "Vacunas: protección desde los primeros años",
+      "src": "audio/08-vacunas-para-proteger.mp3"
+    }
+  ]
+}
