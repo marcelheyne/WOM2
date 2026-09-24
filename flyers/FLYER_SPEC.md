@@ -2,11 +2,9 @@
 
 ## Purpose
 
-A WOM.fm flyer is a lightweight, mobile-first interface for accessing audio or other campaign content.
+A WOM.fm flyer is a lightweight, mobile-first interface for accessing audio and related campaign content.
 
-A flyer is **not a standalone website design**.
-
-When creating a new flyer, always start from an existing WOM.fm flyer of the same type and preserve its established interface patterns.
+A flyer is **not a standalone website design**. It is a configured instance of the shared WOM.fm application.
 
 The goal is consistency, speed, reliability and recognizability across all WOM.fm flyers.
 
@@ -16,29 +14,42 @@ The goal is consistency, speed, reliability and recognizability across all WOM.f
 
 **Do not redesign the WOM.fm interface.**
 
-A new flyer is an instance of the existing WOM.fm system.
+Normal flyer production should change only a slot's `config.json` and flyer-specific assets.
 
 When a reference flyer is specified:
 
-1. Copy the reference flyer as the technical and visual starting point.
-2. Preserve its DOM structure, layout, spacing, typography, player controls, responsive behaviour and interaction patterns.
-3. Replace only the content and assets required for the new flyer.
-4. Make design changes only when explicitly requested.
+1. Copy its slot folder as the configuration and asset starting point.
+2. Preserve the shared DOM structure, layout, typography, controls, responsive behaviour and interaction logic.
+3. Replace only the content, assets and approved configuration required for the new flyer.
+4. Remove copied assets and references that are not used.
+5. Make shared UI or application changes only when explicitly requested and approved.
 
 Do not interpret “create a new flyer” as permission to create a new UI.
 
 ---
 
+## System Boundaries
+
+The WOM.fm Flyer System consists of:
+
+- one shared HTML shell (`/slot.html`)
+- shared application logic and styling (`/assets/`)
+- brand-specific flyer slots (`/flyers/wom/` and `/flyers/cit/`)
+- a `config.json` and assets for each slot
+- central alias and routing configuration
+
+Follow `FLYER_TYPES.md` for taxonomy and canonical references. Follow `CONFIG_SPEC.md` for supported configuration.
+
+---
+
 ## Reference Flyers
 
-Always use a flyer of the same functional type as the starting point.
+- Audio, multiple tracks: `/250`
+- Audio, one-track example: `/100`
+- Visual Audio: `/800`
+- Ambient Feedback interaction: `/700`
 
-Examples:
-
-- Audio-only playlist: use an existing audio-only flyer, e.g. `/250`
-- Other flyer types: use the closest existing WOM.fm implementation specified in the task
-
-If the task specifies a reference flyer, that flyer is authoritative.
+If a task specifies another reference flyer, that flyer is authoritative for the requested configuration and assets.
 
 Do not combine UI elements from different flyers unless explicitly requested.
 
@@ -46,23 +57,21 @@ Do not combine UI elements from different flyers unless explicitly requested.
 
 ## What May Be Changed
 
-Unless otherwise instructed, the following elements may be changed:
+Unless otherwise instructed, normal flyer production may change supported configuration and flyer-specific assets such as:
 
 - slot number
-- page title
-- playlist title
-- track titles
+- flyer and track titles
+- track order
 - audio files
-- descriptions
-- logos
-- partner branding
-- background or accent colors
-- metadata
-- sharing text
-- QR-related destination
-- language
-- analytics identifiers or configuration
-- other content explicitly named in the task
+- track-specific images and alternative text
+- partner logo and alternative text
+- primary and accent colors
+- CTA URL or telephone number
+- feedback question and thank-you audio
+- visibility of supported actions
+- analytics site ID
+
+Do not assume that descriptions, arbitrary metadata, custom share text, QR destinations or language settings are supported config fields. If one is required, check the shared application and request clarification before changing shared code.
 
 ---
 
@@ -71,29 +80,18 @@ Unless otherwise instructed, the following elements may be changed:
 Unless explicitly requested, preserve:
 
 - overall page structure
-- player position
-- play/pause control
-- previous/next controls
-- progress bar
-- time display
-- share buttons
-- WhatsApp button
-- button placement
+- player position and controls
+- progress and time display
+- share and CTA button placement
 - typography hierarchy
-- spacing
-- element sizes
-- responsive layout
-- mobile behaviour
-- desktop behaviour
-- animations
-- interaction logic
-- existing accessibility behaviour
-- existing analytics logic
-- existing asset-loading approach
+- spacing and element sizes
+- responsive and compact layouts
+- animations and interaction logic
+- accessibility behaviour
+- analytics event logic
+- asset-loading approach
 
-Do not add new cards, panels, navigation elements, icons, headers, footers, decorative sections or explanatory UI.
-
-Do not move controls because another arrangement appears more attractive.
+Do not add new cards, panels, navigation, icons, headers, footers, decorative sections or explanatory UI.
 
 ---
 
@@ -101,9 +99,7 @@ Do not move controls because another arrangement appears more attractive.
 
 WOM.fm flyers are primarily designed for smartphones.
 
-Always verify the flyer at mobile width.
-
-The primary content and controls must be usable without zooming.
+Always verify the flyer at mobile width. Primary content and controls must be usable without zooming.
 
 Avoid:
 
@@ -118,18 +114,19 @@ The flyer should feel immediate and simple.
 
 ---
 
-## Audio-only Playlist Flyers
+## Audio Behaviour
 
-For an audio-only playlist:
+All Audio flyers use the same shared player.
 
-- retain the established WOM.fm audio player
+For every Audio flyer:
+
 - show one active track at a time
-- retain previous and next navigation
 - retain the progress bar and elapsed/total time
-- retain WhatsApp and share functionality
-- use the supplied track titles
-- load audio files from the established asset structure
-- preserve the playlist order exactly as supplied
+- use the supplied track titles and order
+- load audio from the established asset structure
+- preserve configured sharing, CTA or feedback behaviour
+
+When one track is configured, previous/next controls are automatically hidden. When multiple tracks are configured, they are shown.
 
 Do not create custom playlist cards, waveform players, accordions, carousels or alternative audio controls unless explicitly requested.
 
@@ -141,162 +138,150 @@ Partner branding should be integrated into the existing WOM.fm UI, not used to r
 
 Prefer:
 
-- partner logo
-- restrained accent color adaptation
+- a partner logo
+- restrained primary and accent colors
 - existing WOM.fm typography and layout
 
-Avoid deriving an entire color palette from a visually complex partner logo.
+If a logo contains many colors, use only one or two compatible interface colors.
 
-If a partner logo contains many colors, keep the WOM.fm interface simple and use only one or two compatible accent colors.
-
-WOM.fm should remain visually coherent even when partner branding changes.
+If a partner has not approved the flyer, do not imply endorsement. Use appropriate draft wording such as `Draft for review` or `Prototipo para revisión` in the approved content; do not invent an extra UI element solely for that label.
 
 ---
 
-## Prototype Branding
+## Content Integrity and Script Storage
 
-If a partner has not yet formally approved the flyer, do not imply endorsement.
+Do not rewrite supplied content unless editing has explicitly been requested.
 
-Use wording such as:
+Preserve approved:
 
-- `Prototipo para revisión`
-- `Draft for review`
-- equivalent wording appropriate to the language
-
-Do not state or imply that a partner recommends, validates or endorses the content unless explicitly confirmed.
-
----
-
-## Content Integrity
-
-Do not rewrite supplied content unless the task explicitly asks for editing.
-
-Preserve:
-
-- track order
-- track titles
 - scripts
+- track titles and order
 - calls to action
 - language
 - partner names
+- health, safety, financial or legal claims
 
-Do not invent additional claims, especially for health, safety, financial or legal content.
+The canonical repository for source scripts, reviewed scripts and approval records is:
+
+<https://drive.google.com/drive/folders/1XKJDEOG_I7aUNXzTih9-9ULhqewE5Tex>
+
+The deployed flyer folder should contain delivery assets and configuration, not the working script history. Before generating or publishing audio, confirm that the correct script version has been reviewed and approved in the canonical Drive folder.
+
+For sensitive content, final scripts and rendered audio require appropriate human/content validation before public or community use.
 
 ---
 
-## URLs
+## Production Workflow
+
+Source material → script adaptation → content approval → recording or TTS → audio QA → flyer config/assets → technical QA → publish
+
+TTS is a production method, not a flyer type.
+
+Generated audio must be checked directly for completeness, pronunciation, language, pacing and file integrity, even if the generation tool reports an error.
+
+---
+
+## URLs and Routing
 
 WOM.fm flyer URLs must always be written without `www`.
 
-Correct:
+Correct: `wom.fm/270`
 
-`wom.fm/270`
+Incorrect: `www.wom.fm/270`
 
-Incorrect:
-
-`www.wom.fm/270`
-
-The `www` hostname may route differently and must not be used for flyer links.
+Flyers may use numeric slots or approved aliases. Aliases and canonical redirects are managed centrally; do not create or change them unless the task includes that scope.
 
 ---
 
 ## Slot Creation
 
-Before creating a new flyer:
+Before creating a flyer:
 
 1. Check whether the requested slot already exists.
 2. If it is free, use it.
 3. If it is occupied, do not overwrite it unless explicitly instructed.
-4. Choose the next suitable free slot only if the task permits this.
-
-Create the new flyer by copying the specified reference flyer.
-
-Do not modify the reference flyer.
+4. Choose another slot only when the task permits this.
+5. Copy the canonical reference slot folder.
+6. Do not modify the reference flyer.
 
 ---
 
 ## Asset Handling
 
-Keep flyer-specific assets inside the established folder structure.
+Keep flyer-specific assets inside the slot's established folder structure.
 
-Use clear, predictable filenames.
-
-For audio playlists, filenames should preferably reflect track order.
-
-Example:
+Use clear filenames that reflect track order where practical, for example:
 
 - `01-alert-signs.mp3`
 - `02-breathing.mp3`
 - `03-diarrhea.mp3`
 
-Do not leave unused assets copied from the reference flyer.
+Do not leave unused assets or references from the source flyer.
 
-Do not leave references to assets belonging to the source flyer.
+Relative asset paths resolve from the slot folder. See `CONFIG_SPEC.md` for supported path behaviour.
 
 ---
 
 ## Analytics
 
-Preserve the existing WOM.fm analytics implementation.
+Preserve the shared WOM.fm analytics implementation.
 
 When copying a flyer:
 
-- verify that tracking refers to the new slot
-- verify that old playlist or campaign identifiers are not retained
-- preserve existing event names and tracking logic unless explicitly requested otherwise
+- set the approved analytics site ID
+- verify that tracking identifies the new slot or canonical alias
+- preserve existing event names and tracking logic
+- do not retain obsolete campaign-specific values
 
-Do not redesign or replace analytics code as part of normal flyer creation.
+Do not replace analytics code as part of normal flyer creation.
 
 ---
 
-## Sharing
+## Sharing and CTA
 
-Preserve existing sharing functionality.
+Preserve the configured interaction pattern.
 
-Verify:
+Verify the applicable actions:
 
 - WhatsApp sharing
-- generic share button
-- shared URL
-- shared title/text where applicable
+- native sharing or its clipboard fallback
+- website CTA
+- telephone CTA
+- feedback followed by share or CTA
 
-The shared URL must point to the new WOM.fm slot and must not contain `www`.
+The standard share message uses the flyer title. Custom share text is not currently a documented config field.
+
+The shared URL must point to the correct slot or canonical alias and must not contain `www`.
 
 ---
 
 ## Quality Assurance
 
-Before considering a flyer complete, verify all of the following:
+Before considering a flyer complete, verify:
 
-- correct slot
-- correct title
-- correct logo
-- correct branding
+- correct slot or alias
+- correct title, logo and branding
 - correct track order
-- all audio files load
-- play/pause works
-- previous/next works
-- progress bar works
-- elapsed and total time work
-- WhatsApp sharing works
-- generic sharing works
-- shared URL is correct
-- no references to the source flyer remain
-- analytics point to the correct flyer
-- layout matches the reference flyer
-- mobile layout works correctly
-- desktop layout remains functional
-- no unnecessary UI elements were introduced
-- no supplied text was unintentionally altered
+- all audio and image assets load
+- play/pause, progress and time display work
+- previous/next work for multiple tracks
+- previous/next remain hidden for one track
+- Visual Audio changes image with the active track
+- configured feedback and thank-you audio work
+- configured share or CTA actions work
+- shared URL is correct and contains no `www`
+- analytics use the approved site and flyer identity
+- no references or unused assets from the source flyer remain
+- mobile and desktop layouts match the canonical reference
+- no unapproved UI or content changes were introduced
+- final audio matches the approved script in the canonical Drive folder
 
 ---
 
 ## Agent Rule
 
-When working on WOM.fm flyers:
-
 **Prefer copying and replacing over redesigning and rebuilding.**
 
-If unsure whether a UI change is allowed, preserve the reference implementation.
+If unsure whether a UI change is allowed, preserve the shared implementation and ask for clarification.
 
 Consistency is more important than creativity.
