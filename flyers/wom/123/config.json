@@ -4,9 +4,9 @@
   "analytics": { "siteId": 1 },
   "branding": {
     "logo": "images/WECF.png",
-    "primary": "#A6CE22",
-    "accent": "#007C89",
-    "logoHeight": 70
+    "primary": "#1ab5eb",
+    "accent": "#159241",
+    "logoHeight": 100
   },
   "tracks": [
   { "title": "Comment la fumée des feux de cuisson peut-elle nuire à notre santé ?", "src": "audio/1.mp3" },
