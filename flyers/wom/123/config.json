@@ -1,0 +1,16 @@
+{
+  "type": "playlist",
+  "title": "Fumées toxiques et santé",
+  "analytics": { "siteId": 1 },
+  "branding": {
+    "logo": "images/WECF.png",
+    "primary": "#A6CE22",
+    "accent": "#007C89",
+    "logoHeight": 70
+  },
+  "tracks": [
+  { "title": "Comment la fumée des feux de cuisson peut-elle nuire à notre santé ?", "src": "audio/1.mp3" },
+  { "title": "Pourquoi les fumées du plastique sont-elles dangereuses ?", "src": "audio/2.mp3" },
+  { "title": "Comment se protéger des fumées toxiques ?", "src": "audio/3.mp3" }
+  ]
+}
