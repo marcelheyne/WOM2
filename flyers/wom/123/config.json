@@ -4,8 +4,8 @@
   "analytics": { "siteId": 1 },
   "branding": {
     "logo": "images/WECF.png",
-    "primary": "#1ab5eb",
-    "accent": "#29339c",
+    "primary": "#29339c",
+    "accent": "#1ab5eb",
     "logoHeight": 100
   },
   "tracks": [
