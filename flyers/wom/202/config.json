@@ -5,8 +5,8 @@
   "branding": {
     "logo": "images/CARE_logo.png",
   "primary": "#E4701E",
-    "accent": "#F48223",
-    "logoHeight": 45
+    "accent": "#f4b223",
+    "logoHeight": 70
   },
   "tracks": [
   { "title": "Ujuzi wa Pesa za Simu", "src": "audio/SwDFL01.mp3" },
