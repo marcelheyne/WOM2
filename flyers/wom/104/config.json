@@ -1,0 +1,21 @@
+{
+  "type": "playlist",
+  "title": "Gedankenreise Stress",
+  "analytics": { "siteId": 1 },
+  "branding": {
+    "logo": "images/lzg.png",
+    "primary": "#ffb713",
+    "accent": "#ea2264",
+    "logoHeight": 50
+  },
+  "tracks": [
+    { "title": "Gedankenreise Stress", "src": "audio/audio.mp3" }
+  ],
+  "interaction": { "preset": "cta" },
+"cta": {
+    "mode": "cta",
+    "type": "url",
+    "url": "https://www.lzg-rlp.de",
+    "color": "#ea2264"
+  }
+}
