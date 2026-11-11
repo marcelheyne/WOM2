@@ -9,13 +9,13 @@
     "logoHeight": 120
   },
   "tracks": [
-    { "title": "Gedankenreise Stress", "src": "audio/audio.mp3" }
+    { "title": "About Spectra", "src": "audio/audio.mp3" }
   ],
   "interaction": { "preset": "cta" },
 "cta": {
     "mode": "cta",
     "type": "url",
-    "url": "https://www.lzg-rlp.de/de/impulse-fuer-die-seele.html",
+    "url": "https://spectraalwar.org",
     "color": "#1075b1"
   }
 }
