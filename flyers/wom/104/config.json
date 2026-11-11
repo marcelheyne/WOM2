@@ -6,7 +6,7 @@
     "logo": "images/lzg.png",
     "primary": "#ffb713",
     "accent": "#ea2264",
-    "logoHeight": 50
+    "logoHeight": 100
   },
   "tracks": [
     { "title": "Gedankenreise Stress", "src": "audio/audio.mp3" }
@@ -15,7 +15,7 @@
 "cta": {
     "mode": "cta",
     "type": "url",
-    "url": "https://www.lzg-rlp.de",
+    "url": "https://www.lzg-rlp.de/de/impulse-fuer-die-seele.html",
     "color": "#ea2264"
   }
 }
