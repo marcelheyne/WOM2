@@ -1,7 +1,7 @@
 {
   "type": "playlist",
   "title": "Spectra Demo",
-  "analytics": { "siteId": 1 },
+  "analytics": { "siteId": 10 },
   "branding": {
     "logo": "images/spectra.jpg",
     "primary": "#d41a20",
