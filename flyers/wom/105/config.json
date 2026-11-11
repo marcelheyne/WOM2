@@ -1,12 +1,12 @@
 {
   "type": "playlist",
   "title": "Spectra Demo",
-  "analytics": { "siteId": 9 },
+  "analytics": { "siteId": 1 },
   "branding": {
     "logo": "images/spectra.jpg",
     "primary": "#d41a20",
     "accent": "#1075b1",
-    "logoHeight": 80
+    "logoHeight": 120
   },
   "tracks": [
     { "title": "Gedankenreise Stress", "src": "audio/audio.mp3" }
