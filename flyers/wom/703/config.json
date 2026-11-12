@@ -4,8 +4,8 @@
   "analytics": { "siteId": 10 },
   "branding": {
     "logo": "images/hitzekarte.png",
-    "primary": "#002874",
-    "accent": "#0057b2",
+    "primary": "#ffce29",
+    "accent": "#dba800",
     "logoHeight": 80
   },
   "tracks": [
