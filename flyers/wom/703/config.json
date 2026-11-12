@@ -1,7 +1,7 @@
 {
   "type": "single",
   "title": "Hitzekarte Mainz",
-  "analytics": { "siteId": 10 },
+  "analytics": { "siteId": 9 },
   "branding": {
     "logo": "images/hitzekarte.png",
     "primary": "#ffce29",
